@@ -21,8 +21,13 @@ mode behind it:
    it does not recognise, visibly, rather than rendering a blank panel.
 
 A seventh rule is specific to this lab's honesty commitments: whenever a payload is downsampled, the
-original count ships next to it. Showing 24 lineages out of 184,320 individuals is fine; not saying
-so is not.
+original count ships next to it. Exporting 12 front members out of 16 is fine; not saying so is not.
+That pair is real and checkable: `MAX_EXPORTED_MEMBERS` is 12, and `ccpp-derating` has a variant
+whose front holds 16, which the artifact reports as `pareto_exported` 12 and `pareto_total` 16.
+
+An earlier version of this paragraph illustrated the rule with "24 lineages out of 184,320
+individuals". No budget in this repo produces 184,320 of anything: a case runs 300 by 40 per rung.
+An invented example inside a paragraph about not hiding numbers is the wrong place to invent one.
 """
 from __future__ import annotations
 

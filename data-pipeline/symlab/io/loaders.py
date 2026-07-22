@@ -256,10 +256,21 @@ def load_flotation(*, target: str = "silica") -> LoadedDataset:
 def load_flotation_mineralogy() -> LoadedDataset:
     """The ore-mineralogy closure case: iron feed against silica feed.
 
-    This is the case where the research measured a real discrepancy: the plant data give
-    Fe = 67.11 - 0.738*Si while two-mineral stoichiometry predicts 69.94 - 0.699*Si. Recovering the
-    measured line and comparing it against the theoretical one is the whole point, so nothing here
-    tries to reconcile them.
+    This is the case where the research measured a real discrepancy between the plant data and
+    two-mineral stoichiometry. Re-derived from the rows this loader actually returns, by ordinary
+    least squares on the 4097 hourly rows:
+
+        measured      Fe = 67.0831 - 0.7363 * Si
+        stoichiometry Fe = 69.94   - 0.699  * Si
+
+    The research phase recorded 67.11 and 0.738 for the measured line. That is the same line to the
+    precision the research quoted it at, and the figures above are the ones this code reproduces, so
+    they are the ones stated: a number in a docstring should be recomputable from the module it sits
+    in. Note the fit is weighted by the hourly broadcast; on the 309 unique (Si, Fe) pairs it is
+    Fe = 65.2725 - 0.6438 * Si, which is a different question and not the one the case asks.
+
+    Recovering the measured line and comparing it against the theoretical one is the whole point, so
+    nothing here tries to reconcile them.
     """
     source = SOURCES["flotation-mining-process"]
     base = load_flotation(target="silica")
