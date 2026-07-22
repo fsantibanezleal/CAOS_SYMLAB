@@ -62,6 +62,11 @@ class Variant:
     note_en: str
     note_es: str
     config: SearchConfig
+    #: Which search FAMILY runs this variant. Every rung of the ladder is "gp": genetic programming
+    #: with one more mechanism than the rung above. "sparse" is a different family entirely, and it
+    #: is here because a ladder made only of GP rungs is a fine ablation of GP and a poor survey of
+    #: symbolic regression.
+    method: str = "gp"
 
 
 @dataclass(frozen=True)
@@ -173,6 +178,30 @@ _LADDER_TEXT: dict[str, tuple[str, str, str, str]] = {
 }
 
 
+#: The non-evolutionary arm. Deterministic, produces a front by construction, and can only ever
+#: return a linear combination of its library, so a law outside that span is unreachable no matter
+#: the budget. Reporting it beside the GP rungs is how a reader sees the size of that gap.
+SPARSE_ARM = Variant(
+    id="sparse-regression",
+    label_en="sparse regression (non-GP)",
+    label_es="regresion dispersa (no GP)",
+    note_en=(
+        "Not an evolutionary search at all: a fixed library of nonlinear terms, then sequentially "
+        "thresholded least squares at a sweep of sparsity levels. Deterministic, so it returns the "
+        "same answer every run, and it produces the accuracy-versus-complexity front by "
+        "construction rather than searching for it. Its ceiling is the span of the library."
+    ),
+    note_es=(
+        "No es una busqueda evolutiva: una biblioteca fija de terminos no lineales y minimos "
+        "cuadrados con umbral secuencial sobre un barrido de niveles de dispersion. Es determinista, "
+        "asi que devuelve la misma respuesta en cada corrida, y produce el frente de exactitud "
+        "frente a complejidad por construccion. Su techo es el espacio generado por la biblioteca."
+    ),
+    config=SearchConfig(),
+    method="sparse",
+)
+
+
 def ladder_variants(
     keys: tuple[str, ...],
     *,
@@ -193,6 +222,9 @@ def ladder_variants(
         label_en, label_es, note_en, note_es = _LADDER_TEXT[key]
         out.append(Variant(id=key, label_en=label_en, label_es=label_es,
                            note_en=note_en, note_es=note_es, config=config))
+    # Every case gets the non-GP arm, so the comparison exists on every case rather than on a
+    # hand-picked subset.
+    out.append(SPARSE_ARM)
     return tuple(out)
 
 

@@ -18,9 +18,9 @@
     "ground_truth_known": 20,
     "real": 7,
     "synthetic": 18,
-    "total_variants": 193,
-    "min_variants": 4,
-    "max_variants": 8
+    "total_variants": 218,
+    "min_variants": 5,
+    "max_variants": 9
   },
   "cases": [
     {
@@ -34,7 +34,7 @@
       "real_or_synthetic": "synthetic",
       "manifest_path": "manifests/monod-saturation.json",
       "artifact_path": "monod-saturation/run.json",
-      "bytes": 166937,
+      "bytes": 184943,
       "n_variants": 3,
       "summary": {
         "n_variants": 3,
@@ -42,10 +42,10 @@
         "accuracy_solution_rate": 0.0,
         "exact_recoveries": 0,
         "exact_recovery_rate": 0.0,
-        "mean_structural_distance": 0.7798,
+        "mean_structural_distance": 0.6455,
         "symbolic_test_failure_rate": 0.0,
         "test_disagreement_count": 0,
-        "total_seconds": 0.32,
+        "total_seconds": 0.38,
         "total_evaluations": 1500,
         "variants_with_irrelevant_features": 0
       }
