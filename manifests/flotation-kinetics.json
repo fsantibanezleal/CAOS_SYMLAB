@@ -1,0 +1,159 @@
+{
+  "schema": "symlab.manifest/v1",
+  "case_id": "flotation-kinetics",
+  "category": "M",
+  "engine": {
+    "package": "symlab",
+    "version": "0.02.000"
+  },
+  "seed": 0,
+  "artifact": {
+    "path": "flotation-kinetics/run.json",
+    "format": "json",
+    "schema_version": "1.0.0",
+    "bytes": 571945
+  },
+  "lane": "precompute",
+  "data": {
+    "source_id": "flotation-kinetics",
+    "citation": "Bu, Xie, Peng, Ge and Ni (2017), Physicochemical Problems of Mineral Processing 53(1):342-365, doi:10.5277/ppmp170128, equation (8); verified by extracting the open-access PDF",
+    "licence": "MIT (generator authored in this repository)",
+    "redistribution": "mirror",
+    "real_or_synthetic": "synthetic",
+    "defects_applied": []
+  },
+  "contract": {
+    "n_rows": 400,
+    "n_inputs": 3,
+    "input_keys": [
+      "t",
+      "Rinf",
+      "KB"
+    ],
+    "target_key": "R",
+    "distinct_target_values": 400,
+    "target_repeat_ratio": 1.0,
+    "constant_inputs": [],
+    "warnings": [],
+    "defects_applied": [],
+    "licence": "MIT (generator authored in this repository)",
+    "redistribution": "mirror",
+    "citation": "Bu, Xie, Peng, Ge and Ni (2017), Physicochemical Problems of Mineral Processing 53(1):342-365, doi:10.5277/ppmp170128, equation (8); verified by extracting the open-access PDF",
+    "n_train": 255,
+    "n_test": 85,
+    "n_extrapolation": 60
+  },
+  "units_declared": 1,
+  "split_note": "extrapolation split holds out the lowest and highest 30 rows of 't', so the training region is an interior box and the extrapolation rows lie outside the support the search ever saw",
+  "variants": [
+    {
+      "id": "r1-koza-baseline",
+      "seconds": 6.17,
+      "evaluations": 12000,
+      "front_size": 19,
+      "selected_complexity": 32,
+      "test_r2": 0.90958388,
+      "accuracy_solution": 0,
+      "exact_recovery": null,
+      "symbolic_test_decided": null,
+      "irrelevant_features": 0
+    },
+    {
+      "id": "r2-linear-scaling",
+      "seconds": 8.231,
+      "evaluations": 12000,
+      "front_size": 15,
+      "selected_complexity": 20,
+      "test_r2": 0.74749685,
+      "accuracy_solution": 0,
+      "exact_recovery": null,
+      "symbolic_test_decided": null,
+      "irrelevant_features": 0
+    },
+    {
+      "id": "r3-constant-tuning",
+      "seconds": 12.643,
+      "evaluations": 12240,
+      "front_size": 28,
+      "selected_complexity": 19,
+      "test_r2": 0.59264323,
+      "accuracy_solution": 0,
+      "exact_recovery": null,
+      "symbolic_test_decided": null,
+      "irrelevant_features": 0
+    },
+    {
+      "id": "r4-multi-objective",
+      "seconds": 6.966,
+      "evaluations": 12240,
+      "front_size": 4,
+      "selected_complexity": 7,
+      "test_r2": 0.27903689,
+      "accuracy_solution": 0,
+      "exact_recovery": null,
+      "symbolic_test_decided": null,
+      "irrelevant_features": 0
+    },
+    {
+      "id": "r5-epsilon-lexicase",
+      "seconds": 119.528,
+      "evaluations": 12240,
+      "front_size": 4,
+      "selected_complexity": 7,
+      "test_r2": 0.27903689,
+      "accuracy_solution": 0,
+      "exact_recovery": null,
+      "symbolic_test_decided": null,
+      "irrelevant_features": 0
+    },
+    {
+      "id": "r6-age-fitness-islands",
+      "seconds": 85.847,
+      "evaluations": 12960,
+      "front_size": 5,
+      "selected_complexity": 7,
+      "test_r2": 0.27903689,
+      "accuracy_solution": 0,
+      "exact_recovery": null,
+      "symbolic_test_decided": null,
+      "irrelevant_features": 0
+    },
+    {
+      "id": "r7-deduplication",
+      "seconds": 431.226,
+      "evaluations": 12960,
+      "front_size": 5,
+      "selected_complexity": 7,
+      "test_r2": 0.27903689,
+      "accuracy_solution": 0,
+      "exact_recovery": null,
+      "symbolic_test_decided": null,
+      "irrelevant_features": 0
+    },
+    {
+      "id": "r8-unit-typed",
+      "seconds": 562.743,
+      "evaluations": 12960,
+      "front_size": 1,
+      "selected_complexity": 5,
+      "test_r2": 0.17461254,
+      "accuracy_solution": 0,
+      "exact_recovery": null,
+      "symbolic_test_decided": null,
+      "irrelevant_features": 0
+    }
+  ],
+  "summary": {
+    "n_variants": 8,
+    "accuracy_solutions": 0,
+    "accuracy_solution_rate": 0.0,
+    "exact_recoveries": 0,
+    "exact_recovery_rate": null,
+    "mean_structural_distance": null,
+    "symbolic_test_failure_rate": null,
+    "test_disagreement_count": 0,
+    "total_seconds": 1233.35,
+    "total_evaluations": 99600,
+    "variants_with_irrelevant_features": 0
+  }
+}

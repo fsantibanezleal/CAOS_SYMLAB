@@ -3,7 +3,7 @@
   "schema_version": "1.0.0",
   "engine_version": "0.02.000",
   "generated_on": "2026-07-22",
-  "n_cases": 10,
+  "n_cases": 12,
   "coverage": {
     "n_cases": 25,
     "n_categories": 6,
@@ -150,6 +150,58 @@
         "test_disagreement_count": 0,
         "total_seconds": 190.44,
         "total_evaluations": 25900,
+        "variants_with_irrelevant_features": 0
+      }
+    },
+    {
+      "case_id": "comminution-bond",
+      "category": "M",
+      "category_name": "Mining and metallurgy",
+      "name_en": "Comminution energy: Bond, with Kick and Rittinger as rival hypotheses",
+      "name_es": "Energia de conminucion: Bond, Kick y Rittinger",
+      "ground_truth_known": true,
+      "real_or_synthetic": "synthetic",
+      "manifest_path": "manifests/comminution-bond.json",
+      "artifact_path": "comminution-bond/run.json",
+      "bytes": 580531,
+      "n_variants": 8,
+      "summary": {
+        "n_variants": 8,
+        "accuracy_solutions": 0,
+        "accuracy_solution_rate": 0.0,
+        "exact_recoveries": 0,
+        "exact_recovery_rate": null,
+        "mean_structural_distance": null,
+        "symbolic_test_failure_rate": null,
+        "test_disagreement_count": 0,
+        "total_seconds": 846.55,
+        "total_evaluations": 99600,
+        "variants_with_irrelevant_features": 0
+      }
+    },
+    {
+      "case_id": "flotation-kinetics",
+      "category": "M",
+      "category_name": "Mining and metallurgy",
+      "name_en": "Flotation kinetics: first-order recovery",
+      "name_es": "Cinetica de flotacion: recuperacion de primer orden",
+      "ground_truth_known": true,
+      "real_or_synthetic": "synthetic",
+      "manifest_path": "manifests/flotation-kinetics.json",
+      "artifact_path": "flotation-kinetics/run.json",
+      "bytes": 571945,
+      "n_variants": 8,
+      "summary": {
+        "n_variants": 8,
+        "accuracy_solutions": 0,
+        "accuracy_solution_rate": 0.0,
+        "exact_recoveries": 0,
+        "exact_recovery_rate": null,
+        "mean_structural_distance": null,
+        "symbolic_test_failure_rate": null,
+        "test_disagreement_count": 0,
+        "total_seconds": 1233.35,
+        "total_evaluations": 99600,
         "variants_with_irrelevant_features": 0
       }
     },
