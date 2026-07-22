@@ -26,6 +26,7 @@ size-specific-energy refinement), it is not shipped as a scored target.
 """
 from __future__ import annotations
 
+import zlib
 from dataclasses import dataclass
 from typing import Callable
 
@@ -968,8 +969,18 @@ def make_dataset(
 
     Deterministic in `(generator.id, n_rows, seed, noise)`, so a committed artifact regenerates
     byte for byte.
+
+    The seed is derived with a STABLE hash. This line used `hash(generator.id)`, and Python
+    randomises string hashing per process, so the docstring above was false in the most damaging way
+    available: every run drew DIFFERENT data from the same declared seed. Artifacts were not
+    reproducible, "a seeded offline run" was not one, and the live lane disagreeing with the offline
+    lane had nothing to do with Pyodide's numpy, which turns out to produce bit-identical streams.
+
+    CRC32 is deterministic across processes, machines and Python versions. It is not a
+    cryptographic hash and does not need to be: it is spreading case ids across seed space, not
+    resisting an adversary.
     """
-    rng = np.random.default_rng(abs(hash(generator.id)) % (2**32) + seed)
+    rng = np.random.default_rng(zlib.crc32(generator.id.encode("utf-8")) + seed)
     X, y = generator.sample(rng, n_rows)
     y = add_noise(rng, y, noise, multiplicative=multiplicative_noise)
     return X, y
