@@ -1,5 +1,7 @@
 import { Callout, Equation, Refs, SubTabs } from '@fasl-work/caos-app-shell';
 
+import { FigLeakage, FigThreeSplits } from '../render/Figures';
+
 import { useLang } from '../lib/useLang';
 
 /**
@@ -57,6 +59,7 @@ export default function Implementation() {
                 : 'writes the schema 1.0.0 artifact and, separately, the audit manifest.'}
             </li>
           </ol>
+          <FigThreeSplits es={es} />
           <Callout variant="note" title={es ? 'Determinismo como requisito, no como detalle' : 'Determinism as a requirement, not a detail'}>
             <p>
               {es
@@ -137,6 +140,7 @@ export default function Implementation() {
               ? 'El cargador agrega a la rejilla horaria y NO ofrece acceso a nivel de fila en absoluto, de modo que la fuga queda estructuralmente indisponible en lugar de meramente desaconsejada. Ademas excluye ambos ensayos de concentrado de las entradas: predecir la silice desde el hierro es leer la respuesta en la otra mitad de la misma medicion de laboratorio, no un sensor virtual.'
               : 'The loader aggregates to the hourly grid and offers NO row-level access at all, so the leak is structurally unavailable rather than merely discouraged. It also excludes both concentrate assays from the inputs: predicting silica from iron is reading the answer off the other half of the same laboratory measurement, not soft sensing.'}
           </p>
+          <FigLeakage es={es} />
           <Equation
             tex="\text{repeat ratio} = \frac{n_{\text{rows}}}{|\{\,\text{distinct } y\,\}|} \;>\; 3 \;\Longrightarrow\; \text{warn}"
             caption={
