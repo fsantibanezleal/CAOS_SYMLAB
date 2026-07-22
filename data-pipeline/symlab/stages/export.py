@@ -134,26 +134,49 @@ def build_run(
 
     variants_payload = []
     for entry, inference, score in zip(trained, inferred, scores):
-        members = entry.result.pareto[:MAX_EXPORTED_MEMBERS]
+        # The export cap must never drop the member the artifact is ABOUT. It used to: the slice took
+        # the first twelve and the selected index was then clamped with `min(index, len - 1)`, so on
+        # a front longer than twelve where selection landed past the cap, `best_expression` was read
+        # at the clamped position. The published equation, tree and validation arrays then described
+        # the last exported member while `score` (MDL, complexity, R2, recovery) described the model
+        # that was actually selected. Two different models in one variant, and both looked plausible.
+        # Ten variants across the committed corpus were in that state, with selection at index 18 of
+        # a front of 19 and only 12 exported.
+        #
+        # So the selected member is appended when the cap excludes it, and the exported index is a
+        # LOOKUP into what shipped rather than an assumption about it.
+        kept_indices = list(range(min(MAX_EXPORTED_MEMBERS, len(entry.result.pareto))))
+        if 0 <= score.selected_index < len(entry.result.pareto) and score.selected_index not in kept_indices:
+            kept_indices.append(score.selected_index)
+
         pareto = [
             pareto_member_payload(
-                individual.expression,
+                entry.result.pareto[original].expression,
                 prepared.X_train, prepared.y_train,
-                index=index,
+                index=position,
                 X_test=prepared.X_test, y_test=prepared.y_test,
                 display_names=dataset.input_display,
                 input_dims=dataset.input_dims if features.units_declared else None,
                 target_dims=dataset.target_dims if features.units_declared else None,
                 n_primitives=len(entry.result.config.primitive_set),
                 on_front=True,
-                score=entry.result.pareto_scores[index] if index < len(entry.result.pareto_scores) else 0.0,
+                score=(
+                    entry.result.pareto_scores[original]
+                    if original < len(entry.result.pareto_scores) else 0.0
+                ),
             )
-            for index, individual in enumerate(members)
+            for position, original in enumerate(kept_indices)
         ]
-        selected = min(score.selected_index, len(pareto) - 1) if pareto else 0
+        selected = kept_indices.index(score.selected_index) if score.selected_index in kept_indices else 0
         best_expression = (
-            entry.result.pareto[selected].expression if entry.result.pareto else None
+            entry.result.pareto[kept_indices[selected]].expression if pareto else None
         )
+        # `score` carries its own copy of the index, into the FULL front. Two indices with one name
+        # and different meanings is how the app came to read one and the exporter the other, so the
+        # exported copy is remapped and the original is kept under a name that says what it is.
+        score_payload = _plain(score)
+        score_payload["selected_index"] = selected
+        score_payload["selected_index_full_front"] = int(score.selected_index)
         # A non-GP arm has no population and no generations. Exporting the ladder's numbers for it
         # would put figures in the audit record that describe a search it never ran.
         gp = entry.variant.method == "gp"
@@ -177,9 +200,25 @@ def build_run(
                 "n_islands": entry.result.config.n_islands,
                 "dedup": entry.result.config.dedup_structural or entry.result.config.dedup_semantic,
                 "unit_typed": entry.result.config.unit_typed,
+                # What the typed initialisation actually did. `unit_typed: true` above is the
+                # REQUEST; this is the outcome, and they disagree whenever a case declares no
+                # dimensions or no expression over its inputs can reach the target dimension.
+                "unit_typed_status": getattr(entry.result, "unit_typed_status", "off"),
                 "parsimony_coefficient": entry.result.config.parsimony_coefficient,
+                # The engine's own module docstring: "Two runs that differed in the primitive set,
+                # the tuning schedule, or the lexicase down-sampling rate were not solving the same
+                # problem, and the honest-comparison protocol this lab exists to demonstrate falls
+                # apart if that goes unrecorded." Only the primitive set was recorded.
+                "tuning_every": entry.result.config.tuning_every,
+                "tuning_top_k": entry.result.config.tuning_top_k,
+                "tuning_iterations": entry.result.config.tuning_iterations,
+                "lexicase_down_sample": entry.result.config.lexicase_down_sample,
+                "tournament_k": entry.result.config.tournament_k,
             },
             "pareto": pareto,
+            # What the search counted about itself, including the identifiability verdicts that used
+            # to be computed and dropped.
+            "counters": _plain(entry.result.counters),
             "pareto_exported": len(pareto),
             "pareto_total": len(entry.result.pareto),
             "selected_index": selected,
@@ -205,7 +244,7 @@ def build_run(
                 )
                 if best_expression is not None else {}
             ),
-            "score": _plain(score),
+            "score": score_payload,
             "seconds": entry.seconds,
         })
 

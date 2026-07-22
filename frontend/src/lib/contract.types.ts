@@ -213,6 +213,11 @@ export interface VariantScore {
   selected_complexity: number;
   selected_description_length: number;
   n_irrelevant_features: number;
+  /** The selected member's position in the FULL front, before the export cap. `selected_index`
+   *  elsewhere is its position in what actually shipped, and the two differ whenever selection
+   *  landed past the cap. They were both called `selected_index` and different readers picked
+   *  different ones, so the app rendered one model's formula beside another model's numbers. */
+  selected_index_full_front?: number;
   equivalence: {
     symbolic: boolean | null;
     symbolic_error: string;
@@ -242,6 +247,17 @@ export interface VariantConfig {
   dedup: boolean;
   unit_typed: boolean;
   parsimony_coefficient: number;
+  /** What the unit-typed initialisation ACTUALLY did. `unit_typed` above is the REQUEST; a run can
+   *  carry `unit_typed: true` and still have searched untyped, when the case declares no dimensions
+   *  or no expression over its inputs can reach the target dimension. */
+  unit_typed_status?: string;
+  tuning_every?: number;
+  tuning_top_k?: number;
+  tuning_iterations?: number;
+  /** Null means lexicase judged every training case. Two runs at different rates were not solving
+   *  the same problem, which is why it ships rather than living only in the engine defaults. */
+  lexicase_down_sample?: number | null;
+  tournament_k?: number;
 }
 
 export interface VariantPayload {
@@ -263,6 +279,18 @@ export interface VariantPayload {
   history: HistoryPayload;
   validation: ValidationPayload;
   score: VariantScore;
+  /** What the search counted about itself. `unidentifiable_tunings` is the one worth reading: a
+   *  rank-deficient Jacobian means those constants are not jointly recoverable from this data, so
+   *  the fitted values are one of many equally good sets rather than the parameters of the law. */
+  counters?: {
+    archive_size: number;
+    front_size: number;
+    evaluations: number;
+    max_depth_seen: number;
+    max_size_seen: number;
+    tuned_candidates: number;
+    unidentifiable_tunings: number;
+  };
   seconds: number;
 }
 

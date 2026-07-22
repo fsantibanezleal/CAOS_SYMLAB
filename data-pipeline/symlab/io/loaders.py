@@ -148,9 +148,22 @@ HOURLY_AGGREGATION_NOTE = (
 def load_flotation(*, target: str = "silica") -> LoadedDataset:
     """Load the froth flotation plant data, aggregated to the hourly grid.
 
-    The aggregation is not a modelling choice, it is a correctness requirement. Process variables are
-    averaged within the hour; the assay columns are constant within the hour by construction and are
-    taken as the first value, which is verified rather than assumed.
+    Aggregating to the hour is a correctness requirement, not a preference: the file records process
+    variables at roughly 20-second resolution but the laboratory assays only once an hour, so the raw
+    rows repeat each assay about 180 times and a row-level fit would be scored against 180 copies of
+    the same measurement.
+
+    Every column is averaged within the hour, assays included. That is worth stating plainly because
+    the feed assays do not need it and the target does. Measured over all 4,097 hours of the raw
+    file, the feed assays are genuinely constant within the hour (zero hours vary), but
+    %_Silica_Concentrate varies in 310 hours and %_Iron_Concentrate in 216, with as many as 180
+    distinct values inside a single hour.
+
+    So the target of this case is a smoothed quantity, and a reader comparing its R2 against a
+    row-level benchmark has to know that. The count is re-measured on the rows actually loaded and
+    shipped in `defects_applied` rather than asserted here, because a docstring cannot be checked and
+    this one was previously wrong: it claimed the assays were constant by construction and taken as
+    the first value, when they vary and are averaged.
     """
     source = SOURCES["flotation-mining-process"]
     text = source.path.read_text(encoding="utf-8", errors="replace")
@@ -230,6 +243,16 @@ def load_flotation(*, target: str = "silica") -> LoadedDataset:
 
     aggregated = np.vstack([matrix[idx].mean(axis=0) for idx in order.values()])
 
+    # Measure what the averaging actually did to the assay columns, rather than asserting it. This
+    # is the check the docstring used to promise and not perform.
+    assay_columns = [c for c in columns if c.startswith("%_")]
+    varying: list[str] = []
+    for name in assay_columns:
+        j = columns.index(name)
+        hours_varying = sum(1 for idx in order.values() if np.ptp(matrix[idx, j]) > 0.0)
+        if hours_varying:
+            varying.append(f"{name} in {hours_varying} of {len(order)} hours")
+
     target_column = "%_Silica_Concentrate" if target == "silica" else "%_Iron_Concentrate"
     if target_column not in columns:
         matches = [c for c in columns if target in c.lower()]
@@ -261,6 +284,11 @@ def load_flotation(*, target: str = "silica") -> LoadedDataset:
         redistribution=source.redistribution,
         defects_applied=[
             HOURLY_AGGREGATION_NOTE,
+            (
+                "Assay columns averaged within the hour, not sampled: "
+                + ("; ".join(varying) if varying else "no assay column varied within an hour")
+                + ". The averaged column is therefore a smoothed quantity where it varied."
+            ),
             f"Comma decimal separator handled explicitly; {parse_failures} malformed rows skipped.",
             "Both concentrate assay columns excluded from the inputs: predicting one from the other "
             "is reading the answer off the same laboratory measurement, not soft sensing.",
