@@ -427,6 +427,10 @@ export interface CaseIndex {
   generated_on: string;
   n_cases: number;
   coverage: {
+    /** Registry ENTRIES. Two of them are suites that expand to one artifact per problem, so this is
+     *  smaller than `cases.length` and subtracting one from the other is meaningless. */
+    n_registry_entries?: number;
+    n_cases_expanded?: number;
     n_cases: number;
     n_categories: number;
     categories: Record<string, number>;

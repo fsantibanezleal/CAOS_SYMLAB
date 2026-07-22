@@ -710,8 +710,18 @@ def list_categories() -> dict[str, list[str]]:
 def coverage_summary() -> dict:
     """The coverage matrix the Experiments page reports, computed rather than typed."""
     by_category = list_categories()
+    # `n_cases` counts REGISTRY ENTRIES, and two of them are suites that expand into one artifact per
+    # problem. So it is 25 while 38 artifacts ship, and the app computed
+    # `pending = coverage.n_cases - cases.length` and rendered "the remaining -13 bake offline".
+    # Both numbers are useful and they are not the same number, so both ship under names that say
+    # which is which.
+    from ..pipeline import expand_suites  # local: pipeline imports this module at load time
+
+    expanded = expand_suites(list(CASES))
     return {
         "n_cases": len(CASES),
+        "n_registry_entries": len(CASES),
+        "n_cases_expanded": len(expanded),
         "n_categories": len(by_category),
         "categories": {CATEGORIES[k]: len(v) for k, v in sorted(by_category.items())},
         "ground_truth_known": sum(1 for c in CASES if c.ground_truth_known),

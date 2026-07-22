@@ -6,8 +6,9 @@
  * never sit in the content area, and the content area never gives up width to a list.
  *
  * The sidebar, top to bottom:
- *   1. Source lane, category, case: three dropdowns, not a chip deck. Twenty-five cases across six
- *      categories do not fit a deck in a sidebar column.
+ *   1. Source lane, category, case: three dropdowns, not a chip deck. The published cases across
+ *      six categories do not fit a deck in a sidebar column, and the count is read from the
+ *      index rather than written here, where it went stale the moment a suite was expanded.
  *   2. Search configuration: the ablation. Each entry differs from its neighbour by exactly ONE
  *      mechanism, so moving down the list attributes a measured difference to a named change.
  *   3. View controls for the panes on the right.
@@ -35,7 +36,7 @@ import { StructurePanel } from '../render/StructurePanel';
 import { ValidationPanel } from '../render/ValidationPanel';
 import { CaseContext } from './workbench/CaseContext';
 import { LiveLane } from './workbench/LiveLane';
-import { groupDigits } from '../lib/format';
+import { formatR2, groupDigits } from '../lib/format';
 
 
 export default function AppPage() {
@@ -239,7 +240,11 @@ export default function AppPage() {
     },
   ];
 
-  const pending = index.coverage.n_cases - index.cases.length;
+  // NOT a subtraction. `coverage.n_cases` counts REGISTRY ENTRIES, two of which are suites that
+  // expand into one artifact per problem, while `index.cases` counts the artifacts that shipped.
+  // Subtracting one from the other gave -13 and the sentence below was only invisible because it
+  // was guarded on being positive.
+  const registryEntries = index.coverage.n_registry_entries ?? index.coverage.n_cases;
 
   return (
     <div className="page-body symlab-layout">
@@ -364,7 +369,7 @@ export default function AppPage() {
                 </div>
                 <div>
                   <span>{es ? 'mejor R2' : 'best R2'}</span>
-                  <strong>{bestTestR2 === null ? '-' : bestTestR2.toFixed(4)}</strong>
+                  <strong>{bestTestR2 === null ? '-' : formatR2(bestTestR2, 4)}</strong>
                 </div>
               </div>
               <p className="sym-control-note">
@@ -409,14 +414,10 @@ export default function AppPage() {
           {es
             ? `${index.cases.length} casos publicados, ${index.cases.filter((c) => c.real_or_synthetic === 'real').length} sobre datos reales medidos.`
             : `${index.cases.length} published cases, ${index.cases.filter((c) => c.real_or_synthetic === 'real').length} on real measured data.`}
-          {pending > 0 && (
-            <>
-              {' '}
-              {es
-                ? `El registro define ${index.coverage.n_cases}; los ${pending} restantes se hornean sin conexion.`
-                : `The registry defines ${index.coverage.n_cases}; the remaining ${pending} bake offline.`}
-            </>
-          )}
+          {' '}
+          {es
+            ? `Provienen de ${registryEntries} entradas del registro: las suites de referencia se expanden a un artefacto por problema.`
+            : `They come from ${registryEntries} registry entries: the benchmark suites expand to one artifact per problem.`}
         </p>
       </aside>
 
