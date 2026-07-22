@@ -79,3 +79,45 @@ def test_every_case_has_a_page() -> None:
     documented = {_case_id(p.read_text(encoding="utf-8")) for p in PAGES}
     missing = sorted(c.id for c in list_cases() if c.id not in documented)
     assert not missing, f"registry cases with no page in docs/cases/: {missing}"
+
+
+def test_the_counts_block_matches_the_registry() -> None:
+    """The aggregate counts in docs/cases.md are generated, not written.
+
+    They were prose ("Ten cases carry a truth_node") and went stale the moment six generators and
+    seventeen Feynman laws acquired one. A reader has no way to tell a stale count from a current
+    one, and both read as authoritative.
+    """
+    from sync_case_doc_truth_rows import COUNTS_END, COUNTS_START, _counts_block
+
+    text = (ROOT / "docs" / "cases.md").read_text(encoding="utf-8")
+    assert COUNTS_START in text and COUNTS_END in text, (
+        "docs/cases.md has no generated counts block. Run scripts/sync_case_doc_truth_rows.py."
+    )
+
+    present = text[text.index(COUNTS_START) : text.index(COUNTS_END) + len(COUNTS_END)]
+    assert present.strip() == _counts_block().strip(), (
+        "the counts in docs/cases.md disagree with the registry. "
+        "Run scripts/sync_case_doc_truth_rows.py."
+    )
+
+
+def test_no_hand_written_case_counts_survive_outside_the_block() -> None:
+    """A number spelled out in prose is a number that will go stale.
+
+    This catches the specific shapes that were wrong: a spelled-out count of cases carrying a
+    truth, and a hard-coded variant total.
+    """
+    import re
+
+    text = (ROOT / "docs" / "cases.md").read_text(encoding="utf-8")
+    outside = text.replace(
+        text[text.index("<!-- counts:start -->") : text.index("<!-- counts:end -->")], ""
+    )
+    offenders = re.findall(
+        r"\b(?:Ten|Twenty|Sixteen|Nine|Eight)\s+cases\b|\b\d+\s+variants across\b", outside
+    )
+    assert not offenders, (
+        f"hand-written counts outside the generated block: {offenders}. "
+        "Move them into the block or refer to it."
+    )
