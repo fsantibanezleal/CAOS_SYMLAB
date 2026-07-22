@@ -8,5 +8,6 @@
 ```
 
 Outputs land in `data/derived/<case>/trace.json` + `data/derived/manifests/<case>.json` + `index.json`. The run is
-deterministic in `(params, seed)`, same seed ⇒ byte-identical artifact. Stages + their roles:
+deterministic in `(params, seed)`: the same seed reproduces every scientific number exactly, and
+only the measured wall clock varies. Stages and their roles:
 [../architecture/05_precompute-pipeline.md](../architecture/05_precompute-pipeline.md).

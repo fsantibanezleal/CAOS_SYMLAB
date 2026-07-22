@@ -6,7 +6,8 @@
     python -m symlab.pipeline --quick             # a reduced budget, for a smoke run
 
 A run is a pure function of `(case, config, seed, data)`. Nothing here reads the clock into an
-artifact, so regenerating a case produces byte-identical output and a re-bake never dirties git
+artifact, so regenerating a case reproduces every scientific number exactly. Measured wall clock is
+recorded and does vary between runs, so a re-bake shows a timing diff and never a result diff
 without a real change behind it.
 
 The suite cases (the published-physics collections) expand into one sub-case per problem, because a

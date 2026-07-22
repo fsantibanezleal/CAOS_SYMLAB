@@ -40,7 +40,7 @@ Ese estrechamiento lo fuerza la evidencia. La literatura de benchmarks reporta u
 
 OFFLINE is where the real work happens. Datasets are fetched into a vault outside the repository, pinned by SHA-256, and carried with a provenance sidecar recording the licence and the redistribution verdict, which are different questions. The staged pipeline then runs: ingestion contract, feature extraction, the search ladder, inference on held-out and extrapolation data, scoring, and export.
 
-COMMITTED is the boundary. A run is a pure function of the case, the configuration, the seed and the data, so regenerating a case produces byte-identical output. Nothing reads the clock into an artifact, which is why a re-bake never dirties the repository without a real change behind it.
+COMMITTED is the boundary. A run is a pure function of the case, the configuration, the seed and the data. Regenerating a case reproduces every scientific number exactly: the same expressions, the same losses, the same verdicts. The measured wall clock IS recorded and does move between runs, deliberately, because what a rung costs is part of its evaluation and comparing methods at equal generation count rather than equal budget is a fairness problem this lab argues about. So a re-bake shows a timing diff and never a result diff.
 
 WEB has two modes. Replay is always the first paint and is a pure rendering of the committed artifact: nothing that Python could compute is recomputed in the browser. The live lane runs the SAME package modules under Pyodide at a reduced budget, and only when the reader asks for it.
 
@@ -49,7 +49,7 @@ That last point is a design constraint, not a preference. There is no maintained
 
 OFFLINE es donde ocurre el trabajo real. Los conjuntos de datos se descargan a una boveda fuera del repositorio, se fijan por SHA-256 y se acompanan de un archivo de procedencia que registra la licencia y el veredicto de redistribucion, que son preguntas distintas. Luego corre la tuberia por etapas: contrato de ingesta, extraccion de caracteristicas, la escalera de busqueda, inferencia sobre datos retenidos y de extrapolacion, evaluacion y exportacion.
 
-COMMITTED es la frontera. Una ejecucion es una funcion pura del caso, la configuracion, la semilla y los datos, de modo que regenerar un caso produce una salida identica byte a byte. Nada escribe el reloj dentro de un artefacto, y por eso volver a hornear nunca ensucia el repositorio sin un cambio real detras.
+COMMITTED es la frontera. Una ejecucion es una funcion pura del caso, la configuracion, la semilla y los datos. Regenerar un caso reproduce exactamente cada numero cientifico: las mismas expresiones, las mismas perdidas, los mismos veredictos. El tiempo medido SI se registra y si cambia entre corridas, a proposito, porque lo que cuesta un escalon forma parte de su evaluacion y comparar metodos a igual numero de generaciones en vez de a igual presupuesto es un problema de justicia que este laboratorio discute. Asi que volver a hornear muestra una diferencia de tiempos y nunca una diferencia de resultados.
 
 WEB tiene dos modos. La reproduccion es siempre el primer render y es una representacion pura del artefacto versionado: nada que Python pudiera calcular se recalcula en el navegador. El carril en vivo ejecuta LOS MISMOS modulos del paquete bajo Pyodide con presupuesto reducido, y solo cuando el lector lo pide.
 

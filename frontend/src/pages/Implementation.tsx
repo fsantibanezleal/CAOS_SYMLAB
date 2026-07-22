@@ -63,8 +63,8 @@ export default function Implementation() {
           <Callout variant="note" title={es ? 'Determinismo como requisito, no como detalle' : 'Determinism as a requirement, not a detail'}>
             <p>
               {es
-                ? 'Una ejecucion es una funcion pura del caso, la configuracion, la semilla y los datos. Nada escribe el reloj dentro de un artefacto, de modo que regenerar un caso produce una salida identica byte a byte y volver a hornear nunca ensucia el repositorio sin un cambio real detras.'
-                : 'A run is a pure function of the case, the configuration, the seed and the data. Nothing writes the clock into an artifact, so regenerating a case produces byte-identical output and a re-bake never dirties the repository without a real change behind it.'}
+                ? 'Una ejecucion es una funcion pura del caso, la configuracion, la semilla y los datos. Regenerar un caso reproduce exactamente cada numero cientifico: las mismas expresiones, las mismas perdidas, los mismos veredictos. El tiempo medido SI se registra y si cambia entre corridas, a proposito, porque lo que cuesta un escalon forma parte de su evaluacion y comparar metodos a igual numero de generaciones en vez de a igual presupuesto es un problema de justicia que este laboratorio discute. Asi que volver a hornear muestra una diferencia de tiempos y nunca una diferencia de resultados.'
+                : 'A run is a pure function of the case, the configuration, the seed and the data. Regenerating a case reproduces every scientific number exactly: the same expressions, the same losses, the same verdicts. The measured wall clock IS recorded and does move between runs, deliberately, because what a rung costs is part of its evaluation and comparing methods at equal generation count rather than equal budget is a fairness problem this lab argues about. So a re-bake shows a timing diff and never a result diff.'}
             </p>
           </Callout>
         </section>
