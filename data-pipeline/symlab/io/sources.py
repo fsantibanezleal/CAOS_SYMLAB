@@ -292,7 +292,10 @@ FEYNMAN_SELECTION: tuple[str, ...] = (
     "feynman_II_27_18",    # E = epsilon*Ef**2
     "feynman_II_38_14",    # G = Y/(2*(1+sigma))
     "feynman_III_12_43",   # L = n*h/(2*pi)
-    "feynman_III_15_14",   # m = h/(2*pi)**2/(E_n*d**2)
+    # m = h**2/(8*pi**2 * E_n * d**2). This read `h/(2*pi)**2/(E_n*d**2)`, which is a different
+    # formula: measured against the shipped rows it is off by a relative 1.0, while the form
+    # below reproduces them to 1.5e-15. The verified builder is in cases/physics_truths.py.
+    "feynman_III_15_14",
     "feynman_III_17_37",   # f = beta*(1+alpha*cos(theta))
 )
 

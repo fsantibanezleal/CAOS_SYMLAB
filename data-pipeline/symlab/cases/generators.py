@@ -178,7 +178,7 @@ MICHAELIS_MENTEN = Generator(
         "A Lineweaver-Burk linearisation fits this exactly but distorts the error structure; the lab "
         "shows that as a worked example of a transformation that helps a human and hurts a fit.",
     ),
-    real_data_twin="penicillin-monod",
+    real_data_twin=None,
     truth_node=lambda: Node.call("div", Node.call("mul", Node.var(1), Node.var(0)),
                                 Node.call("add", Node.var(2), Node.var(0))),
     regime="structure",
@@ -312,7 +312,7 @@ COMMINUTION_BOND = Generator(
         "The Morrell size-specific-energy refinement is a known extension whose exact coefficient form "
         "the research could not verify, so it is deliberately NOT shipped as a scored target.",
     ),
-    real_data_twin="geomet-bond",
+    real_data_twin=None,
     truth_node=lambda: Node.call("mul", Node.call("mul", Node.const(10.0), Node.var(2)),
         Node.call("sub", Node.call("inv", Node.call("sqrt", Node.var(1))),
                           Node.call("inv", Node.call("sqrt", Node.var(0))))),
@@ -339,7 +339,7 @@ COMMINUTION_KICK = Generator(
     sample=_kick,
     recovery_target="the logarithmic ratio form, distinguished from Bond's inverse-square-root",
     caveats=("Shipped so the model-selection question in the Bond case has a real alternative to select.",),
-    real_data_twin="geomet-bond",
+    real_data_twin=None,
     truth_node=lambda: Node.call("mul", Node.var(2),
         Node.call("log", Node.call("div", Node.var(0), Node.var(1)))),
     regime="structure",
@@ -837,7 +837,7 @@ THETA_LOGISTIC = Generator(
         "Real-data twin: GPDD ships 5,156 series WITH published theta fits, so a recovered exponent "
         "can be compared against a published one rather than only against the residual.",
     ),
-    real_data_twin="gpdd-density-dependence",
+    real_data_twin=None,
     truth_node=lambda: Node.call(
         "mul",
         Node.call("mul", Node.var(1), Node.var(0)),
@@ -851,8 +851,9 @@ THETA_LOGISTIC = Generator(
 def _lotka_volterra(rng: np.random.Generator, n: int) -> tuple[np.ndarray, np.ndarray]:
     # Parameters chosen to reproduce roughly the ten-year lynx-hare cycle.
     # Only the prey right-hand side is generated here, so only alpha and beta are used. The
-    # predator parameters gamma and delta belong to the second equation of the system and to
-    # the conserved quantity, both of which ship as their own variants.
+    # predator equation and the conserved quantity are the other two formulations of this system
+    # and NEITHER is implemented: this comment used to say "both of which ship as their own
+    # variants", and no such generator is registered.
     alpha, beta = 0.55, 0.028
     hares = rng.uniform(5.0, 90.0, size=n)
     lynx = rng.uniform(5.0, 60.0, size=n)
@@ -873,14 +874,16 @@ LOTKA_VOLTERRA = Generator(
     truth_infix="0.55*H - 0.028*H*L",
     source="Lotka-Volterra predator-prey model, lynx-hare parameterisation (research dossier 7.2.14)",
     sample=_lotka_volterra,
-    recovery_target="the bilinear interaction term, and separately the conserved quantity",
+    recovery_target="the bilinear interaction term",
     caveats=(
-        "The conserved quantity V = delta*H - gamma*ln(H) + beta*L - alpha*ln(L) is a DIFFERENT and "
-        "harder symbolic regression formulation on the same system, and it ships as its own variant. "
-        "Recovering an invariant is not the same task as recovering a derivative.",
-        "Real-data twin: the lynx-hare series, 21 points, 1900 to 1920.",
+        "Only the PREY right-hand side is posed here. The conserved quantity "
+        "V = delta*H - gamma*ln(H) + beta*L - alpha*ln(L) is a different and harder formulation on "
+        "the same system, and recovering an invariant is not the same task as recovering a "
+        "derivative. It is not implemented, and this caveat used to claim it shipped as its own "
+        "variant.",
+        "There is no real-data twin in this repository. The lynx-hare series would be the natural one, but it is not among the shipped sources.",
     ),
-    real_data_twin="lynx-hare-lotka-volterra",
+    real_data_twin=None,
     truth_node=lambda: Node.call("sub", Node.call("mul", Node.const(0.55), Node.var(0)),
         Node.call("mul", Node.const(0.028), Node.call("mul", Node.var(0), Node.var(1)))),
     regime="structure+constants",
