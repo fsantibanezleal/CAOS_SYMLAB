@@ -20,9 +20,9 @@ Binding decision: [`conventions/architecture/0-archetype/ADR-0058-in-app-archite
 
 ## How to wire it (per product)
 
-1. **Copy** `frontend/src/architecture.ts.txt` → `frontend/src/architecture.ts`.
+1. **Copy** `frontend/src/architecture.ts.txt` to `frontend/src/architecture.ts`.
 2. **Specialise** the product-specific tabs:
-   - Replace `public/svg/tech/01-the-app.svg` with a diagram of THIS product's domain (problem → input → method →
+   - Replace `public/svg/tech/01-the-app.svg` with a diagram of THIS product's domain (problem to input to method  to 
      value) and edit the `app` tab's `body_en` / `body_es`.
    - Replace `public/svg/tech/04-the-science.svg` with THIS product's real algorithm + equations and edit the
      `science` tab body.
@@ -49,7 +49,7 @@ Binding decision: [`conventions/architecture/0-archetype/ADR-0058-in-app-archite
 
 | id | tab | generic? | what it must show |
 |----|-----|----------|-------------------|
-| `app` | The app | **product** | the domain problem → input → method → value; why it is real, not a demo |
+| `app` | The app | **product** | the domain problem to input to method to value; why it is real, not a demo |
 | `lanes` | Lanes, web / offline / compute | generic | what runs **live in the web** vs **offline/compute** (bake + train) vs **replay** |
 | `web-flow` | Web-app flow | generic | App recomputes live; the 6 pages; contract mirror; copy-data overlay; deploy |
 | `science` | The science | **product** | the real algorithm step by step, with the genuine equations |

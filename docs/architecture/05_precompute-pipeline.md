@@ -4,10 +4,10 @@
 
 | Stage | Module | Does |
 |---|---|---|
-| preprocess | `stages/preprocess.py` | read raw → apply **CONTRACT 1** (validate + outlier policy) |
-| feature_extraction | `stages/feature_extraction.py` | validated params → feature rows |
-| train | `stages/train.py` | fit the model → `models/` (OFFLINE; skippable; EXAMPLE = numpy lstsq surrogate) |
-| infer | `stages/infer.py` | run the engine → trace (EXAMPLE = SIR) |
+| preprocess | `stages/preprocess.py` | read raw to apply **CONTRACT 1** (validate + outlier policy) |
+| feature_extraction | `stages/feature_extraction.py` | validated params to feature rows |
+| train | `stages/train.py` | fit the model to `models/` (OFFLINE; skippable; EXAMPLE = numpy lstsq surrogate) |
+| infer | `stages/infer.py` | run the engine to trace (EXAMPLE = SIR) |
 | evaluate | `stages/evaluate.py` | held-out, leakage-safe metrics (R²/RMSE) |
 | export | `stages/export.py` | **CONTRACT 2**, compact artifact + manifest |
 
