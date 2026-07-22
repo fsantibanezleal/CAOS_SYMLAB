@@ -16,26 +16,37 @@ quietly resolved.
 
 | Lane | File | Contents |
 |---|---|---|
-| Core and live | [`requirements.txt`](../requirements.txt) | `numpy==2.4.6`, and nothing else. Pyodide-safe by construction. |
-| Precompute | [`requirements-precompute.txt`](../requirements-precompute.txt) | numpy, scipy, `openpyxl` and `xlrd` (two source datasets ship as spreadsheets), `sreval[symbolic]` and `sympy` |
+| Core and live | [`requirements.txt`](../requirements.txt) | `numpy==2.5.1`, and nothing else. Pyodide-safe by construction. |
+| Precompute | [`requirements-precompute.txt`](../requirements-precompute.txt) | numpy, `openpyxl` and `xlrd` (two source datasets ship as spreadsheets), `sreval[symbolic]==0.1.0` and `sympy` |
 | Dev | [`requirements-dev.txt`](../requirements-dev.txt) | `pytest`, `ruff` |
 | API | [`requirements-api.txt`](../requirements-api.txt) | dormant, fully commented out |
+| GPU | [`requirements-gpu.txt`](../requirements-gpu.txt) | intentionally empty, with the reason written in the file |
 
 The `symlab` package imports the standard library and numpy, and nothing else. `sreval` is imported
 inside a `try` in [`stages/evaluate.py`](../data-pipeline/symlab/stages/evaluate.py) so the browser
 lane runs without it. That is the whole third-party surface of this product.
 
-Three discrepancies in the manifests, recorded rather than tidied:
+Three discrepancies were found here and have since been fixed rather than left recorded. What they
+were, and what closed them:
 
-- `scipy==1.16.3` is pinned in `requirements-precompute.txt` and no module under
-  `data-pipeline/symlab/` imports it. The Levenberg-Marquardt tuner is hand-written on numpy in
+- `scipy==1.16.3` was pinned in `requirements-precompute.txt` and no module under
+  `data-pipeline/symlab/` imported it. It was never installed either. Removed: the
+  Levenberg-Marquardt tuner is hand-written on numpy in
   [`search/tune.py`](../data-pipeline/symlab/search/tune.py), which is what keeps the same code
   runnable under Pyodide.
-- [`data-pipeline/requirements.txt`](../data-pipeline/requirements.txt) still carries the template's
-  precompute-lane text and pins numpy alone, while the real precompute pins live in the root
-  `requirements-precompute.txt`.
-- There is no `requirements-gpu.txt`. This product has no GPU step, for the reasons in
+- [`data-pipeline/requirements.txt`](../data-pipeline/requirements.txt) carried the template's
+  precompute-lane text and pinned numpy on its own, while the real pins lived in the root file. It
+  is a pointer now: two files claiming one lane is how a pin drifts, because one gets updated and
+  the other quietly does not.
+- There was no `requirements-gpu.txt` although the guides referenced one. It exists and states why
+  it is empty: the search evaluates small trees against a few thousand rows, far too little to repay
+  a device transfer, and the cost that dominates is SELECTION rather than evaluation throughput. See
   [22_evogp.md](frameworks/22_evogp.md) and [guides/03_gpu-lane.md](guides/03_gpu-lane.md).
+
+`tests/test_manifests_match_reality.py` now holds both directions: every pin must be installed at
+the pinned version, every pinned runtime package must actually be imported, and every third-party
+import must be pinned somewhere. An import with no pin works on the machine that has it and breaks
+in CI.
 
 ## The cards
 
