@@ -35,6 +35,8 @@ interface RungRow {
   /** Recovered minus the previous rung's recovered, over cases that ran both. Null when none do. */
   pairedDelta: number | null;
   pairedCases: number;
+  /** "gp" for a ladder rung; anything else is a separate family and gets no paired delta. */
+  method: string;
 }
 
 function median(values: number[]): number | null {
@@ -76,7 +78,17 @@ export function AblationResult({ runs, lang }: { runs: RunPayload[]; lang: 'en' 
 
       let pairedDelta: number | null = null;
       let pairedCases = 0;
-      if (index > 0) {
+      // A delta is only meaningful between two rungs of the SAME ladder, because that is the only
+      // pair that differs by one mechanism. Comparing a different family against the rung above it
+      // would imply an increment that does not exist.
+      const thisMethod = present[0]?.notes.variants.find((v) => v.id === rungId)?.method ?? 'gp';
+      const previousMethod =
+        index > 0
+          ? runs
+              .flatMap((run) => run.notes.variants)
+              .find((v) => v.id === order[index - 1])?.method ?? 'gp'
+          : 'gp';
+      if (index > 0 && thisMethod === 'gp' && previousMethod === 'gp') {
         const previousId = order[index - 1];
         const shared = runs.filter(
           (run) => recoveredIn(run, rungId) !== null && recoveredIn(run, previousId) !== null,
@@ -89,8 +101,10 @@ export function AblationResult({ runs, lang }: { runs: RunPayload[]; lang: 'en' 
         }
       }
 
+      const method = variants[0].method ?? 'gp';
       return {
         id: rungId,
+        method,
         label: es ? variants[0].label_es : variants[0].label_en,
         cases: present.length,
         checkable: checkableRuns.length,
@@ -150,8 +164,15 @@ export function AblationResult({ runs, lang }: { runs: RunPayload[]; lang: 'en' 
                   ? rung.medianSeconds / baseline.medianSeconds
                   : null;
               return (
-                <tr key={rung.id}>
-                  <th scope="row">{rung.label}</th>
+                <tr key={rung.id} className={rung.method === 'gp' ? undefined : 'sym-other-family'}>
+                  <th scope="row">
+                    {rung.label}
+                    {rung.method !== 'gp' && (
+                      <span className="sym-family-tag">
+                        {es ? 'otra familia' : 'other family'}
+                      </span>
+                    )}
+                  </th>
                   <td>{rung.cases}</td>
                   <td>
                     <strong>
@@ -160,7 +181,11 @@ export function AblationResult({ runs, lang }: { runs: RunPayload[]; lang: 'en' 
                   </td>
                   <td>
                     {rung.pairedDelta === null ? (
-                      <span className="sym-hint">{es ? 'sin par' : 'no pair'}</span>
+                      <span className="sym-hint">
+                        {rung.method === 'gp'
+                          ? es ? 'sin par' : 'no pair'
+                          : es ? 'no aplica' : 'not applicable'}
+                      </span>
                     ) : (
                       <>
                         <span
@@ -201,8 +226,8 @@ export function AblationResult({ runs, lang }: { runs: RunPayload[]; lang: 'en' 
 
       <p className="sym-note">
         {es
-          ? 'La columna "vs anterior" es la unica comparacion directa entre dos escalones aqui, y se calcula SOLO sobre los casos que ejecutaron ambos, porque los vecinos difieren en exactamente un mecanismo. Las demas columnas describen cada escalon sobre su propio conjunto.'
-          : 'The "vs previous" column is the only direct comparison between two rungs on this page, and it is computed ONLY over the cases that ran both, because neighbours differ by exactly one mechanism. Every other column describes a rung over its own set.'}
+          ? 'La columna "vs anterior" es la unica comparacion directa entre dos escalones aqui, y se calcula SOLO sobre los casos que ejecutaron ambos, porque los vecinos difieren en exactamente un mecanismo. No se calcula para una fila de otra familia: esa no anade un mecanismo a la anterior, asi que un incremento no significaria nada. Comparala con la escalera completa.'
+          : 'The "vs previous" column is the only direct comparison between two rungs on this page, and it is computed ONLY over the cases that ran both, because neighbours differ by exactly one mechanism. It is not computed for a row from another family: that row does not add a mechanism to the one above it, so an increment would mean nothing. Compare it against the ladder as a whole.'}
       </p>
       <p className="sym-note">
         {es

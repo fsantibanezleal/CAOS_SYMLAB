@@ -250,9 +250,12 @@ export default function AppPage() {
           <>
             <section className="sym-control">
               <h3>{es ? 'Configuracion de busqueda' : 'Search configuration'}</h3>
+              {/* Grouped by FAMILY. The sparse arm is not a further step along the ladder, and
+                  listing it as one would imply it adds a mechanism to the rung above it, which is
+                  the single claim the ladder design exists to make. */}
               <label className="sym-nav-field">
                 <span className="sym-nav-label">
-                  {es ? 'Escalon de la escalera' : 'Ladder rung'}
+                  {es ? 'Metodo' : 'Method'}
                 </span>
                 <select
                   className="sym-select"
@@ -262,18 +265,37 @@ export default function AppPage() {
                     setMemberIndex(null);
                   }}
                 >
-                  {run.notes.variants.map((v, i) => (
-                    <option key={v.id} value={i}>
-                      {es ? v.label_es : v.label_en}
-                    </option>
-                  ))}
+                  <optgroup label={es ? 'Escalera de programacion genetica' : 'Genetic-programming ladder'}>
+                    {run.notes.variants.map((v, i) =>
+                      (v.method ?? 'gp') === 'gp' ? (
+                        <option key={v.id} value={i}>
+                          {es ? v.label_es : v.label_en}
+                        </option>
+                      ) : null,
+                    )}
+                  </optgroup>
+                  {run.notes.variants.some((v) => (v.method ?? 'gp') !== 'gp') && (
+                    <optgroup label={es ? 'Otras familias' : 'Other families'}>
+                      {run.notes.variants.map((v, i) =>
+                        (v.method ?? 'gp') !== 'gp' ? (
+                          <option key={v.id} value={i}>
+                            {es ? v.label_es : v.label_en}
+                          </option>
+                        ) : null,
+                      )}
+                    </optgroup>
+                  )}
                 </select>
               </label>
               {variant && <p className="sym-control-note">{es ? variant.note_es : variant.note_en}</p>}
               <p className="sym-control-note">
-                {es
-                  ? 'Cada escalon anade UN mecanismo al anterior, asi que la diferencia medida es atribuible a ese cambio y no a la suma de varios.'
-                  : 'Each rung adds ONE mechanism to the one before it, so a measured difference is attributable to that change rather than to several at once.'}
+                {(variant?.method ?? 'gp') === 'gp'
+                  ? es
+                    ? 'Dentro de la escalera, cada escalon anade UN mecanismo al anterior, asi que la diferencia medida es atribuible a ese cambio y no a la suma de varios.'
+                    : 'Within the ladder, each rung adds ONE mechanism to the one before it, so a measured difference is attributable to that change rather than to several at once.'
+                  : es
+                    ? 'Esta no es un escalon de la escalera sino OTRA familia de busqueda. Comparala con la escalera completa, no con el escalon de arriba: no anade un mecanismo a nada.'
+                    : 'This is not a rung of the ladder but a DIFFERENT search family. Compare it against the ladder as a whole rather than against the entry above it: it does not add a mechanism to anything.'}
               </p>
             </section>
 

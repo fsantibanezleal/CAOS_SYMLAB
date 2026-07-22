@@ -142,15 +142,19 @@ def build_run(
         best_expression = (
             entry.result.pareto[selected].expression if entry.result.pareto else None
         )
+        # A non-GP arm has no population and no generations. Exporting the ladder's numbers for it
+        # would put figures in the audit record that describe a search it never ran.
+        gp = entry.variant.method == "gp"
         variants_payload.append({
             "id": entry.variant.id,
+            "method": entry.variant.method,
             "label_en": entry.variant.label_en,
             "label_es": entry.variant.label_es,
             "note_en": entry.variant.note_en,
             "note_es": entry.variant.note_es,
             "config": {
-                "population": entry.result.config.population,
-                "generations": entry.result.config.generations,
+                "population": entry.result.config.population if gp else None,
+                "generations": entry.result.config.generations if gp else None,
                 "primitive_set": entry.result.config.primitive_set,
                 "linear_scaling": entry.result.config.linear_scaling,
                 "interval_guard": entry.result.config.interval_guard,

@@ -213,8 +213,11 @@ export interface VariantScore {
 }
 
 export interface VariantConfig {
-  population: number;
-  generations: number;
+  /** Null for a non-GP family, which has neither. Exporting the ladder's numbers for an arm that
+   *  never ran a population would put figures in the audit record describing a search that did not
+   *  happen. */
+  population: number | null;
+  generations: number | null;
   primitive_set: string;
   linear_scaling: boolean;
   interval_guard: boolean;
@@ -230,6 +233,10 @@ export interface VariantConfig {
 
 export interface VariantPayload {
   id: string;
+  /** Which search FAMILY this variant belongs to. "gp" is a rung of the genetic-programming
+   *  ladder, where each entry adds one mechanism to the one above it. Anything else is a separate
+   *  family and must not be presented as a further step along that ladder. */
+  method?: string;
   label_en: string;
   label_es: string;
   note_en: string;

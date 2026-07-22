@@ -726,3 +726,21 @@
 .sym-delta.is-down {
   color: var(--sym-term-4);
 }
+
+/* A row from a different search family. Marked rather than blended in: it is not a further step
+   along the ladder, and reading it as one would imply an increment that does not exist. */
+.sym-other-family {
+  border-top: 2px solid var(--color-border);
+}
+
+.sym-family-tag {
+  margin-left: 0.45rem;
+  padding: 0.08rem 0.4rem;
+  border: 1px solid var(--color-border);
+  border-radius: 999px;
+  font-size: 0.64rem;
+  letter-spacing: 0.05em;
+  text-transform: uppercase;
+  color: var(--color-fg-subtle);
+  white-space: nowrap;
+}
