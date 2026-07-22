@@ -12,6 +12,13 @@ Every fact in these cards is transcribed from the persisted research dossiers, a
 research could not close against a primary source is carried forward marked `UNVERIFIED` rather than
 quietly resolved.
 
+The licences, versions and release dates in the table below were re-read from primary sources on
+2026-07-22: the PyPI JSON API for every installable package, and the GitHub repository API for every
+repository-only project. Star counts and last-push dates in the cards drift by the day and are not
+re-checked; treat them as of the date they were written, not as live numbers. Every DOI and arXiv
+identifier in this folder was resolved against Crossref, DataCite and the arXiv API on the same day,
+and all of them resolve to the work cited.
+
 ## What this repo actually depends on
 
 | Lane | File | Contents |
@@ -22,9 +29,14 @@ quietly resolved.
 | API | [`requirements-api.txt`](../requirements-api.txt) | dormant, fully commented out |
 | GPU | [`requirements-gpu.txt`](../requirements-gpu.txt) | intentionally empty, with the reason written in the file |
 
-The `symlab` package imports the standard library and numpy, and nothing else. `sreval` is imported
-inside a `try` in [`stages/evaluate.py`](../data-pipeline/symlab/stages/evaluate.py) so the browser
-lane runs without it. That is the whole third-party surface of this product.
+Four third-party packages are imported anywhere in `symlab`, and all four sit in the precompute lane:
+`openpyxl` and `xlrd` inside the two spreadsheet loaders in
+[`io/loaders.py`](../data-pipeline/symlab/io/loaders.py), and `sreval` and `sympy` in
+[`stages/evaluate.py`](../data-pipeline/symlab/stages/evaluate.py). Every one of those imports is
+local to the function or wrapped in a `try`, so nothing outside the precompute lane needs them. The
+modules the browser lane actually loads (`symlab/model/`, `symlab/search/`, `symlab/cases/`, copied
+into `frontend/public/engine/`) import the standard library and numpy and nothing else. That is the
+whole third-party surface of this product.
 
 Three discrepancies were found here and have since been fixed rather than left recorded. What they
 were, and what closed them:
@@ -55,8 +67,8 @@ licence forbids use in an MIT product.
 
 | Card | Family | Licence | Usable in an MIT repo | Status here |
 |---|---|---|---|---|
-| [01 sreval](frameworks/01_sreval.md) | Evaluation and equivalence | MIT | yes | **used**, in `stages/evaluate.py` |
-| [02 SymPy](frameworks/02_sympy.md) | Computer algebra | BSD | yes | **used** indirectly, through `sreval[symbolic]` |
+| [01 sreval](frameworks/01_sreval.md) | Evaluation and equivalence | MIT | yes | **used**: `structural_distance` in `stages/evaluate.py` calls it |
+| [02 SymPy](frameworks/02_sympy.md) | Computer algebra | BSD | yes | **used** directly, imported inside `stages/evaluate.py` for the symbolic verdict |
 | [03 SRBench](frameworks/03_srbench.md) | Benchmark harness | GPL-3.0 | protocol yes, code no | protocol reimplemented in `sreval`; code never vendored |
 | [04 PMLB](frameworks/04_pmlb.md) | Benchmark data | MIT | yes | surveyed; this lab builds its own case registry |
 | [05 gplearn](frameworks/05_gplearn.md) | Koza tree GP | BSD-3-Clause | yes | surveyed; it is the reference for rung 1, which is implemented here |
@@ -72,7 +84,7 @@ licence forbids use in an MIT product.
 | [15 PySINDy](frameworks/15_pysindy.md) | Sparse dictionary SR | MIT | yes | surveyed; a different problem class, no dynamics track here |
 | [16 ODEFormer](frameworks/16_odeformer.md) | Transformer for ODE systems | MIT | yes | surveyed; ODEBench named as the benchmark to adopt if dynamics are added |
 | [17 pykan](frameworks/17_pykan.md) | Spline network plus symbolic extraction | MIT | yes | surveyed; the symbolification step is the weak link |
-| [18 ESR](frameworks/18_esr.md) | Exhaustive enumeration plus MDL | MIT | yes | surveyed; the rung is implemented here from the paper, with this build's own codelength |
+| [18 ESR](frameworks/18_esr.md) | Exhaustive enumeration plus MDL | MIT declared in `setup.py`, no LICENSE file in the repository | treat as unsettled until the file exists | surveyed; the rung is implemented here from the paper, with this build's own codelength |
 | [19 FFX](frameworks/19_ffx.md) | Deterministic basis enumeration | non-OSI, non-commercial | **no** | blocked as a dependency; reimplementable, not yet reimplemented |
 | [20 LLM-driven SR](frameworks/20_llm-sr.md) | Model as mutation operator | Apache 2.0 / MIT | yes | surveyed; an endpoint would break the determinism contract |
 | [21 feyn / QLattice](frameworks/21_feyn-qlattice.md) | Proprietary graph search | CC-BY-NC-ND-4.0 | **no** | blocked; first on the SRBench++ synthetic track |

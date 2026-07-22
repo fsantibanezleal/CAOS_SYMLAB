@@ -32,9 +32,13 @@ data that a tree search cannot.
 that does not involve commercial gain, with a patent-pending note. That is not an OSI open-source
 licence, and it is incompatible with shipping inside an MIT-licensed public product.
 
-`UNVERIFIED`: the actual contents of the `LICENSE` file in the repository. The PyPI metadata is the
-source of the restriction above, and the file itself must be read directly before any use. If the
-non-commercial restriction holds, the options are to reimplement the algorithm or to drop it.
+The research left the repository's own `LICENSE` file `UNVERIFIED`. It is settled here: the file at
+`github.com/natekupp/ffx` was read on 2026-07-22 and carries the same text as the PyPI metadata,
+"FFX Software Licence Agreement (like BSD, but adapted for non-commercial gain only)", copyright
+2011 Solido Design Automation Inc., authored by Trent McConaghy, with "Usage does not involve
+commercial gain" as the first redistribution condition and "Patent pending" as the closing line.
+GitHub's licence endpoint reports `NOASSERTION` for the repository, consistent with a non-standard
+text. The restriction holds, so the options are to reimplement the algorithm or to drop it.
 
 The algorithm itself is published and reimplementable, and the research estimated a clean
 reimplementation at about 200 lines: enumerate the bases, run scikit-learn's `ElasticNet` path,

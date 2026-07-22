@@ -7,8 +7,9 @@ to merge them.
 ## The two claims
 
 **Accuracy** is whether the returned expression predicts held-out rows well. It is reported for every case,
-against every rung of the ladder, as R2 and mean squared error on the test split, plus a separate figure on the
-extrapolation split where one exists.
+against every rung of the ladder, as R2 and mean squared error on the test split, plus a separate mean squared
+error on the extrapolation split where one exists. A configuration counts as an accuracy solution at
+`ACCURACY_R2_THRESHOLD = 0.999` on the test split.
 
 **Recovery** is whether the returned expression IS the published law. It is reported only where such a law
 exists. A plant or instrument dataset has no closed form to recover, so its recovery is `null`, and the app says
@@ -25,8 +26,16 @@ Three tests, run against a truth expression the search never sees:
 | Test | How | What it misses |
 |---|---|---|
 | symbolic | simplify the difference through sympy and ask whether it is zero | can time out, or fail to simplify a form that is in fact equivalent |
-| numerical | evaluate both over a probe box of inputs and compare relative error | agrees with a wrong expression that happens to match inside the sampled box |
-| structural | a normalised edit distance between canonical forms | reports a distance, never a yes or no |
+| numerical | evaluate both over a probe box drawn from the training support and compare relative error | agrees with a wrong expression that happens to match inside the sampled box |
+| structural | a normalised edit distance in [0, 1] over the two canonical pre-order label sequences | reports a distance, never a yes or no |
+
+The verdict itself (`EquivalenceVerdict.recovered`) is the symbolic answer where sympy decided, and the
+numerical answer otherwise. The structural distance is reported alongside and never decides. It is computed by
+`sreval[symbolic]==0.1.0` (MIT), the evaluation harness extracted from this lab as its own package because
+telling "the method failed" apart from "the scorer failed" is a general need; the local loop in
+`stages/evaluate.py` is the browser-lane fallback for Pyodide, where sreval is never installed, and
+`tests/test_sreval_agrees.py` asserts the two return identical numbers. The dependency is called rather than
+merely imported: an earlier version pinned it, documented it as "used here", and never referenced it.
 
 The symbolic and numerical tests usually agree inside the sampled box and differ outside it, which is exactly
 where a wrong expression gives itself away, so a **disagreement is published rather than resolved silently**. A

@@ -65,9 +65,15 @@ The two constants also differ by a factor of about twenty in magnitude, so a sea
 jointly has to get a small coefficient right in the presence of a large one; a constant-tuning stage
 that rescales poorly will find the linear term and miss the interaction.
 
-## The harder formulation, shipped as its own variant
+## The harder formulation, named in the caveat and NOT shipped
 
-The recorded caveat names it. The system has a CONSERVED QUANTITY:
+The recorded caveat says the conserved-quantity formulation "ships as its own variant". It does not.
+The nine chips on this case are the eight ladder rungs plus the sparse-regression arm, all of them
+SEARCH configurations over the prey right-hand side; no case in this registry ships an alternative
+target as a chip. The formulation is worth describing because it is the natural next case, and the
+page says which half of that is built.
+
+The system has a CONSERVED QUANTITY:
 
 $$V = \delta H - \gamma \ln H + \beta L - \alpha \ln L$$
 
@@ -77,8 +83,8 @@ looking for a function of the states whose value is the same on every row rather
 predicts a column. That is the formulation Schmidt and Lipson used to recover Hamiltonians and
 Lagrangians from motion-tracking data, and it is harder.
 
-It ships as its own variant so that recovering the derivative and recovering the invariant can be
-compared on the same system, which is the only way to say by how much the second is harder.
+Running both on the same system is the only way to say by how much the second is harder, and it is
+recorded as work not done rather than as a comparison the reader can run today.
 
 ## Provenance
 

@@ -69,10 +69,11 @@ about the search rather than hidden as an implementation detail.
 
 ## Recovery regime: structure+constants
 
-The two constants in the expression are both 1, and they are not input columns. A candidate has to
-produce the form with those literals in the right places. Recorded as `structure+constants` on the
-generator; the numeric burden here is lighter than on cases such as [20](20_friction-factor.md), and
-the label is carried as declared rather than softened.
+The only numeric literal in the expression is 1, appearing four times: twice as the leading term of a
+difference and twice inside $1 - C_r$. None of them is an input column, so a candidate has to produce
+the form with those literals in the right places. Recorded as `structure+constants` on the generator;
+the numeric burden here is much lighter than on cases such as [20](20_friction-factor.md), which
+bakes in four unrelated constants, and the label is carried as declared rather than softened.
 
 ## The removable singularity, which is the point of the case
 
@@ -84,9 +85,11 @@ $$\varepsilon = \frac{\mathrm{NTU}}{1 + \mathrm{NTU}} \qquad (C_r = 1)$$
 This is the physically important case, because $C_r = 1$ is BALANCED counter-current flow, the
 arrangement a well-designed exchanger is usually built for.
 
-The generator keeps $C_r$ below 0.95 so the sampled data contain no NaNs; the singularity itself is
-the subject of a dedicated variant rather than a source of missing values. And the recorded caveat
-states why it matters:
+The generator keeps $C_r$ below 0.95 so the sampled data contain no NaNs. A comment in the generator
+calls the singularity "the subject of a dedicated variant"; **no such variant exists**. The nine
+chips on this case are the eight ladder rungs plus the sparse-regression arm, all of them SEARCH
+configurations over the same $C_r \le 0.95$ sample, so the $C_r = 1$ limit is reachable only through
+the extrapolation view and never as a sampled case. The recorded caveat states why it matters:
 
 > a fitted result that blows up at $C_r = 1$ is wrong in a way a plain error metric hides completely,
 > and the extrapolation view is what exposes it

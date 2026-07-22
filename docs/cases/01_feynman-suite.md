@@ -51,11 +51,21 @@ PMLB `metadata.yaml` of each dataset.
 | `feynman_II_27_18` | $E = \epsilon E_f^2$ | 2 |
 | `feynman_II_38_14` | $G = \dfrac{Y}{2(1 + \sigma)}$ | 2 |
 | `feynman_III_12_43` | $L = \dfrac{n h}{2\pi}$ | 2 |
-| `feynman_III_15_14` | $m = \dfrac{h}{(2\pi)^2 E_n d^2}$ | 3 |
+| `feynman_III_15_14` | $m = \dfrac{h^2}{8\pi^2 E_n d^2}$ | 3 |
 | `feynman_III_17_37` | $f = \beta (1 + \alpha\cos\theta)$ | 3 |
 
 `feynman_I_12_1`, a plain product of two variables, is deliberately in the list as the FLOOR: an
 engine that cannot recover it has a defect, not a difficulty.
+
+Two of these forms are worth reading against the code rather than against the comment they came
+from. The `FEYNMAN_SELECTION` comment in `io/sources.py` writes III.15.14 as
+`m = h/(2*pi)**2/(E_n*d**2)`; the expression actually scored, in
+[`physics_truths.py`](../../data-pipeline/symlab/cases/physics_truths.py), is
+$h^2/(8\pi^2 E_n d^2)$, and the table above states the scored form. That constant was solved from the
+data rather than guessed: `y * E_n * d^2 / h^2` is 0.0126651 with no spread across 3,000 rows, and
+$1/(8\pi^2)$ is 0.01266515. `tests/test_physics_truths.py` evaluates every expression in that module
+over real rows of its own dataset and requires agreement to 1e-9 relative; the suite passes on the
+vault copy (29 tests, run 2026-07-22).
 
 ## Inputs, units and ranges
 
@@ -74,19 +84,29 @@ constant is being recovered from a region no experiment would ever visit.
 
 Yes, one per problem, listed above, and machine-readable in the source metadata.
 
-**It is not machine-comparable in this pipeline.** `preprocess.run` builds a `truth_node`, the
-expression tree the equivalence test scores against, only for cases whose loader is an in-repo
-generator. A PMLB-backed case gets `truth = None` and `regime = "unknown"`. So this case contributes
-to the error metrics and to the structural-distance statistics, and the exact-recovery scorer reports
-"not checkable" rather than zero. Reporting zero here would be false: it would read as eighteen
-failed recoveries when in fact the scorer was never handed a comparable object.
+**Seventeen of the eighteen are machine-comparable.** `preprocess.run` has a branch for loaders of
+the form `pmlb-dataset:<name>`: it calls `physics_truths.truth_for`, which builds the published law
+as an expression tree bound by column NAME rather than by position, so a change in the source column
+order cannot rebind a variable to the wrong symbol. Every one of those trees is verified against
+real rows of its own dataset before it is allowed to score.
+
+The exception is `feynman_I_26_2`, Snell's law in the form $\theta_1 = \arcsin(n\sin\theta_2)$. The
+operator set has no inverse-sine primitive, so the recorded reason, carried in `INEXPRESSIBLE` and
+surfaced in the artifact's `not_checkable_reason`, is that the target lies outside the space the
+search can reach. Recovery for that one problem is reported as not checkable rather than as zero,
+because a zero would describe the primitive set rather than the method.
+
+The baked artifacts agree: `data/derived/feynman-i_26_2/run.json` carries
+`ground_truth_available: false` and `regime: "unknown"`, while the other seventeen carry
+`ground_truth_available: true` and `regime: "structure"`.
 
 ## Recovery regime
 
-Recorded as `unknown`. The physical parameters ARE input columns in this collection, which is the
-convention the published physics benchmarks use, so in the sense of the taxonomy this is a
-structure-only task; the field is left `unknown` because the pipeline only sets it from a generator's
-declaration and will not infer it.
+Recorded as `structure` on the seventeen scored problems. The physical parameters ARE input columns
+in this collection, which is the convention the published physics benchmarks use, so only the FORM
+is unknown and the numbers are handed over. The suite row in
+[`docs/cases.md`](../cases.md) reports the same value, and a recovery rate over this case is never
+averaged with a `structure+constants` case.
 
 ## Provenance
 
@@ -123,9 +143,9 @@ Two things happen above the loader:
 - **Deterministic subsampling.** Each source dataset ships exactly 100,000 rows. `preprocess.run`
   subsamples to 4,000 with seed 0 and records the fact as a defect on the manifest, with the stated
   reason: the source is a smooth low-dimensional law, the extra rows carry no additional information
-  about its structure, and they would spend the whole search budget on redundancy. The manifests
-  baked so far (`manifests/feynman-i_6_2a.json`, `manifests/feynman-i_12_1.json`) carry that line
-  verbatim.
+  about its structure, and they would spend the whole search budget on redundancy. All eighteen
+  manifests carry that line verbatim as their only entry under `contract.defects_applied`, and all
+  eighteen record the same split, 2,550 train, 850 test and 600 extrapolation rows.
 
 The suite is expanded by `expand_suites` in `pipeline.py` into one case per equation, with ids of the
 form `feynman-i_6_2a`. Asking the preprocessor to load `pmlb:feynman` as a single dataset raises

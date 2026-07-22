@@ -55,7 +55,8 @@ same function with a different factorisation of the exponents is close, not wron
 | `rho2` | $\rho_2$ | density, point 2 | kg/m^3 | uniform, 800 to 1,400 |
 | `Wratio` | $W_1/W_2$ | shaft power ratio (target) | 1 | follows from the law |
 
-The speed range spans two-pole to eight-pole motor speeds at 50 and 60 Hz. The diameter range covers a
+The speed range runs from the synchronous speed of a two-pole motor at 60 Hz (3,600 rpm) down to
+that of a ten-pole motor at 50 Hz (600 rpm). The diameter range covers a
 small process pump to a large one. The density range runs from a hydrocarbon to a moderately dense
 slurry.
 

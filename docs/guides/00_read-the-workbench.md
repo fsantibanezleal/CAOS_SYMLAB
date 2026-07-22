@@ -16,7 +16,7 @@ right**. No selector sits in the content area, and the content area never gives 
 | Data source | Generator, or measured data. A generator has a published law behind it, so recovery is checkable. Measured data does not, and there are no knobs to turn: only what was recorded. |
 | Category | Narrows the case list. The category codes in the registry are internal; the dropdown shows their human names with a count. |
 | Case | The case itself. The selection is mirrored into `?case=`, so a case can be shared as a URL. |
-| Ladder rung | The search configuration. Each rung adds exactly ONE mechanism to the one above it, so a measured difference is attributable to that named change rather than to several at once. |
+| Method | The search configuration, grouped by family. Within the genetic-programming ladder each rung adds exactly ONE mechanism to the one above it, so a measured difference is attributable to that named change rather than to several at once. The sparse-regression arm sits in a second group because it is a different family, not a further rung: compare it against the ladder as a whole. |
 | View | Long form wraps a many-term sum across lines, because KaTeX cannot break display maths on its own. Raw output shows what the engine produced before prettifying. Collapse-below-influence hides low-influence subtrees so a large expression stays readable. |
 | Readout | Row accounting, rung count, best held-out R2, and the two counts below. |
 
@@ -81,9 +81,16 @@ continuous.
 
 ## Tab 4, Live (your browser)
 
-The same Python engine, running in your browser through Pyodide, at a reduced budget. It exists so the numbers
-on the other tabs are checkable rather than merely asserted. It is not a different implementation: the browser
-loads the same engine modules the offline pipeline uses.
+The same Python engine, running in your browser through Pyodide, at a reduced budget. It is not a different
+implementation: the browser loads the same engine modules the offline pipeline runs, staged into
+`public/engine/` at build time. Nothing starts until you press run.
+
+Read it as a demonstration of the ENGINE, not as a check on this case's numbers. The rung is fixed at
+`r4-multi-objective`, the data is regenerated in the browser at 240 rows, and the population and generation
+budget are whatever you set, so expect a simpler expression than the Expression tab shows. On a case with no
+generator behind it (the measured datasets and the published-physics suites, 9 of the 25 registry cases) the
+worker currently falls back to the Monod generator instead of refusing, so what runs there is not the case on
+screen. That fallback is a known defect in `frontend/src/live/search.worker.ts`.
 
 ## Tab 5, Front and search
 
@@ -96,7 +103,10 @@ exactly how a method exceeds 0.999 while recovering the wrong structure, so the 
 Below it, the convergence and diversity curves and the measured cost of the rung: seconds, evaluations,
 duplicates avoided and candidates rejected by the interval guard. The cost is shown because the benchmark
 literature names budget unfairness as a standing problem, and comparing rungs at equal generation count is not
-a fair comparison when one of them buys its quality at roughly twenty-two times the baseline wall clock.
+a fair comparison when they do not cost the same. Across the committed manifests, taking each case's Koza
+baseline as 1, the median wall-clock ratios are about 1.3 for linear scaling, 1.7 for constant tuning, 24 for
+age-fitness islands, 30 for epsilon-lexicase and 150 for deduplication, while the sparse-regression arm comes
+back in about a hundredth of the baseline.
 
 ## Tab 6, Context
 

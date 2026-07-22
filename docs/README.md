@@ -46,10 +46,16 @@ exactly where a wrong expression gives itself away.
 ## Honesty and data policy
 
 - Numbers come from the committed artifacts, never from a claim. Every figure in the app is replayed from a
-  seeded offline run, and the live lane runs the same engine in the browser at a reduced budget.
-- Public derived artifacts are committed (`data/derived/`); raw sources stay out of git (`data/raw/`) per
-  ADR-0055. The two data contracts ([architecture/08_data-contracts.md](architecture/08_data-contracts.md))
-  govern raw to pipeline and pipeline to web.
-- Source defects are recorded verbatim rather than tidied away: rows dropped, folds ignored, aggregation applied,
-  and the guards that reject a Git LFS pointer served with HTTP 200. Four sources the research had recorded as
-  good turned out to be defective on download, and every one of them returned HTTP 200.
+  seeded offline run. The live lane loads the same engine modules into the browser at a reduced budget, on
+  data it generates there from a registered generator, so it corroborates the engine rather than the case:
+  16 of the 25 registry cases have such a generator, and the measured-data cases have none.
+- Public derived artifacts are committed (`data/derived/`); raw sources stay out of git (the download vault is
+  outside the repository, see `io/sources.py`) per ADR-0055. The two data contracts
+  ([architecture/08_data-contracts.md](architecture/08_data-contracts.md)) govern raw to pipeline and pipeline
+  to web.
+- Source defects are recorded verbatim rather than tidied away: rows dropped, folds ignored, aggregation
+  applied, a comma decimal separator inside quoted fields, and the guard that rejects a Git LFS pointer served
+  with HTTP 200. Two entries in `io/sources.py` carry recorded defects (the OpenML flotation dataset and the
+  UCI water treatment plant), and the failures the research hit split two ways: the flotation file id and the
+  PMLB raw route both answered HTTP 200 with the wrong bytes, while the Princeton host cited for the Nikuradse
+  measurements answered HTTP 404. A status code decides nothing; only reading the content does.

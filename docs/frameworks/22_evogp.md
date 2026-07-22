@@ -49,9 +49,12 @@ selection rather than evaluation throughput. The published cost table in
 [method-families.md](../method-families.md) supports that: epsilon-lexicase costs 22 times the
 baseline wall clock, and it is a selection method, not an evaluation kernel.
 
-There is no `requirements-gpu.txt` in this repo. The template's GPU lane refers to one; this product
-has no GPU dependency to pin, and the honest form of that is an absent file plus this paragraph
-rather than an empty file implying a lane that does not exist.
+[`requirements-gpu.txt`](../../requirements-gpu.txt) exists and is deliberately empty of pins: its
+whole content is the reason there is no GPU lane, and the instruction to pin here and reclassify the
+case in the live/precompute gate if a future rung ever reaches for a differentiable component. An
+earlier version of this card said the file did not exist and argued that its absence was the honest
+form. The file was added, this paragraph was not updated with it, and the contradiction stood until
+this audit.
 
 ## Caveats
 
@@ -63,8 +66,12 @@ rather than an empty file implying a lane that does not exist.
 
 ## Citations
 
-- Wu, L. et al. (2025). EvoGP: A GPU-accelerated Framework for Tree-based Genetic Programming.
-  arXiv:2501.17168, accepted at IEEE Transactions on Evolutionary Computation.
+- Wu, Z., Wang, L., Sun, K., Li, Z. and Cheng, R. (2025). Enabling Population-Level Parallelism in
+  Tree-Based Genetic Programming for GPU Acceleration. arXiv:2501.17168, accepted at IEEE
+  Transactions on Evolutionary Computation. This is the EvoGP paper; the framework name is the
+  repository's, not the paper title's. The abstract is the source of both figures quoted above:
+  peak throughput exceeding 10^11 GP operations per second, and a speedup of up to 304 times over
+  existing GPU-based tree-GP implementations (and 18 times over CPU libraries).
 - Burlacu, B., Kronberger, G. and Kommenda, M. (2020). Operon C++. GECCO 2020 Companion,
   doi:10.1145/3377929.3398099. The CPU counterfactual: SIMD and parallel execution policies rather
   than a device.

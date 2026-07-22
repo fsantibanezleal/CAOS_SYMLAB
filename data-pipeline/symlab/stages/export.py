@@ -27,6 +27,7 @@ import numpy as np
 from .. import __version__
 from ..cases.registry import Case
 from ..cases import physics_truths
+from ..core.gate import classify_lane
 from ..model import latex as tex
 from ..core.contract import (
     SCHEMA_VERSION,
@@ -326,6 +327,9 @@ def build_manifest(
     artifact_bytes: int,
 ) -> dict:
     """The audit record. Deterministic: no wall-clock timestamps that would dirty git on a re-run."""
+    # A case runs live in the browser if and only if the browser can build its inputs, which means
+    # it has a first-principles generator. See core/gate.py for why that is the whole rule.
+    gate = classify_lane(has_generator=case.is_generator)
     return {
         "schema": MANIFEST_SCHEMA,
         "case_id": case.id,
@@ -338,7 +342,14 @@ def build_manifest(
             "schema_version": SCHEMA_VERSION,
             "bytes": artifact_bytes,
         },
-        "lane": "precompute",
+        # MEASURED, not asserted. This was the literal string "precompute" for every case, while
+        # `core/gate.py` carried an unused classifier whose docstring claimed the verdict "goes into
+        # the manifest, and CI fails on mislabeling". It had no callers, so `manifest["gate"]` was
+        # never written and the CI check that compares it to `manifest["lane"]` passed vacuously on
+        # every artifact. Both halves now exist: the gate decides, and the check has something to
+        # compare.
+        "gate": gate,
+        "lane": gate["lane"],
         "data": {
             "source_id": prepared.dataset.source_id,
             "citation": prepared.dataset.citation,

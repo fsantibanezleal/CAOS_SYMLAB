@@ -45,15 +45,20 @@ Two robustness results worth carrying:
 
 ## Licence, and whether this MIT repo may use it
 
-MIT (verified in `LICENSE`; copyright M. Quade 2019 for the sparsereg-derived portions, B. de Silva
-and K. Champion 2019 for the rest). Compatible with this repo. Two optional paths carry their own
-terms: `MIOSR` needs Gurobi (commercial, free academic licence), and the `sbr` extra pulls numpyro
-and jax.
+MIT (read from the repository `LICENSE` on 2026-07-22; copyright M. Quade 2019 for the
+sparsereg-derived portions, B. de Silva and K. Champion 2019 for the rest, over the standard MIT
+text). Compatible with this repo. One wrinkle worth recording because it looks alarming and is not:
+GitHub's licence endpoint reports `NOASSERTION` for this repository, because the split-copyright
+header stops its detector matching the template. The PyPI metadata and the file itself both say MIT.
+Two optional paths carry their own terms: `MIOSR` needs Gurobi (commercial, free academic licence),
+and the `sbr` extra pulls numpyro and jax.
 
 ## Install reality
 
-`pip install pysindy`. Release v2.1.0 dated 2026-01-08. Requires Python >= 3.11, numpy >= 2.0,
-scikit-learn >= 1.1 (verified in `pyproject.toml`). CPU. Extras: `cvxpy` for some SR3 variants,
+`pip install pysindy`. Release v2.1.0 dated 2026-01-08. Its published metadata declares
+`requires-python >= 3.10`, `numpy >= 2.0` and `scikit-learn >= 1.1` with three excluded point
+releases (1.5.0, 1.6.0, 1.7.1), plus `derivative >= 0.6.2` and scipy. An earlier version of this
+card said Python >= 3.11; the wheel says 3.10. CPU. Extras: `cvxpy` for some SR3 variants,
 `gurobipy` for MIOSR, `numpyro` and `jax` for SBR.
 
 ## Usage

@@ -36,8 +36,11 @@ The PMLB carrier ships the two features and the target under the column names be
 | `log_Re` | $\log_{10}\mathrm{Re}$ | base-10 logarithm of the Reynolds number | dimensionless | Reynolds numbers from 4.27e3 to 1.02e6 |
 | target | $\lambda$ | Darcy friction factor | dimensionless | measured |
 
-Point counts per roughness ratio, verified during the research phase from the Princeton spreadsheet
-`NikRough_f_vs_Re.xls`: 48, 38, 71, 73, 62 and 70 points respectively, summing to 362.
+Point counts per roughness ratio, first recorded during the research phase from the Princeton
+spreadsheet `NikRough_f_vs_Re.xls` and re-counted on 2026-07-22 directly from the PMLB file in the
+vault, which is the copy this case actually loads: 48, 38, 71, 73, 62 and 70 points for `r_k` equal
+to 507, 252, 126, 60, 30.6 and 15 respectively, summing to 362. The two counts agree exactly. The
+`log_Re` column runs from 3.63 to 6.008, which is the Reynolds range quoted above.
 
 Note that the second input arrives ALREADY logarithmic. The search is therefore not being asked to
 discover that a logarithm belongs in the law; it is handed one.
@@ -107,10 +110,13 @@ $\lambda$, and replaces the generic PMLB note with the provenance paragraph abov
 dropped, no columns are excluded, no aggregation is applied. The LFS pointer guard described in case
 [01](01_feynman-suite.md) applies.
 
-Recorded in the manifest baked so far (`manifests/nikuradse-friction.json`): 362 rows kept, 2 inputs,
-186 distinct target values across those 362 rows, a repeat ratio of about 1.9, and a split of 231
-train, 77 test, 54 extrapolation. The repeat ratio is a property of the digitised measurements rather
-than a defect the loader introduced, and it is reported rather than corrected.
+Recorded in `manifests/nikuradse-friction.json`: 362 rows kept, 2 inputs, 186 distinct target values
+across those 362 rows, a repeat ratio of 1.946, an empty `defects_applied` list, and a split of 231
+train, 77 test, 54 extrapolation. All of those were reproduced from the vault file on 2026-07-22.
+The manifest's split note names `r_k` as the pivot, so the extrapolation hold-out is the 27 lowest
+and 27 highest rows of the roughness ratio, which means the held-out region is two whole roughness
+ratios rather than a slice of each. The repeat ratio is a property of the digitised measurements
+rather than a defect the loader introduced, and it is reported rather than corrected.
 
 ## Its twin
 

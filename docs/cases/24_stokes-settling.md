@@ -79,16 +79,26 @@ This is the clearest small example in the set of a correct-looking fit that is t
 is the reason the lab evaluates on a held-out extrapolation region rather than only on a random test
 split: only leaving the sampled box exposes it.
 
-## Validity, and the variant that leaves it
+## Validity, and the variant that would leave it
 
 Stokes' law holds for particle Reynolds number below 1, which gives about 10 percent error at the
 boundary. That limit is stated explicitly on the verified source.
 
-The recorded caveat describes the deliberate variant: sample BEYOND $\mathrm{Re} = 1$ using an
-empirical drag law, so the lab can show a law BREAKING DOWN outside its validity range. That is
-described on the generator as the single most useful honest lesson available here, and it is the same
-argument the friction-factor case makes about the laminar branch: knowing where a law stops is part
-of knowing the law.
+The recorded caveat says "a variant deliberately samples beyond Re = 1 so the lab can show a law
+BREAKING DOWN outside its validity range". **That variant is not shipped.** The nine chips on this
+case are the eight ladder rungs plus the sparse-regression arm, all of them SEARCH configurations
+over one sample; nothing in the registry widens the sampled box, and the generator has no
+alternative drag law in it. The idea is described on the generator as the single most useful honest
+lesson available here, and it is the same argument the friction-factor case makes about the laminar
+branch: knowing where a law stops is part of knowing the law. It is recorded as work not done.
+
+Note also that the generator does not compute a particle Reynolds number and does not constrain the
+sample to keep it below 1, so a large part of the default sample is ALREADY outside the stated
+validity range. Computed on the seed-0, 400-row draw on 2026-07-22 using
+$\mathrm{Re} = \rho_f v (2R) / \mu$: 140 of 400 rows exceed $\mathrm{Re} = 1$, the median is 0.049
+and the maximum is 3.1e5. The rows are still exact evaluations of the stated expression, which is
+what the recovery test scores; they are not claims about a real settling particle everywhere in the
+box. The validity note above therefore describes the LAW, not the sample.
 
 ## Provenance
 

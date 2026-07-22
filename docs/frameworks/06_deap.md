@@ -72,8 +72,12 @@ The reasons are the same three that apply to gplearn, plus one specific to DEAP:
 4. The LGPL question above has no answer on file, and the honest response to an unresolved licence
    question in a public product is to not take the dependency.
 
-The `symlab` package imports only the standard library and numpy. That is a deliberate property, and
-it is what makes the offline engine and the browser engine the same code.
+The search itself imports only the standard library and numpy: `symlab/model/`, `symlab/search/` and
+`symlab/cases/`, which are exactly the packages copied into `frontend/public/engine/` for the browser.
+The precompute-only modules add four third-party imports (`openpyxl` and `xlrd` in the loaders,
+`sreval` and `sympy` in the evaluation stage), and none of them is on the path the live lane loads.
+That split is a deliberate property, and it is what makes the offline engine and the browser engine
+the same code.
 
 ## Caveats
 

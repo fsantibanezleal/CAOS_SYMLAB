@@ -28,8 +28,8 @@ GitHub. No compiler, no GPU. The practical constraint is bandwidth and disk, not
 
 ## Usage
 
-The counts, verified directly from `pmlb/all_summary_stats.tsv` on `master`, are what a user needs
-before planning a run:
+The counts, verified directly from `pmlb/all_summary_stats.tsv` on `master` and re-counted from that
+file on 2026-07-22, are what a user needs before planning a run:
 
 | Slice | Count |
 |---|---|

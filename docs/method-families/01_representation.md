@@ -22,6 +22,13 @@ candidate and REJECTS anything undefined anywhere in the box, before a single ev
 extrapolate" rather than "safe on this sample". `M` is a magnitude bound discarding expressions that
 are defined but numerically useless.
 
+The constants, so the guard can be reproduced rather than described: `M` is `max_abs = 1e12` in
+`admissible`, and `B` is widened by `interval_margin` as a fraction of each column's own width,
+which every ladder rung from r2 upwards sets to 0.25. `SearchConfig` defaults it to 0.0, and the
+guard itself defaults OFF, so the Koza baseline runs with no interval guard at all: there, an
+undefined candidate is caught only after evaluation, by the finite check on its predictions. That
+difference is part of what rung 2 buys.
+
 ## What the guard rejects, concretely
 
 | Expression | Box | Verdict |

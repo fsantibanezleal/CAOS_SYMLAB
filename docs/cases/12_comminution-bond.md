@@ -111,7 +111,7 @@ generator as a caveat rather than left as an absence somebody might mistake for 
 | Source | Bond comminution law, verified reference transcription, research dossier 7.2.4 |
 | Licence | MIT, generator authored in this repository |
 | Redistribution | `mirror` |
-| Real-data twin | GeoMet `comminution.csv`, 78 rows by 28 columns with $F_{80}$ and $P_{80}$, Zenodo record 7051975, CC BY 4.0, redistribution `derived` |
+| Real-data twin | the GeoMet comminution table, 78 rows by 28 columns with $F_{80}$ and $P_{80}$, Zenodo record 7051975, CC BY 4.0, redistribution `derived`; declared on the generator as `geomet-bond`, not shipped as a case |
 
 **UNVERIFIED:** no DOI for Bond's original publications was resolved during the research phase. The
 law was transcribed from a verified reference; no identifier is invented here.

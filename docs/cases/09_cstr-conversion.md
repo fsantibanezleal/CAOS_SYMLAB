@@ -68,15 +68,18 @@ problem trivially separable and remove the point of the case.
 Yes, the expression above, standard reactor engineering. `ground_truth_known` is true and
 `truth_latex` renders the full nested form.
 
-**No machine-comparable truth is shipped.** No `truth_node` is defined for this generator, so the
-equivalence test has no tree to compare against. The case contributes to the error metrics and to the
-structural-distance statistics; the exact-recovery scorer reports "not checkable" rather than zero,
-and reporting zero would be false.
+**A machine-comparable truth IS shipped.** A `truth_node` is defined for this generator, so the
+equivalence test runs and this case contributes to the exact recovery rate. It is built once from a
+shared Damkohler subexpression and used twice:
 
-The reason a truth node is hard to write here is itself informative: the correct expression contains a
-constant in an exponent (60000) and a constant multiplying an exponential ($10^7$) whose recovered
-values will be correlated, so an equivalence test would need a numerical tolerance policy rather than
-a structural comparison. That is recorded rather than papered over.
+    Da = mul( mul(tau, 1e7), exp(neg(div(60000, mul(8.314462618, T)))) )
+    X  = div( Da, add(1, Da) )
+
+The difficulty that made this look unwriteable is real and is a statement about SCORING rather than
+about the tree: the constant in the exponent (60,000) and the constant multiplying the exponential
+($10^7$) are correlated, so a candidate can trade one against the other and land close to the truth
+numerically while differing structurally. The equivalence test's tolerance policy, not the truth
+node, is what decides those cases.
 
 ## Recovery regime: structure+constants
 

@@ -64,7 +64,10 @@ asked to discover a number it can solve for.
 
 ## Caveats
 
-- The repository is archived read-only since 2023-10-31 (verified). No fixes, no dependency updates.
+- The repository is archived read-only. Confirmed on 2026-07-22 through the GitHub API, which
+  reports `archived: true` and a last push of 2022-11-13 but exposes no archive timestamp, so the
+  2023-10-31 date carried from the research dossier cannot be re-derived from the API. No fixes, no
+  dependency updates.
 - The out-of-distribution degradation verified for this family (arXiv:2509.19849) applies here.
 - `UNVERIFIED`: ONNX exportability and browser runnability, as for every model in this family. The
   numeric tokenizer and the BFGS refinement sit outside any exported graph.

@@ -37,9 +37,11 @@ MIT (verified in the raw `LICENSE`, copyright Ziming Liu 2024). Compatible with 
 
 ## Install reality
 
-`pip install pykan`. Latest release v0.2.8 dated 2024-11-14. Requires Python >= 3.9.7 and PyTorch
-2.2.2. CPU or GPU. For a package under this much research attention, the release cadence stalling in
-November 2024 is a maintenance signal worth noting.
+`pip install pykan`. Latest release v0.2.8 dated 2024-11-14. The repository documents Python >= 3.9.7
+and PyTorch 2.2.2; the published wheel declares `requires-python >= 3.6` and NO dependencies at all,
+so pip will install it into an environment with no torch and it will fail at import. CPU or GPU. For
+a package under this much research attention, the release cadence stalling in November 2024 is a
+maintenance signal worth noting.
 
 The extracted formula is trivially runnable in a browser; the KAN itself is not a good browser
 target, and the splines export awkwardly.
@@ -100,5 +102,7 @@ model that fit fine, and KAN-to-formula should not be presented as a solved pipe
 - Liu, Z., Ma, P., Wang, Y., Matusik, W. and Tegmark, M. (2024). KAN 2.0: Kolmogorov-Arnold Networks
   Meet Science. arXiv:2408.10205.
 - Yu, R., Yu, W. and Wang, X. (2024). KAN or MLP: A Fairer Comparison. arXiv:2407.16674.
-- Sovrano, F., Losavio, S., Vilone, G. and Langheinrich, M. (2026). arXiv:2603.15250. Greedy
-  in-context Symbolic Regression and Gated Matching Pursuit for KAN symbolification.
+- Sovrano, F., Losavio, L., Vilone, G. and Langheinrich, M. (2026). In-Context Symbolic Regression
+  for Robustness-Improved Kolmogorov-Arnold Networks. arXiv:2603.15250, accepted at XAI 2026. Source
+  of Greedy in-context Symbolic Regression, Gated Matching Pursuit, and the 99.8% figure, all three
+  read from the abstract.

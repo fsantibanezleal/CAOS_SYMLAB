@@ -40,13 +40,20 @@ the linear regime and the saturating plateau are populated. Sampling uniformly w
 row on the plateau, where the law is nearly constant and nothing can be identified: the data would
 look clean, the fit would look excellent, and $K_m$ would be unrecoverable.
 
-For the seed-0 bake recorded in `data/derived/monod-saturation/run.json`, the realised training
-ranges were substrate about 0.005 to 15.5, $V_{max}$ about 0.73 to 99.9 and $K_m$ about 0.010 to 9.6.
-Those are properties of that bake and will move with a re-run; the ranges in the table above are the
-generator's declaration and will not.
+The artifact committed at `data/derived/monod-saturation/run.json` records the realised training
+ranges in `notes.sampling`: substrate 0.0045 to 21.238 spanning 3.674 decades, $V_{max}$ 0.6956 to
+99.714, and $K_m$ 0.0103 to 9.922. Read that artifact with care: it carries three variants at
+population 60 and 8 generations, which is the `--quick` budget, so it is a smoke bake rather than a
+published run. The ranges above are properties of that bake and will move with a re-run; the ranges
+in the table are the generator's declaration and will not.
 
-Dimension vectors are declared dimensionless on all three inputs, so `units_declared` is 0 and this
-case runs the `UNITLESS_LADDER` with the unit-typed rung omitted rather than shown as an inert chip.
+Dimension vectors are declared dimensionless on all three inputs, so `units_declared` is false. The
+case still runs the FULL ladder, unit-typed rung included, because every generator case in the
+registry is built with `FULL_LADDER`; the rung simply has nothing to constrain and the feature stage
+emits the note saying so. That note's wording ("the unit-typed rung is omitted from this case") is
+the generic text `feature_extraction` emits whenever units are absent, and it describes the
+`UNITLESS_LADDER` cases 01 through 07 and 10 through 11 rather than this one, where the chip is
+present in the variant list.
 
 ## The published law
 

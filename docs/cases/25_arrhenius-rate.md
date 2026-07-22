@@ -53,7 +53,14 @@ The consequence of those ranges is that the target itself spans an extreme dynam
 real property of the physics and it makes the choice of noise model matter: multiplicative log-normal
 noise is the right model for a rate, where the error scales with the value, and the additive
 proportional-to-RMS model that the benchmark literature uses would drown every slow reaction in the
-noise attached to a fast one. The repo implements both and does not treat them as interchangeable.
+noise attached to a fast one.
+
+`add_noise` implements both and the module says they are not interchangeable. **The offline runs use
+the additive one.** `make_dataset` takes `multiplicative_noise` as a keyword defaulting to false and
+`run_case` never passes it, so every baked artifact on this case at a nonzero noise level carries
+additive noise proportional to the root-mean-square of a target that spans ten decades. Selecting
+the multiplicative path for the rate-like generators is work not done, and the mismatch matters most
+precisely here.
 
 Temperature carries a declared temperature dimension and the pre-exponential factor a frequency
 dimension; the activation energy is declared dimensionless, because a per-mole quantity has no

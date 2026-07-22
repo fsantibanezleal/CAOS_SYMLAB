@@ -38,9 +38,9 @@ design of experiments is the one a metallurgist would actually run rather than a
 That matters for the search: with only six distinct time values, an expression can fit the sampled
 points while behaving badly between them, and the extrapolation split is what exposes it.
 
-The rate constant range spans two decades, from a slow-floating fine to a fast-floating liberated
-particle. The ultimate recovery is bounded below 1 because no ore floats completely; some fraction is
-locked in the gangue and will never report regardless of time.
+The rate constant range spans a factor of forty, from a slow-floating fine to a fast-floating
+liberated particle. The ultimate recovery is bounded below 1 because no ore floats completely; some
+fraction is locked in the gangue and will never report regardless of time.
 
 ## The published law
 
@@ -71,12 +71,18 @@ comparable with the structure-plus-constants cases such as [17](17_lotka-volterr
 
 ## The interesting question is not the fit
 
-The recorded caveat names it: the same paper documents a Kelsall TWO-COMPONENT model,
+The recorded caveat names the Kelsall TWO-COMPONENT model,
 
 $$R = R_\infty\left(1 - \phi e^{-k_f t} - (1 - \phi) e^{-k_s t}\right)$$
 
-splitting a fast-floating and a slow-floating fraction, along with the rectangular (Klimpel) and
-Gamma rate-constant distributions and non-integral-order variants.
+which splits a fast-floating and a slow-floating fraction. The cited paper is a survey of flotation
+kinetic orders and rate-constant distributions, so the rectangular (Klimpel) and Gamma variants
+belong to the same literature; UNVERIFIED here, since only equation (8) was extracted from the PDF
+during the research phase and the generator's caveat names Kelsall alone.
+
+**Neither the Kelsall form nor any other alternative model is shipped as a variant.** The nine chips
+on this case are the eight ladder rungs plus the sparse-regression arm, all of them SEARCH
+configurations over the same single-component data.
 
 Whether the data justify ONE rate constant or TWO is a genuine accuracy-versus-complexity Pareto
 decision on a real industrial problem, and it is the reason this case matters more than its fit

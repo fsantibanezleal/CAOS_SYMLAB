@@ -77,11 +77,17 @@ Dimensions ARE declared on all three inputs (velocity, temperature, pressure) an
 Yes, the piecewise form above, from the Betz analysis plus the ideal gas law plus the machine's own
 rating. `ground_truth_known` is true and `truth_latex` renders it.
 
-**No machine-comparable truth is shipped.** No `truth_node` is defined, because the truth contains a
-`min` and two hard gates, and an equivalence test over a piecewise definition is a different object
-from the structural comparison the scorer performs. The case contributes to the error metrics and the
-structural-distance statistics; the exact-recovery scorer reports "not checkable" rather than zero,
-and reporting zero would be false.
+**No machine-comparable truth is shipped**, and this is the one generator in the set without a
+`truth_node`. The reason is recorded in `physics_truths.not_checkable_reason` and reaches the
+artifact verbatim, so it is quoted here rather than paraphrased:
+
+> The curve is piecewise: zero below cut-in, zero above cut-out, and capped at rated power between.
+> The operator set has no comparison, no minimum and no indicator, so the law cannot be written in
+> the language the search uses. Reporting zero recovery would describe the primitive set rather than
+> the method.
+
+The case contributes to the error metrics and the structural-distance statistics; the exact-recovery
+scorer reports "not checkable" rather than zero.
 
 ## Recovery regime: structure+constants
 
@@ -107,7 +113,7 @@ error metric hides and the reason this case sits in the set.
 | Licence | MIT, generator authored in this repository |
 | Redistribution | `mirror` |
 | Raw data | none; deterministic in `(generator.id, n_rows, seed, noise)` |
-| Real-data twin | Kelmarsh wind farm, Zenodo record 5841834, CC BY 4.0, identified but NOT shipped as a case |
+| Real-data twin | Kelmarsh wind farm, Zenodo record 5841834, CC BY 4.0, named in the generator's caveat text but NOT shipped as a case, and the generator's `real_data_twin` field is left unset |
 
 The Kelmarsh geometry was verified during the research phase from `Kelmarsh_WT_static.csv`: Senvion
 MM92, rated 2,050 kW, rotor diameter 92 m, hub height 78.5 m or 68.5 m, released by Cubico

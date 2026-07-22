@@ -58,7 +58,9 @@ the region where the misspecification bites hardest. Sampling from 10,000 instea
 the whole effect and turned this into a slightly awkward power-law case.
 
 The Prandtl range spans gases (around 0.7) through water (around 7) to viscous oils (into the
-hundreds), which is the span the correlation claims.
+hundreds). The correlation claims validity to Pr 2000; the generator samples to 200, so the sampled
+window is a tenth of the claimed one at the top end and the case says nothing about the decade above
+it.
 
 Both inputs are dimensionless, so the unit-typed rung has nothing to constrain.
 
@@ -72,23 +74,26 @@ Note the nesting: a friction factor defined by a logarithm raised to a negative 
 appears in the numerator, under a square root in the denominator, alongside a two-thirds power of
 Prandtl. Six constants and four distinct nonlinearities.
 
-`ground_truth_known` is true.
+`ground_truth_known` is true, and a `truth_node` IS defined, so the equivalence test runs and this
+case contributes to the exact recovery rate. The intermediate quantity $f$ is built once as a
+subtree and substituted into both the numerator and the denominator:
 
-**No machine-comparable truth is shipped.** No `truth_node` is defined, and the reason is visible in
-the expression: the truth is a composition through an intermediate quantity $f$, which the flat
-expression-tree comparison the scorer performs does not represent naturally. The case contributes to
-the error metrics and the structural-distance statistics; the exact-recovery scorer reports "not
-checkable" rather than zero.
+    f8 = div( inv(square(sub(mul(0.79, log(Re)), 1.64))), 8 )
+    Nu = div( mul(mul(f8, sub(Re, 1000)), Pr),
+              add(1, mul(mul(12.7, sqrt(f8)), sub(exp((2/3)*log(Pr)), 1))) )
 
-That is the honest reading here and it happens to matter more than usual, because a zero would be
-misread as evidence for the very conclusion the case is designed to challenge. The case does not
-measure whether a search can recover Gnielinski. It measures whether the reporting is honest when it
-cannot.
+so the composition through $f$ is represented, as a shared subtree rather than as a named
+intermediate. $\mathrm{Pr}^{2/3}$ goes through the same `_pow_const` rewrite used elsewhere in the
+module, exact because Prandtl is sampled strictly positive.
+
+Being scoreable does not make this a case anybody should expect to recover. The case does not measure
+whether a search can recover Gnielinski. It measures whether the reporting is honest when it cannot,
+and a recovery flag of false here is the expected result rather than a finding about the engine.
 
 ## Recovery regime: structure+constants
 
-Six baked-in constants (0.79, 1.64, the exponent -2, 8, 1000, 12.7 and the 2/3 power) and none of
-them arrive as columns.
+Seven baked-in constants (0.79, 1.64, the exponent -2, the divisor 8, the offset 1000, 12.7 and the
+2/3 power) and none of them arrive as columns.
 
 ## How to read a run on this case
 

@@ -48,15 +48,18 @@ $$\frac{dN}{dt} = r N\left(1 - \left(\frac{N}{K}\right)^{\theta}\right)$$
 At $\theta = 1$ this collapses to the plain logistic $rN(1 - N/K)$, so recovering $\theta$ near 1 is
 itself an answer: it says the data do not support the generalisation.
 
-`ground_truth_known` is true.
+`ground_truth_known` is true, and a `truth_node` IS defined, so the equivalence test runs and this
+case contributes to the exact recovery rate:
 
-**No machine-comparable truth is shipped.** This generator carries `truth_latex` and `truth_infix`
-but no `truth_node`, so the equivalence test has no expression tree to compare against. The reason is
-the variable exponent: $(N/K)^{\theta}$ raises one input to the power of another, which the repo's
-node vocabulary does not express as a fixed structural pattern the way `square` or `sqrt` do. The
-case therefore contributes to the error metrics and the structural-distance statistics, and the
-exact-recovery scorer reports "not checkable" rather than zero. Reporting zero would be false: the
-search was never given a comparable object to be scored against.
+    mul( mul(r, N), sub(1, exp(mul(theta, log(div(N, K))))) )
+
+The variable exponent is the interesting part. $(N/K)^{\theta}$ raises one input to the power of
+another, and the operator set has no general power primitive, deliberately: an unrestricted power is
+the fastest way for a search to manufacture an unphysical expression that fits. The truth is
+therefore written through the `_pow_var` helper as $e^{\theta\ln(N/K)}$. That identity is exact
+wherever the base is strictly positive, which the generator guarantees by sampling $N$ as $K$ times
+a factor bounded away from zero. It is not a general substitute for a power operator and the module
+says so.
 
 ## Recovery regime: structure
 

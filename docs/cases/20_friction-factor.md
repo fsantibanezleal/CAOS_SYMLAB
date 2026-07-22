@@ -49,12 +49,17 @@ $$f = \frac{0.25}{\left[\log_{10}\!\left(\dfrac{\epsilon/D}{3.7} + \dfrac{5.74}{
 
 valid for $5000 \le \mathrm{Re} \le 10^{8}$ and $10^{-6} \le \epsilon/D \le 0.05$.
 
-`ground_truth_known` is true.
+`ground_truth_known` is true, and a `truth_node` IS defined, so the equivalence test runs and this
+case contributes to the exact recovery rate:
 
-**No machine-comparable truth is shipped.** No `truth_node` is defined for this generator, so the
-equivalence test has no expression tree to score against. The case contributes to the error metrics
-and the structural-distance statistics; the exact-recovery scorer reports "not checkable" rather than
-zero, and reporting zero would be false.
+    div( 0.25,
+         square( log10( add( div(relrough, 3.7), div(5.74, exp(0.9*log(Re))) ) ) ) )
+
+Two rewrites are visible in that tree and both are exact on the sampled domain rather than
+approximations. $\log_{10}$ is written as $\ln(x)/\ln(10)$, because the operator set carries a
+natural logarithm only. $\mathrm{Re}^{0.9}$ is written through `_pow_const` as
+$e^{0.9\ln \mathrm{Re}}$, because there is no general power primitive; the Reynolds number is
+sampled strictly positive, so the identity holds everywhere the generator draws.
 
 ## Recovery regime: structure+constants
 

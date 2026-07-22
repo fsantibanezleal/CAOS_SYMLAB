@@ -1,7 +1,7 @@
 # data-pipeline/, the offline engine (`symlab`)
 
 Rename `symlab` → `<slug>lab` per product. The **single source of physics/algorithm truth**; `frontend/` and
-`app/` consume it, never re-implement it. Its own venv: **`.venv-pipeline`** (heavy SOTA engines, local-only).
+`app/` consume it, never re-implement it. Installed into the repository's single venv, `.venv`, from `requirements-precompute.txt`. There is no separate heavy-engine venv: the search is hand-written numpy so the same modules run in the browser.
 
 ## Layout (the package lives directly under `data-pipeline/`)
 - `symlab/pipeline.py`, orchestrator + CLI (`python -m symlab.pipeline [all|<case>] [--seed N]`)

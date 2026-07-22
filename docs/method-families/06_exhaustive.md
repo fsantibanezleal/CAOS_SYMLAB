@@ -22,8 +22,10 @@ watched shrinking as the constraints tighten.
   expression STRUCTURES are exhaustively covered.
 - Any published codelength. The description length used is the one this build defines and states.
 
-If the enumeration hits its cap, the certificate is marked INVALID and says so explicitly. A
-truncated enumeration proves nothing and must never be presented as if it did.
+If the enumeration hits its cap of 200 000 distinct expressions, the certificate comes back with
+`complete = False` and an extra caveat saying in words that the completeness claim does not hold for
+that run and must not be presented as a certificate. A truncated enumeration proves nothing and must
+never be presented as if it did.
 
 ## How the enumeration stays finite
 
@@ -35,6 +37,16 @@ operators in the set. Constants enter as a single placeholder leaf and are fitte
 
 573 expressions enumerated over four operators up to 5 nodes, 546 admissible after the interval
 guard, recovering `x0 * x1` exactly at zero mean squared error, with the certificate complete.
+
+The conditions, so the count can be reproduced rather than trusted: the `arithmetic` primitive set
+(add, sub, mul, div), TWO input variables plus the constant placeholder, `max_nodes = 5`, and the
+interval guard on with a margin of 0.25. Re-running that returns exactly 573 enumerated, 546
+admissible, 370 of them carrying a constant to fit, `complete = True`, and `(x0 * x1)` at a loss of
+0.0. The count is a function of the variable count as much as of the operator set: three variables
+is a different number and the two are not comparable.
+
+The pipeline's own certificate stage runs the same enumeration at `max_nodes = 7` over that
+primitive set.
 
 ## Reference
 

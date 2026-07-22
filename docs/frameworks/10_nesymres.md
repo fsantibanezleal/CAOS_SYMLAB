@@ -61,8 +61,9 @@ repository's calling convention, and a fabricated API call would be worse than a
 
 Not used. There is no PyTorch dependency in any requirements file
 ([`requirements.txt`](../../requirements.txt) is numpy only,
-[`requirements-precompute.txt`](../../requirements-precompute.txt) adds numpy, scipy, two spreadsheet
-readers, `sreval` and sympy), no checkpoint in `models/`, and no inference stage that would load one.
+[`requirements-precompute.txt`](../../requirements-precompute.txt) adds two spreadsheet readers,
+`sreval[symbolic]` and sympy), no checkpoint in `models/`, whose only file is a four-term linear
+least-squares surrogate, and no inference stage that would load one.
 
 The reasons are scope rather than merit. This lab's argument is about the classical spine and about
 the measurement of recovery, and a pretrained transformer is a different product: it needs a weights

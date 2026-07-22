@@ -29,8 +29,9 @@ MIT. Same licence as this repo. No obstacle to depending on it, vendoring it or 
 ## Install reality
 
 `pip install pyoperon`. Version 0.6.1 released 2026-03-01, with wheels for CPython 3.10 through 3.14
-on `win_amd64`, manylinux x86_64, and macOS arm64 and x86_64. The core repository was last pushed
-2026-07-21, 211 stars.
+on `win_amd64`, manylinux x86_64 and macOS arm64 (macOS 14 and 15). Read from the PyPI API on
+2026-07-22: there is no macOS x86_64 wheel, which an earlier version of this card claimed, so an
+Intel Mac is a source build. The core repository was last pushed 2026-07-21, 211 stars.
 
 That wheel matrix is a genuine advantage over FEAT, ellyn and GP-GOMEA, which are Linux-first source
 builds. No GPU. Not Pyodide-safe: it is a native extension, so it cannot go in the browser lane.
@@ -89,7 +90,7 @@ to add, and its MIT licence means there is nothing to resolve first.
 - Burlacu, B., Kronberger, G. and Kommenda, M. (2020). Operon C++: an efficient genetic programming
   framework for symbolic regression. GECCO 2020 Companion, pages 1562-1570,
   doi:10.1145/3377929.3398099.
-- Burlacu, B. (2025). Zobrist hashing for expression deduplication in genetic programming.
+- Burlacu, B. (2025). Zobrist Hash-based Duplicate Detection in Symbolic Regression.
   arXiv:2508.13859. Source of the 34% figure.
 - Kommenda, M., Burlacu, B., Kronberger, G. and Affenzeller, M. (2020). Parameter identification for
   symbolic regression using nonlinear least squares. Genetic Programming and Evolvable Machines

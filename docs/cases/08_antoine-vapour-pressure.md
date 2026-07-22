@@ -55,11 +55,15 @@ The structure to recover is the RECIPROCAL-SHIFTED temperature form $B/(C + T)$.
 reciprocal and not a plain linear term: the shift $C$ moves the pole away from absolute zero and is
 what lets three constants cover a hundred-degree span.
 
-**No machine-comparable truth is shipped.** The generator carries `truth_latex` and `truth_infix` but
-no `truth_node`, so the equivalence test has no expression tree to compare a candidate against. This
-case contributes to the error metrics and to the structural-distance statistics; the exact-recovery
-scorer reports "not checkable" rather than zero. Reporting zero would be false, because the search
-was never scored against a comparable object.
+**A machine-comparable truth IS shipped.** The generator carries a `truth_node` alongside
+`truth_latex` and `truth_infix`, so the equivalence test runs and this case contributes to the exact
+recovery rate:
+
+    exp( mul(ln10, sub(8.07131, div(1730.63, add(233.426, T)))) )
+
+The base-10 power is written as $e^{\ln(10)\,x}$ because the operator set has no general power
+primitive. That is the same identity `_pow_const` uses elsewhere in the module, and it is exact on
+the sampled domain rather than an approximation.
 
 ## Recovery regime: structure+constants
 
@@ -78,10 +82,16 @@ The constants are valid from -20 to 100 degC. Outside that window they are simpl
 approximately right, because a fitted Antoine set is an interpolation over the range it was regressed
 on.
 
-The recorded caveat states the interesting variant: a single constant set cannot cover the whole
-liquid range of water, so a two-window variant asks the search to DETECT that, which is a change-point
-question dressed as a fitting question. An engine that reports one smooth expression with a good
-aggregate error across both windows has answered the wrong question.
+The recorded caveat describes a two-window variant: a single constant set cannot cover the whole
+liquid range of water, so a variant that spans both windows would ask the search to DETECT that,
+which is a change-point question dressed as a fitting question. An engine that reports one smooth
+expression with a good aggregate error across both windows has answered the wrong question.
+
+**That variant is NOT shipped.** The nine chips on this case are the eight ladder rungs plus the
+sparse-regression arm, all of them SEARCH configurations over the same data; nothing in the registry
+changes the sampled window. The generator draws temperature on -20 to 100 degC only. The caveat
+describes intended work, and the page says so rather than letting "variant" be read as something a
+reader can click.
 
 ## Provenance
 

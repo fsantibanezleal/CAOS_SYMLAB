@@ -4,8 +4,11 @@ Every other page in this folder describes a mechanism inside a genetic-programmi
 describes a search that does no evolution at all, and it is here because a ladder made only of GP
 rungs is an excellent ablation of GP and a poor survey of symbolic regression.
 
-Implemented in [`search/sparse.py`](../../data-pipeline/symlab/search/sparse.py) and run as the
-`sparse-regression` arm on every case.
+Implemented in [`search/sparse.py`](../../data-pipeline/symlab/search/sparse.py). `ladder_variants`
+in the case registry appends the `sparse-regression` arm to every case it builds, and every case in
+the registry is built through it, so the arm is declared everywhere rather than on a hand-picked
+subset. At the time of this audit 25 of the 39 committed case artifacts carry it; the other 14
+predate the arm and will pick it up on their next bake.
 
 ## The method
 
@@ -18,8 +21,10 @@ deliberately modest: the constant, and for each input $x_j$ the terms $x_j$, $x_
 $\sqrt{x_j}$, $\log x_j$ and $e^{x_j}$, plus every pairwise product $x_a x_b$.
 
 Selection is **sequentially thresholded least squares** (STLSQ): fit the full library, delete every
-coefficient below a threshold, refit on what survives, repeat until the support stops changing.
-Sweeping the threshold sweeps the accuracy-versus-complexity front.
+coefficient below a threshold, refit on what survives, repeat until the support stops changing, or
+until a bound of 12 refits that exists so a pathological input cannot spin. Sweeping the threshold
+sweeps the accuracy-versus-complexity front; the sweep is eleven fixed fractions from 1e-6 to 0.7,
+each multiplied by the root-mean-square of the target.
 
 This is the family behind FFX (McConaghy, 2011) and, for dynamical systems, SINDy (Brunton, Proctor
 and Kutz, 2016). Neither library is vendored here, for the same reason the GP engine is
@@ -36,8 +41,10 @@ front regardless of the seed passed in.
 **The front comes out by construction** rather than being searched for. One model per sparsity
 level, already ordered.
 
-**It is nearly free.** On a 400-row case it returns in single-digit milliseconds, against tens of
-seconds for the GP rungs. Any claim that a GP rung "found" something has to beat this first.
+**It is nearly free.** Measured over the eighteen first-principles generators at 400 rows, it
+returns in 2.0 to 31.2 milliseconds, median about 5. The GP rungs on the committed artifacts run
+from around a second to 856 seconds on the same machine. Any claim that a GP rung "found" something
+has to beat this first.
 
 ## What it cannot do, stated plainly
 
@@ -51,10 +58,22 @@ search the space of compositions, and running both families over the same cases 
 the size of the gap between "a good linear combination of known shapes" and "the law".
 
 On the first-principles generators the arm recovers the Lotka-Volterra right-hand side essentially
-exactly, because that law IS a polynomial and therefore is in the span. On the saturating and
-exponential laws it reaches R2 in the 0.85 to 0.99 range while the structural distance to the true
-law stays near 1.0: a good fit, the wrong structure, which is the phenomenon this entire lab is
-built to report.
+exactly, because that law IS a polynomial and therefore is in the span: R2 1.0000 at a structural
+distance of 0.111 to the declared truth. It is the only generator where both numbers land there.
+
+Across the other fifteen generators that declare a truth expression, measured at 400 rows without
+noise, the pattern splits rather than sitting in one band:
+
+| Regime | R2 | Structural distance |
+|---|---|---|
+| Lotka-Volterra, in the span | 1.0000 | 0.111 |
+| The twelve saturating, power and mixing laws (Monod, heat-exchanger NTU, Bond, Kick, both Nusselt correlations, flotation kinetics, Antoine, ASM1, CSTR, theta-logistic, two-product recovery) | 0.839 to 0.997 | 0.68 to 0.96 |
+| Exponential and strongly nested laws (Arrhenius, Stokes settling, pump affinity) | 0.301 to 0.602 | 0.94 |
+
+So the summary "a good fit with the wrong structure" is right for the middle band and wrong for the
+bottom one, where the fit is not good either: on the Arrhenius law the arm reaches R2 0.301. The
+structural distance stays high almost everywhere, which is the phenomenon this lab is built to
+report, but the accuracy it comes with depends on how far outside the span the law sits.
 
 ## Two ways it failed silently, and what stops them now
 

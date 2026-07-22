@@ -1,7 +1,9 @@
 # Framework card, sreval
 
-**Status in this repo: USED.** It is the only symbolic-regression package this repo depends on, and it
-is imported by the evaluation stage.
+**Status in this repo: USED.** It is the only symbolic-regression package this repo depends on, and
+the evaluation stage CALLS it: `structural_distance` in `stages/evaluate.py` delegates to
+`sreval.equivalence.structural_distance` whenever the package is installed. The usage snippet below
+was checked against the installed 0.1.0 API on 2026-07-22.
 
 ## What it is, and the one thing it does better
 
@@ -50,19 +52,21 @@ that adds `sympy>=1.12`. No compiler, no Julia, no GPU.
 
 Source repository: `github.com/fsantibanezleal/CAOS_SREVAL`. Its CHANGELOG records release 0.01.000
 on 2026-07-22 and states that publishing to PyPI runs through OIDC trusted publishing with no stored
-token.
+token. The package's own `__version__` is the `0.01.000` house format; PyPI carries the PEP 440 form
+of the same release, `0.1.0`, uploaded 2026-07-22.
 
-This repo currently pins the git ref rather than a released version, in
-[`requirements-precompute.txt`](../../requirements-precompute.txt):
+The git ref is gone from the manifest. [`requirements-precompute.txt`](../../requirements-precompute.txt)
+now pins:
 
 ```
-sreval[symbolic] @ git+https://github.com/fsantibanezleal/CAOS_SREVAL@main
-sympy>=1.12             # required by sreval's symbolic equivalence test
+sreval[symbolic]==0.1.0
+sympy==1.14.0            # required by sreval's symbolic equivalence test
 ```
 
-The pin carries a comment saying it swaps to a version pin once the first PyPI release lands. Until
-that swap happens, a build of this repo is not reproducible from a version number alone, which is a
-known and stated gap rather than an accident.
+One wrinkle a reader reproducing this build should know: the copy installed in this repo's `.venv`
+was installed from the git ref before the release, so its `direct_url.json` records
+`git+https://github.com/fsantibanezleal/CAOS_SREVAL@main` at commit `8b9af3b` while reporting version
+0.1.0. A clean `pip install -r requirements-precompute.txt` resolves the same version from PyPI.
 
 ## Usage
 
@@ -102,8 +106,21 @@ from sreval.equivalence import structural_distance as sreval_structural_distance
 The import sits inside a `try` block that sets `HAS_SREVAL`, because the live (Pyodide) lane never
 installs it and never needs it: the browser replays or reruns the search, and equivalence scoring is
 an offline concern. The stage carries its own numerical probe constants
-(`NUMERICAL_PROBE_POINTS = 512`, `NUMERICAL_TOLERANCE = 1e-6`, `ACCURACY_R2_THRESHOLD = 0.999`) and
-delegates the protocol itself so that the scoring rule exists in exactly one auditable place.
+(`NUMERICAL_PROBE_POINTS = 512`, `NUMERICAL_TOLERANCE = 1e-6`, `ACCURACY_R2_THRESHOLD = 0.999`).
+
+Exactly how much is delegated, stated precisely because this card once claimed more than was true:
+
+| Test | Where it runs |
+|---|---|
+| Structural edit distance | `sreval.equivalence.structural_distance`, with the local loop kept as the browser-lane fallback |
+| Symbolic | local, `sympy.simplify` on the difference, inside `stages/evaluate.py` |
+| Numerical | local, a 512-point probe inside `stages/evaluate.py` |
+
+So one of the three tests delegates today, not the protocol as a whole, and `sreval.equivalence`
+carries `symbolic_equivalent`, `numerical_equivalent` and `check` that this repo does not call. The
+second imported name in the snippet above, `sreval.metrics`, is bound and never referenced anywhere
+in the module: it is the same unused-import shape this card was written to correct, at a smaller
+scale, and it is recorded here rather than left for the next reader to find.
 
 The package was extracted from this lab rather than written for it, for a licence reason as much as a
 design one: the reference implementation of this protocol is SRBench's `symbolic_utils.py`, which is

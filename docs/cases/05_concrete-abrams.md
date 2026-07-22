@@ -52,10 +52,14 @@ Abrams' law states that strength depends on the water-to-cement RATIO,
 
 $$f_c \approx \frac{A}{B^{w/c}}$$
 
-with $A$ and $B$ material constants, combined with a logarithmic maturity term in age, commonly
-written in engineering practice as
+with $A$ and $B$ material constants, combined with a logarithmic maturity term in age. The registry's
+`ground_truth_latex` states only that there is a $\ln(t)$ maturity term. One common way to write it
+is
 
 $$f_c(t) \approx f_{c,28}\,\frac{\ln t}{\ln 28}$$
+
+**UNVERIFIED:** no primary source for that particular normalisation was resolved during the research
+phase. What is verified is the presence of a logarithm of age, not this exact expression.
 
 **Neither the ratio nor the logarithm is an input column.** The search is handed water and cement as
 separate masses and age as a plain number of days; to reach the published form it has to CONSTRUCT
@@ -105,11 +109,12 @@ is recorded as work not done.
 
 ## A note on the target the registry carries
 
-The registry's `ground_truth_latex` for this case is the Abrams form with the maturity term. The
-loader also sets a `ground_truth_latex`, and the string in `loaders.py` contains mangled escape
-sequences (`pprox`, `rac`, `ext`) where backslashes were lost. The registry string is the correct
-one; the loader string is a defect in the docs pipeline rather than in the data, and it is recorded
-here rather than quietly patched, because this page is not the place to change code.
+Both the registry and the loader set a `ground_truth_latex` for this case, and the two strings differ
+in whitespace only. An earlier version of this page reported the loader's string as shipping mangled
+control bytes (`pprox`, `rac`, `ext`, from backslashes eaten by a non-raw Python string). That defect
+has been fixed: the literal in `load_concrete` is a raw string today and renders correctly, and
+`tests/test_no_control_characters.py` guards the class of bug. The note is kept because the failure
+is worth remembering, not because it is still present.
 
 ## References
 

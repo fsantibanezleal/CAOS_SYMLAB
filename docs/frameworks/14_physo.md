@@ -38,11 +38,14 @@ is no licence obstacle.
 
 ## Install reality
 
-`pip install physo`, also on conda-forge. Python 3.12+. Tested on Linux, macOS (ARM and Intel) and
-Windows, with parallel execution modes and documentation at physo.readthedocs.io. Release history:
-2023-03 initial, 2023-08 dimensional-analysis acceleration, 2024-02 uncertainty-aware fitting,
-2024-05 Class SR, 2024-06 documentation overhaul. Version 1.1.0 released 2024-06-14. A frozen v1.0.0
-is archived on Zenodo at doi:10.5281/zenodo.8415435.
+`pip install physo`, also on conda-forge. Tested on Linux, macOS (ARM and Intel) and Windows, with
+parallel execution modes and documentation at physo.readthedocs.io. Release history: 2023-03
+initial, 2023-08 dimensional-analysis acceleration, 2024-02 uncertainty-aware fitting, 2024-05
+Class SR, 2024-06 documentation overhaul. Read from the PyPI API on 2026-07-22, the current release
+is 1.1.11, uploaded 2025-08-09, declaring `requires-python >= 3.8`. An earlier version of this card
+said "Python 3.12+" and named 1.1.0 of 2024-06-14 as the current version; neither matches the
+package metadata. A frozen v1.0.0 is archived on Zenodo at doi:10.5281/zenodo.8415435, which
+resolves to "PhySO-v1.0.0", Zenodo, 2023.
 
 Of all the physics-aware options in the research, this is the best engineered: a real package, a real
 release history, real cross-platform testing, and a permissive licence.
@@ -69,8 +72,9 @@ Three reasons the dependency was not taken despite the research's recommendation
 1. The ablation requires one engine. Rung 8 has to differ from rung 7 by exactly one switch, and a
    second engine with its own generator, its own selection and its own reward would make the
    comparison meaningless.
-2. The live lane installs nothing beyond what the browser already has. `symlab` imports only the
-   standard library and numpy, which is what lets the same modules run offline and under Pyodide.
+2. The live lane installs nothing beyond what the browser already has. The three packages it loads
+   (`symlab/model/`, `symlab/search/`, `symlab/cases/`) import only the standard library and numpy,
+   which is what lets the same modules run offline and under Pyodide.
 3. This build has no reinforcement-learning component at all, so adopting PhySO would mean adopting a
    whole search paradigm, not a units feature.
 

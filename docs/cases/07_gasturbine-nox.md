@@ -38,25 +38,27 @@ here is about the data or about the operator set.
 
 ## Inputs
 
-Nine process variables. Verified ranges from the research phase.
+Nine process variables. Ranges re-measured from the loader output over all 36,733 rows on
+2026-07-22; three cells of this table were wrong before that check and are corrected here.
 
 | Column | Meaning | Unit | Range |
 |---|---|---|---|
-| `AT` | ambient temperature | degC | -6.23 to 37.10 |
-| `AP` | ambient pressure | mbar | 985.85 to 1036.56 |
-| `AH` | ambient humidity | % | 24.08 to 100.20 |
-| `AFDP` | air filter differential pressure | mbar | 2.09 to 7.61 |
-| `GTEP` | gas turbine exhaust pressure | mbar | 17.70 to 40.72 |
-| `TIT` | turbine inlet temperature | degC | 1000.85 to 1100.89 |
+| `AT` | ambient temperature | degC | -6.2348 to 37.103 |
+| `AP` | ambient pressure | mbar | 985.85 to 1036.60 |
+| `AH` | ambient humidity | % | 24.085 to 100.20 |
+| `AFDP` | air filter differential pressure | mbar | 2.0874 to 7.6106 |
+| `GTEP` | gas turbine exhaust pressure | mbar | 17.698 to 40.716 |
+| `TIT` | turbine inlet temperature | degC | 1000.80 to 1100.90 |
 | `TAT` | turbine after temperature | degC | 511.04 to 550.61 |
 | `TEY` | turbine energy yield | MWh | 100.02 to 179.50 |
-| `CDP` | compressor discharge pressure | mbar | 9.85 to 15.16 |
-| `NOX` | nitrogen oxides (target) | mg/m^3 | 25.90 to 119.91 |
+| `CDP` | compressor discharge pressure | mbar | 9.8518 to 15.159 |
+| `NOX` | nitrogen oxides (target) | mg/m^3 | 25.905 to 119.91 |
 
-The turbine inlet temperature range is worth reading twice: 100 degrees across the whole five-year
-record, on an absolute scale near 1,350 K. The exponential argument therefore varies over a narrow
-window, and a search can approximate the exponential with a steep polynomial inside that window and
-extrapolate catastrophically outside it. The extrapolation split is what exposes that.
+The turbine inlet temperature range is worth reading twice: 100.1 degrees across the whole five-year
+record, which on the absolute scale is 1,273.95 K to 1,374.05 K. The exponential argument therefore
+varies over a narrow window, and a search can approximate the exponential with a steep polynomial
+inside that window and extrapolate catastrophically outside it. The extrapolation split is what
+exposes that.
 
 ## Is there a published law
 

@@ -75,9 +75,11 @@ Not applicable, recorded as `unknown`.
 | Citation | Quality Prediction in a Mining Process, OpenML dataset 43311, CC0 Public Domain. Real froth flotation plant, 20-second process readings with hourly laboratory assays |
 | Verified on | 2026-07-21, URL corrected 2026-07-22 |
 
-The data originate as a Kaggle upload (Eduardo Magalhaes, 2017). The Kaggle page is a JavaScript
-application that returned no extractable text on repeated fetches, so the Kaggle-side licence is
-UNVERIFIED and the download needs an account. The OpenML mirror solves both problems: the licence
+The data originate as a Kaggle upload by Eduardo Magalhaes in 2017, recorded in the research dossier
+with the dataset URL. The Kaggle page is a JavaScript application that returned no extractable text
+on repeated fetches, so the Kaggle-side licence is UNVERIFIED and the download needs an account. The
+OpenML `licence` field, read through the REST API during the research phase, is what the CC0 verdict
+rests on. The OpenML mirror solves both problems: the licence
 field is machine-readable and the download is anonymous.
 
 This is the most important mining dataset in the set, and the research phase found the area to be the
@@ -98,17 +100,26 @@ carries a CONTENT GUARD: it asserts that the attribute set contains `%_Iron_Feed
 any is missing. It also raises if zero data rows parsed.
 
 **2. The target is BROADCAST, and the loader refuses row-level access.** The concentrate assays are
-hourly laboratory measurements repeated verbatim across every 20-second process row, about 13.5
-repeats per distinct value, over roughly 4,000 distinct hourly timestamps. Fitting at row level leaks
-the target 13.5 times over: the same assay appears in both the training and the test split. The
-loader groups rows by the timestamp string truncated to the hour, averages the process variables
-within each hour, and returns only the aggregated table. Row-level access is not offered at all, so
-the leak is structurally unavailable rather than merely discouraged.
+hourly laboratory measurements repeated verbatim across every 20-second process row. The loader's
+defect string states "about 13.5 repeats per distinct value" and is quoted here as it stands;
+re-measured on the vault copy on 2026-07-22 with the loader's own quote-aware parser, the figure is
+55,569 distinct `%_Silica_Concentrate` values over 737,453 rows, which is 13.27 repeats each. There
+are exactly 4,097 distinct timestamps and 4,097 distinct hour keys, at exactly 180.0 rows per hour.
+Fitting at row level leaks the target thirteen times over: the same assay appears in both the
+training and the test split. The loader groups rows by the timestamp string truncated to the hour,
+averages the process variables within each hour, and returns only the aggregated table. Row-level
+access is not offered at all, so the leak is structurally unavailable rather than merely discouraged.
+
+The source registry's defect string says "over only 3,981 distinct timestamps". That count came from
+a naive comma split during the research phase and does not describe the file the loader reads; the
+stricter parser finds 4,097, which is also the row count of the aggregated table the registry
+declares. Both numbers are stated here rather than one being quietly replaced.
 
 **3. The decimal separator is a comma INSIDE quoted fields.** A naive split on commas corrupts every
 number and produces wrong results rather than an error. The loader parses field by field honouring
 the quotes, then replaces the comma with a point. It counts malformed rows and writes the count into
-the defect string; the baked manifest records 0 malformed rows skipped.
+the defect string; the baked manifest records 0 malformed rows skipped, and a direct re-parse on
+2026-07-22 confirms all 737,453 data rows parse cleanly.
 
 **4. Both concentrate assays are excluded from the inputs.** Predicting silica from iron in the same
 concentrate is reading the answer off the other half of the same laboratory measurement, not soft
@@ -119,7 +130,10 @@ A fifth line is added by the preprocessor: deterministic subsampling to 4,000 ro
 ## The warning the contract raises anyway
 
 Even after hourly aggregation, the ingestion contract reports that the target takes fewer distinct
-values than there are rows, with a repeat ratio above 5, and raises the leakage warning:
+values than there are rows: 719 distinct values over the 4,097 loaded rows, and 709 over the 4,000
+kept after subsampling, which is the repeat ratio of 5.642 recorded in
+`manifests/flotation-silica.json`. That is above the contract's threshold of 3.0, so it raises the
+leakage warning:
 
 > if those repeats come from a coarser measurement grid, fitting at this resolution leaks the target
 
@@ -130,6 +144,10 @@ because the cause is understood would remove a tripwire that works.
 ## References
 
 - Quality Prediction in a Mining Process. OpenML dataset 43311, CC0 1.0 Public Domain.
-- Measured during the research phase on the parsed file, and quoted here as a measurement rather than
-  a published value: 699,816 of 737,453 raw rows parse cleanly, and `corr(Fe_feed, Si_feed)` is
-  -0.9720. That correlation is the subject of case [11](11_ore-mineralogy-closure.md).
+- Measured, and quoted as measurements rather than as published values. The research phase reported
+  699,816 of 737,453 raw rows parsing cleanly; that was with a naive `,` delimiter, and the dossier
+  says as much ("the remainder need a stricter parser"). The loader's quote-aware parser, re-run on
+  2026-07-22, reads all 737,453 with zero failures, so the shipped case uses the whole file. The
+  research phase also measured `corr(Fe_feed, Si_feed)` as -0.9720 at row level; the hourly
+  aggregate this case ships gives -0.9718. That correlation is the subject of case
+  [11](11_ore-mineralogy-closure.md).

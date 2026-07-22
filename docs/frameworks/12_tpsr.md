@@ -67,8 +67,10 @@ into the generator. Multi-objective survival on (loss, complexity) is
 front is built from the run archive in
 [`search/engine.py`](../../data-pipeline/symlab/search/engine.py), and the front is reduced to one
 answer by description length rather than by best accuracy
-([`model/complexity.py`](../../data-pipeline/symlab/model/complexity.py), and `description_length`
-in `sreval`). Choosing the most accurate member of a front is the field's routine way of inflating a
+(`description_length` in [`model/complexity.py`](../../data-pipeline/symlab/model/complexity.py),
+which is what `select_by_description_length` in the evaluation stage calls; `sreval` ships a
+description length of its own and this repo does not call it). Choosing the most accurate member of
+a front is the field's routine way of inflating a
 result, because the most accurate member is usually the most over-parameterised one.
 
 If this lab ever adds a neural rung, TPSR is the shape it should take: a search layer, not a

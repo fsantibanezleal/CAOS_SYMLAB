@@ -1,7 +1,10 @@
 # Framework card, SymPy
 
-**Status in this repo: USED, indirectly.** It is pulled in by `sreval[symbolic]` for the symbolic
-equivalence test. No module under `data-pipeline/symlab/` imports it.
+**Status in this repo: USED, directly.** [`stages/evaluate.py`](../../data-pipeline/symlab/stages/evaluate.py)
+imports it inside `_to_sympy` and `symbolic_equivalence` to run this build's own symbolic verdict,
+and `sreval[symbolic]` declares it as well for the symbolic test inside that package. An earlier
+version of this card said no module under `data-pipeline/symlab/` imported it. That was wrong: the
+import is lazy and local to two functions, not absent.
 
 ## What it is, and the one thing it does better
 
@@ -26,9 +29,10 @@ License`). Permissive, compatible with an MIT product, usable as a dependency wi
 recipe for it, so it is installable in a browser through micropip, which matters for any lab that
 wants final simplification and LaTeX rendering client-side.
 
-Pinned in this repo as `sympy>=1.12` in [`requirements-precompute.txt`](../../requirements-precompute.txt),
-as a stated requirement of `sreval`'s symbolic test. The version resolved into the current
-environment is 1.14.0.
+Pinned in this repo as `sympy==1.14.0` in [`requirements-precompute.txt`](../../requirements-precompute.txt),
+which is the version installed in the repo's `.venv`. `sreval` declares the looser `sympy>=1.12` for
+its own `symbolic` extra; the exact pin is this repo's, because a lane whose numbers are committed
+cannot float its simplifier version.
 
 ## Usage
 
@@ -50,16 +54,20 @@ cancellation.
 
 ## Applying it here
 
-Not directly. This repo's expression handling is its own: trees are built and walked in
+Only at the scoring boundary. This repo's expression handling is its own: trees are built and walked in
 [`data-pipeline/symlab/model/expr.py`](../../data-pipeline/symlab/model/expr.py), canonical and
 semantic keys for deduplication live there (`canonical_key`, `semantic_key`), and LaTeX is generated
 by [`model/latex.py`](../../data-pipeline/symlab/model/latex.py). The reasons are recorded in
 [architecture/04_live-lane-pyodide.md](../architecture/04_live-lane-pyodide.md): the live lane loads
-only `symlab/model/`, and every extra runtime dependency in that path is a download the browser has
-to make before a search can start.
+`symlab/model/`, `symlab/search/` and `symlab/cases/` from `frontend/public/engine/`, and every extra
+runtime dependency in that path is a download the browser has to make before a search can start.
+None of those three packages imports sympy, which is what keeps that path numpy-only.
 
-SymPy therefore appears in exactly one place in this build, as the engine behind `sreval`'s symbolic
-verdict in [`stages/evaluate.py`](../../data-pipeline/symlab/stages/evaluate.py).
+SymPy therefore appears in exactly one module of this build,
+[`stages/evaluate.py`](../../data-pipeline/symlab/stages/evaluate.py), where
+`symbolic_equivalence` calls `sympy.simplify` on the difference between the candidate and the truth.
+That verdict is computed here rather than delegated to `sreval`, which offers its own
+`symbolic_equivalent` and is not called for it.
 
 ## Caveats
 

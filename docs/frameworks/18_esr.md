@@ -26,8 +26,13 @@ of adversarial finding a lab should be willing to publish.
 
 ## Licence, and whether this MIT repo may use it
 
-MIT (`github.com/DeaglanBartlett/ESR`, copyright 2022 Deaglan J. Bartlett). Compatible with this
-repo. There is no licence obstacle; the obstacles are distribution size and scope.
+MIT, but declared rather than shipped, and the difference matters for a repo that has to be able to
+point at a file. Read on 2026-07-22: `github.com/DeaglanBartlett/ESR` carries NO `LICENSE` file in
+its root, GitHub's licence endpoint returns none for it, and the only declaration is in `setup.py`,
+which sets `license='MIT licence'` and the classifier `'License :: MIT License'`. Nothing here is
+copied into this repo, so nothing turns on it today; if any ESR code were ever vendored, that file
+would have to exist first. The earlier reading of this card, "MIT, copyright 2022 Deaglan J.
+Bartlett", asserted a copyright line that no licence file carries.
 
 ## Install reality
 
@@ -55,7 +60,9 @@ description-length ranking. The deep page is
 
 Measured in this build: 573 expressions enumerated over four operators up to 5 nodes, 546 admissible
 after the interval guard, recovering `x0 * x1` exactly at zero mean squared error, with the
-certificate complete.
+certificate complete. Reproduced on 2026-07-22 at the conditions that make the count meaningful:
+the `arithmetic` primitive set, two input variables plus the constant placeholder, `max_nodes = 5`,
+guard margin 0.25.
 
 Three differences from ESR that must not be blurred:
 
