@@ -17,6 +17,7 @@ import { useEffect, useMemo, useRef } from 'react';
 
 import type { ParetoMember, VariantScore } from '../lib/contract.types';
 import { formatR2 } from '../lib/format';
+import { isRecovered } from '../lib/recovery';
 
 /**
  * Mark the wrapper when its mathematics is wider than its box, so the fade and the scrollbar
@@ -150,12 +151,7 @@ export function ExpressionPanel({
   ) > 95;
 
   const eq = score.equivalence;
-  // Prefer the verdict the pipeline recorded. The fallback re-derives the same rule for artifacts
-  // baked before it was exported, and tests/test_recovery_verdict_is_one_rule.py asserts the two
-  // agree on every variant of every case, so this cannot drift silently.
-  const recovered = eq
-    ? (eq.recovered ?? (eq.symbolic !== null ? eq.symbolic : eq.numerical))
-    : null;
+  const recovered = isRecovered(eq);
 
   const verdict = !truthAvailable
     ? { key: 'none', text: es ? 'nada que comparar' : 'nothing to compare against' }

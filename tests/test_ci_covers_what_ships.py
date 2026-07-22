@@ -124,3 +124,24 @@ def test_the_smoke_bake_is_sandboxed(ci: str) -> None:
             f"the CI bake `{line.strip()}` writes the checked-out tree. It must set "
             "SYMLAB_OUTPUT_DIR, or it truncates the committed index and the next step fails."
         )
+
+
+def test_the_recovery_verdict_is_derived_in_one_place() -> None:
+    """No component may re-implement `symbolic ?? numerical` by hand.
+
+    The recovery verdict is the lab's central claim, and it was written out in four components. It is
+    a helper now (`frontend/src/lib/recovery.ts`), and this keeps it that way: the raw rule must not
+    reappear outside that file, or the next edit to one copy silently disagrees with the other three.
+    """
+    src = ROOT / "frontend" / "src"
+    pattern = re.compile(r"symbolic\s*!==\s*null\s*\?")
+    offenders = []
+    for path in src.rglob("*.ts*"):
+        if path.name == "recovery.ts":
+            continue
+        if pattern.search(path.read_text(encoding="utf-8")):
+            offenders.append(path.relative_to(ROOT).as_posix())
+    assert not offenders, (
+        f"the recovery rule is hand-written in {offenders}. Use isRecovered() from lib/recovery.ts, "
+        "so the verdict is decided in one place."
+    )

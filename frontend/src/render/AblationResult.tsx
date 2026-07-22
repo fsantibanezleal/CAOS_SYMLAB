@@ -23,6 +23,7 @@ import { useMemo } from 'react';
 
 import type { RunPayload } from '../lib/contract.types';
 import { formatR2 } from '../lib/format';
+import { isRecovered } from '../lib/recovery';
 
 interface RungRow {
   id: string;
@@ -49,13 +50,7 @@ function median(values: number[]): number | null {
 
 function recoveredIn(run: RunPayload, rungId: string): boolean | null {
   const variant = run.notes.variants.find((v) => v.id === rungId);
-  const eq = variant?.score.equivalence;
-  if (!eq || (eq.symbolic === null && eq.numerical === null)) return null;
-  const verdict = eq.symbolic !== null ? eq.symbolic : eq.numerical;
-  // Coerced rather than compared against `true`. Artifacts baked before the exporter stopped
-  // writing booleans as 0/1 carry a number here, and `1 === true` is false, which silently turned
-  // every recovery in this table into a non-recovery.
-  return Boolean(verdict);
+  return isRecovered(variant?.score.equivalence);
 }
 
 export function AblationResult({ runs, lang }: { runs: RunPayload[]; lang: 'en' | 'es' }) {

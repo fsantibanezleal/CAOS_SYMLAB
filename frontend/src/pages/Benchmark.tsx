@@ -2,6 +2,7 @@ import { Callout, Cite, Refs } from '@fasl-work/caos-app-shell';
 import { useEffect, useMemo, useState } from 'react';
 
 import { loadIndex, loadRun } from '../lib/data';
+import { isCheckable, isRecovered } from '../lib/recovery';
 import type { CaseIndex, RunPayload } from '../lib/contract.types';
 import { useLang } from '../lib/useLang';
 import { groupDigits } from '../lib/format';
@@ -50,20 +51,12 @@ export default function Benchmark() {
     // Recovery is counted over the configurations where it is CHECKABLE, never over all of them.
     // Dividing recoveries by the full row count would silently include problems that have no
     // published law to recover, which is the exact arithmetic this page exists to refuse.
-    const checkable = rows.filter((r) => {
-      const eq = r.score.equivalence;
-      return eq !== null && (eq.symbolic !== null || eq.numerical !== null);
-    });
-    const recovered = checkable.filter((r) => {
-      const eq = r.score.equivalence!;
-      return eq.symbolic !== null ? eq.symbolic : eq.numerical;
-    });
+    const checkable = rows.filter((r) => isCheckable(r.score.equivalence));
+    const recovered = checkable.filter((r) => isRecovered(r.score.equivalence));
     // Accuracy WITHOUT recovery, on the same configurations: the gap, as a count.
-    const fitButNotFound = checkable.filter((r) => {
-      const eq = r.score.equivalence!;
-      const found = eq.symbolic !== null ? eq.symbolic : eq.numerical;
-      return r.score.accuracy_solution && !found;
-    });
+    const fitButNotFound = checkable.filter(
+      (r) => r.score.accuracy_solution && !isRecovered(r.score.equivalence),
+    );
 
     return {
       variants: rows.length,
