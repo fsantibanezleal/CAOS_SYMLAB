@@ -6,8 +6,8 @@
 |---|---|---|
 | preprocess | `stages/preprocess.py` | read raw to apply **CONTRACT 1** (validate + outlier policy) |
 | feature_extraction | `stages/feature_extraction.py` | validated params to feature rows |
-| train | `stages/train.py` | fit the model to `models/` (OFFLINE; skippable; EXAMPLE = numpy lstsq surrogate) |
-| infer | `stages/infer.py` | run the engine to trace (EXAMPLE = SIR) |
+| train | `stages/train.py` | run the search: the ladder of configurations, each adding ONE mechanism |
+| infer | `stages/infer.py` | render each front member: LaTeX with node ids, tree, terms, influence |
 | evaluate | `stages/evaluate.py` | held-out, leakage-safe metrics (R²/RMSE) |
 | export | `stages/export.py` | **CONTRACT 2**, compact artifact + manifest |
 

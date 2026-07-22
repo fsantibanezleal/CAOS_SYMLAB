@@ -8,5 +8,7 @@ model training). Never required for the live/replay path.
 3. Document the engine in `docs/frameworks/<tool>/`.
 
 The committed artifacts are produced offline regardless of lane, so a GPU-only product still deploys as a static
-replay (the browser never needs the GPU). The template's EXAMPLE has no GPU step, `requirements-gpu.txt` is a
-commented placeholder.
+replay (the browser never needs the GPU). SymLab has no GPU step. The search is a population of small expression trees evaluated against at most a few
+thousand rows, which is memory-bandwidth bound on arrays far too small to repay a device transfer; the measured
+cost that matters is selection, not evaluation throughput. `requirements-gpu.txt` stays a commented placeholder
+for that reason rather than by omission.

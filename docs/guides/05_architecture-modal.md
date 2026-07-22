@@ -7,7 +7,7 @@ demo. The chrome (button + modal) is provided by the shared shell; each product 
 Binding decision: [`conventions/architecture/0-archetype/ADR-0058-in-app-architecture-modal.md`](../../../conventions/architecture/0-archetype/ADR-0058-in-app-architecture-modal.md)
 (in CAOS_MANAGE). Reference implementations: Veta and Circuita.
 
-## What you inherit from the template
+## What the shared shell provides
 
 - **Chrome**, `@fasl-work/caos-app-shell` (≥ **0.1.2**) exposes the ⓘ button + the `ArchitectureModal`. The
   `ShellConfig` gained an `architecture` field; when it is present the button appears, when absent it is hidden.

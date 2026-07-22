@@ -8,8 +8,11 @@ A product is only real if data flows through two **enforced** contracts. Both ar
 reason**, never silently coerced; suspicious-but-plausible rows are flagged (the flag is recorded in the
 manifest). This is what lets a third party point the tool at THEIR data instead of only replaying baked cases.
 
-EXAMPLE (SIR): columns `case_id,beta,gamma,N,I0[,days]`; ranges per `RANGES`; reject NaN/Inf/out-of-range/`I0>N`;
-flag `R0>20`. Full table: [`data/README.md`](../../data/README.md).
+In SymLab the ingestion contract is checked in `stages/preprocess.py` and refuses a dataset rather than letting a
+leaked number reach the search: non-finite values, constant input columns, and a target that takes so few
+distinct values relative to its row count that fitting at that resolution would leak it. The recorded defects
+travel with the dataset (rows dropped, folds ignored, aggregation applied, Git LFS pointers rejected) and are
+published in the artifact rather than tidied away. Full table: [`data/README.md`](../../data/README.md).
 
 ## CONTRACT 2, artifact (`pipeline to web`)
 `data-pipeline/symlab/core/{trace.py, manifest.py}`. Every run writes a compact trace (`example.trace/v1`) +

@@ -10,4 +10,7 @@ Key points:
 - Eligibility is decided by the [gate](03_the-gate.md); a case the gate marks `precompute` is replayed from the
   committed artifact instead.
 - **Replay is always the fallback** (ADR-0054): a product can ship with this lane dormant and still be fully
-  functional. The template's `frontend/src/pyodide/worker.ts` is a stub, wire Pyodide there per product.
+  functional. In SymLab the lane is wired and live: `frontend/src/live/search.worker.ts` loads Pyodide as a module worker and
+imports the same engine modules the offline pipeline runs, copied into `public/engine/` at build time by
+`copy-data.mjs`, which fails the build if one of them is missing. The worker uses a dynamic ESM import rather
+than `importScripts`, which a module worker does not support.
