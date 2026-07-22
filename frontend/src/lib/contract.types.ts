@@ -300,6 +300,8 @@ export interface CaseNotes {
   case_id: string;
   category: string;
   category_name: string;
+  /** The Spanish category name, produced by the registry so the taxonomy is bilingual at source. */
+  category_name_es?: string;
   name_en: string;
   name_es: string;
   summary_en: string;

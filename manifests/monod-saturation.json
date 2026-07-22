@@ -4,14 +4,14 @@
   "category": "B",
   "engine": {
     "package": "symlab",
-    "version": "0.03.000"
+    "version": "0.04.000"
   },
   "seed": 0,
   "artifact": {
     "path": "monod-saturation/run.json",
     "format": "json",
     "schema_version": "1.0.0",
-    "bytes": 167200
+    "bytes": 166937
   },
   "lane": "precompute",
   "data": {
@@ -43,43 +43,43 @@
     "n_test": 85,
     "n_extrapolation": 60
   },
-  "units_declared": 0,
+  "units_declared": false,
   "split_note": "extrapolation split holds out the lowest and highest 30 rows of 'a', so the training region is an interior box and the extrapolation rows lie outside the support the search ever saw",
   "variants": [
     {
       "id": "r1-koza-baseline",
-      "seconds": 0.124,
+      "seconds": 0.092,
       "evaluations": 480,
       "front_size": 5,
-      "selected_complexity": 7,
-      "test_r2": 0.52202503,
-      "accuracy_solution": 0,
-      "exact_recovery": 0,
-      "symbolic_test_decided": 1,
+      "selected_complexity": 8,
+      "test_r2": 0.22123374,
+      "accuracy_solution": false,
+      "exact_recovery": false,
+      "symbolic_test_decided": true,
       "irrelevant_features": 0
     },
     {
       "id": "r2-linear-scaling",
-      "seconds": 0.112,
+      "seconds": 0.118,
       "evaluations": 480,
-      "front_size": 5,
+      "front_size": 4,
       "selected_complexity": 5,
-      "test_r2": 0.50464777,
-      "accuracy_solution": 0,
-      "exact_recovery": 0,
-      "symbolic_test_decided": 1,
+      "test_r2": 0.30426501,
+      "accuracy_solution": false,
+      "exact_recovery": false,
+      "symbolic_test_decided": true,
       "irrelevant_features": 0
     },
     {
       "id": "r3-constant-tuning",
-      "seconds": 0.132,
+      "seconds": 0.108,
       "evaluations": 540,
-      "front_size": 3,
-      "selected_complexity": 9,
-      "test_r2": 0.57120035,
-      "accuracy_solution": 0,
-      "exact_recovery": 0,
-      "symbolic_test_decided": 1,
+      "front_size": 4,
+      "selected_complexity": 5,
+      "test_r2": 0.30426501,
+      "accuracy_solution": false,
+      "exact_recovery": false,
+      "symbolic_test_decided": true,
       "irrelevant_features": 0
     }
   ],
@@ -89,10 +89,10 @@
     "accuracy_solution_rate": 0.0,
     "exact_recoveries": 0,
     "exact_recovery_rate": 0.0,
-    "mean_structural_distance": 0.746,
+    "mean_structural_distance": 0.7798,
     "symbolic_test_failure_rate": 0.0,
     "test_disagreement_count": 0,
-    "total_seconds": 0.37,
+    "total_seconds": 0.32,
     "total_evaluations": 1500,
     "variants_with_irrelevant_features": 0
   }
