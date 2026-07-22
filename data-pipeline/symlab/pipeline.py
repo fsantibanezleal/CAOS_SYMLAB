@@ -24,6 +24,7 @@ from pathlib import Path
 
 from .cases.registry import Case, coverage_summary, list_cases
 from .core.contract import SCHEMA_VERSION
+from .cases.physics_truths import FEYNMAN_TRUTHS, INEXPRESSIBLE
 from .io.sources import FEYNMAN_SELECTION, STROGATZ_SELECTION
 from .stages import evaluate as evaluate_stage
 from .stages import export as export_stage
@@ -39,6 +40,52 @@ MANIFESTS = REPO_ROOT / "manifests"
 STAGES = ("preprocess", "feature_extraction", "train", "infer", "evaluate", "export")
 
 
+def _expanded_summary(label: str, dataset: str, es: bool) -> str:
+    """The summary for ONE expanded problem, rather than the suite's description of all of them.
+
+    An expanded case inherited its parent's text, so the page for a single Gaussian opened with
+    "Eighteen published physical laws, each with 100,000 sampled rows". The reader is looking at one
+    of them, and a description that counts eighteen is a false statement about what is on screen.
+    """
+    reason = INEXPRESSIBLE.get(dataset)
+    if reason is not None:
+        checkable_en = (
+            "Its published law cannot be written in this operator set, so recovery is reported as "
+            "not checkable rather than as zero: a zero would describe the primitive set rather "
+            "than the method."
+        )
+        checkable_es = (
+            "Su ley publicada no se puede escribir en este conjunto de operadores, asi que la "
+            "recuperacion se reporta como no comprobable y no como cero: un cero describiria el "
+            "conjunto de primitivas y no al metodo."
+        )
+    elif dataset in FEYNMAN_TRUTHS:
+        checkable_en = (
+            "The published law is wired as a machine-comparable expression, verified against this "
+            "dataset before it was allowed to score, so recovery is checked rather than assumed."
+        )
+        checkable_es = (
+            "La ley publicada esta conectada como expresion comparable por maquina, verificada "
+            "contra este conjunto antes de permitirle puntuar, asi que la recuperacion se comprueba."
+        )
+    else:
+        checkable_en = "No machine-comparable law is wired for it, so recovery is not checkable."
+        checkable_es = (
+            "No hay ley comparable por maquina conectada, asi que la recuperacion no es comprobable."
+        )
+
+    if es:
+        return (
+            f"Una ley fisica publicada, {label}, muestreada por PMLB. Los parametros fisicos llegan "
+            f"como COLUMNAS de entrada, asi que lo desconocido es la FORMA y no los numeros. "
+            f"{checkable_es}"
+        )
+    return (
+        f"One published physical law, {label}, as sampled by PMLB. The physical parameters arrive as "
+        f"input COLUMNS, so what is unknown is the FORM and not the numbers. {checkable_en}"
+    )
+
+
 def expand_suites(cases: list[Case]) -> list[Case]:
     """Turn a suite case into one case per underlying problem."""
     out: list[Case] = []
@@ -46,10 +93,13 @@ def expand_suites(cases: list[Case]) -> list[Case]:
         if case.loader == "pmlb:feynman":
             for dataset in FEYNMAN_SELECTION:
                 short = dataset.replace("feynman_", "").lower()
+                label = short.replace("_", ".").upper()
                 out.append(replace(
                     case, id=f"feynman-{short}", loader=f"pmlb-dataset:{dataset}",
-                    name_en=f"Feynman {short.replace('_', '.').upper()}",
-                    name_es=f"Feynman {short.replace('_', '.').upper()}",
+                    name_en=f"Feynman {label}",
+                    name_es=f"Feynman {label}",
+                    summary_en=_expanded_summary(f"Feynman {label}", dataset, es=False),
+                    summary_es=_expanded_summary(f"Feynman {label}", dataset, es=True),
                 ))
         elif case.loader == "pmlb:strogatz":
             for dataset in STROGATZ_SELECTION:
@@ -57,6 +107,8 @@ def expand_suites(cases: list[Case]) -> list[Case]:
                 out.append(replace(
                     case, id=f"strogatz-{short}", loader=f"pmlb-dataset:{dataset}",
                     name_en=f"Strogatz {short}", name_es=f"Strogatz {short}",
+                    summary_en=_expanded_summary(f"the {short} system", dataset, es=False),
+                    summary_es=_expanded_summary(f"el sistema {short}", dataset, es=True),
                 ))
         else:
             out.append(case)
