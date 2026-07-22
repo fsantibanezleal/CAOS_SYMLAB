@@ -86,9 +86,9 @@ export default function Experiments() {
                   <td>6</td>
                   <td>
                     {es
-                      ? 'edad-aptitud e islas, con la supervivencia multiobjetivo APAGADA'
-                      : 'age-fitness and islands, with multi-objective survival turned OFF'}{' '}
-                    <em>{es ? '(compuesto: tres cambios)' : '(compound: three changes)'}</em>
+                      ? 'supervivencia edad-aptitud e islas'
+                      : 'age-fitness survival and islands'}{' '}
+                    <em>{es ? '(compuesto: dos interruptores, un mecanismo)' : '(compound: two switches, one mechanism)'}</em>
                   </td>
                   <td>{es ? 'si la convergencia prematura estaba limitando el resultado' : 'whether premature convergence was limiting the result'}</td>
                 </tr>
@@ -96,9 +96,9 @@ export default function Experiments() {
                   <td>7</td>
                   <td>
                     {es
-                      ? 'deduplicacion estructural y semantica, con la supervivencia multiobjetivo encendida de nuevo'
-                      : 'structural and semantic deduplication, with multi-objective survival turned back on'}{' '}
-                    <em>{es ? '(compuesto: tres cambios)' : '(compound: three changes)'}</em>
+                      ? 'deduplicacion estructural y semantica'
+                      : 'structural and semantic deduplication'}{' '}
+                    <em>{es ? '(compuesto: dos interruptores, un mecanismo)' : '(compound: two switches, one mechanism)'}</em>
                   </td>
                   <td>{es ? 'que fraccion del presupuesto se gastaba en repetir evaluaciones' : 'what fraction of the budget was spent repeating evaluations'}</td>
                 </tr>

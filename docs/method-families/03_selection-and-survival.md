@@ -56,17 +56,23 @@ whose case is not recorded, so treat the ratio rather than the seconds as the fi
 ## Age-fitness Pareto survival
 
 Age becomes an objective, so a young individual only has to beat older ones on error rather than the
-whole population, and a fresh lineage gets a window in which to become competitive. Survival is then
-Pareto non-domination on (error, age), and it costs one extra objective.
+whole population, and a fresh lineage gets a window in which to become competitive. This rung ADDS
+age to the objectives the rung below already had, so survival here is NSGA-II non-domination on
+(error, complexity, age), not a two-way trade that discards the front r4 introduced.
 
-Two deviations from the published method, stated because the page would otherwise describe Schmidt
-and Lipson's algorithm rather than this one. In the paper, age is the number of generations since an
-individual's OLDEST ancestor entered the population, inherited as `1 + max(parent ages)`, and one
-brand-new random individual of age 0 is injected every generation. Here a child's age is
-`1 + min(parent ages)`, which tracks its youngest ancestor rather than its oldest, and no random
-individual is injected: the only age-0 material is the initial population. The consequence is that
-this rung protects the youngest LINEAGE rather than continuously refreshing the population, so it is
-a weaker guard against premature convergence than the paper's version.
+Both halves of the published method are implemented. Age is the number of generations since an
+individual's OLDEST ancestor entered the population, inherited as `1 + max(parent ages)`; and one
+brand-new random individual of age 0 enters each island every generation. The injection REPLACES a
+child rather than adding one, so the population size and the evaluations per generation are identical
+to the rung below and the ablation stays a comparison of mechanisms rather than of budgets.
+
+Both were wrong until recently, and the way they were wrong is worth recording, because the search
+still ran and still converged. Children inherited `1 + min(parent ages)`, which tracks the YOUNGEST
+ancestor, so an entrenched lineage could reset its age by crossing with anything younger, which is
+precisely the takeover age-fitness Pareto optimisation exists to prevent. And nothing was injected,
+so the only age-0 material was the initial population and the youngest age present could only climb,
+leaving the age objective with nothing fresh to protect. The rung carried the name of the method and
+inverted its mechanism.
 
 Combined with islands and periodic migration it is the recipe behind Eureqa, the Schmidt and Lipson
 engine (see [frameworks/21_feyn-qlattice.md](../frameworks/21_feyn-qlattice.md)), and it remains
