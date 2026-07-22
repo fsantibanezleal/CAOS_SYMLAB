@@ -5,4 +5,4 @@ export const EXTERNAL_LINKS = {
   portfolio: 'https://fasl-work.com',
 } as const;
 
-export const VERSION = '0.02.000';
+export const VERSION = '0.03.000';
