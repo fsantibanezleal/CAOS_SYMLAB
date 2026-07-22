@@ -767,3 +767,25 @@
   font-size: 0.8rem;
   line-height: 1.5;
 }
+
+/* ---------------------------------------------------------------- the readout must stay visible
+ *
+ * `.symlab-side` is a sticky column with `overflow-y: auto`, and the readout is the LAST block in
+ * it, below the selectors and the whole ablation list. On a 1600x1000 viewport that put it past the
+ * fold with its labels visible and its values cut off, which reads as missing data rather than as
+ * "scroll for more": a screenshot of the App showed "RUNGS" and "BEST R2" as headings with nothing
+ * underneath them.
+ *
+ * A readout whose entire job is to refresh on every selection above it cannot be the part you have
+ * to scroll to. It sticks to the bottom of its own scroll container instead, so it is on screen at
+ * any viewport height while the configuration list above it scrolls behind.
+ */
+.sym-side-readout {
+  position: sticky;
+  bottom: 0;
+  z-index: 1;
+  background: var(--color-bg);
+  padding-top: 0.75rem;
+  margin-top: 0.25rem;
+  box-shadow: 0 -0.75rem 0.75rem -0.5rem var(--color-bg);
+}
