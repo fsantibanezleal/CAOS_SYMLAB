@@ -1,4 +1,6 @@
 import { Callout, Cite, Equation, Refs, SubTabs } from '@fasl-work/caos-app-shell';
+
+import { FigThreeSplits, FigTripleEquivalence } from '../render/Figures';
 import { useEffect, useState } from 'react';
 
 import { loadIndex } from '../lib/data';
@@ -112,12 +114,14 @@ export default function Experiments() {
               ? 'Se construye reteniendo las colas de la entrada con mayor rango, de modo que la region de entrenamiento es una caja interior. Cuando un caso es demasiado pequeno para que eso deje un entrenamiento utilizable, la particion se OMITE y el manifiesto lo dice, en lugar de fabricarse.'
               : 'It is built by holding out the tails of the widest-ranging input, so the training region is an interior box. Where a case is too small for that to leave a usable training set, the split is SKIPPED and the manifest says so, rather than being faked.'}
           </p>
+          <FigThreeSplits es={es} />
           <h3>{es ? 'La prueba triple de equivalencia' : 'The triple-equivalence test'}</h3>
           <p>
             {es
               ? 'Ninguna prueba estructural aislada es fiable, asi que corren tres y se reportan sus desacuerdos en lugar de resolverlos.'
               : 'No single structural test is reliable, so three run and their disagreements are reported rather than resolved.'}
           </p>
+          <FigTripleEquivalence es={es} />
           <Equation
             tex="d(f, g) = \frac{\mathrm{lev}\big(\tau(f), \tau(g)\big)}{\max\big(|\tau(f)|, |\tau(g)|\big)} \in [0, 1]"
             caption={

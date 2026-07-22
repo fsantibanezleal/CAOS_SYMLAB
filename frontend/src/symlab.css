@@ -42,16 +42,32 @@
 
 /* ---------------------------------------------------------------- the App workbench grid */
 
+/* Two columns: choosing on the left, content on the right. The left column is wide enough for the
+   grouped case chips to read as full names rather than truncating to slugs, and the right column
+   keeps a real 1fr so the expression tree and the Pareto front are never squeezed. */
 .symlab-layout {
   display: grid;
-  grid-template-columns: 300px minmax(0, 1fr);
-  gap: 1.75rem;
+  grid-template-columns: 320px minmax(0, 1fr);
+  grid-template-areas: "side main";
+  gap: 1.5rem 1.75rem;
   align-items: start;
 }
 
-@media (max-width: 960px) {
+.symlab-layout > .symlab-side { grid-area: side; }
+.symlab-layout > .symlab-main { grid-area: main; }
+
+@media (max-width: 1080px) {
   .symlab-layout {
     grid-template-columns: minmax(0, 1fr);
+    grid-template-areas: "side" "main";
+  }
+
+  .symlab-side {
+    position: static;
+    max-height: none;
+    border-right: none;
+    border-bottom: 1px solid var(--color-border);
+    padding-bottom: 1rem;
   }
 }
 
@@ -716,4 +732,169 @@
 .sym-field h3,
 .sym-charts h3 {
   margin-bottom: 0.5rem;
+}
+
+/* ---------------------------------------------------------------- documentation figures */
+
+.sym-figure {
+  margin: 1.1rem 0;
+  padding: 0.7rem 0.8rem;
+  border: 1px solid var(--color-border);
+  border-radius: 10px;
+  background: var(--color-bg-subtle, transparent);
+}
+
+.sym-figure .sym-fig {
+  width: 100%;
+  height: auto;
+  display: block;
+}
+
+.sym-figure figcaption {
+  margin-top: 0.6rem;
+  padding-top: 0.55rem;
+  border-top: 1px solid var(--color-border);
+  font-size: 0.82rem;
+  color: var(--color-fg-subtle);
+  max-width: 90ch;
+}
+
+
+/* The shell case selector inside a narrow column: let its chips stack rather than overflow. */
+.symlab-side .cs-cases,
+.symlab-side .cs-group {
+  min-width: 0;
+}
+
+.symlab-side > * + * {
+  margin-top: 0.75rem;
+}
+
+.symlab-main > * + * {
+  margin-top: 1.25rem;
+}
+
+
+/* ---------------------------------------------------------------- control sidebar blocks
+ *
+ * The sidebar carries every selector, the global configuration and the live readout. The main area
+ * carries only the tabs and their views. That split is the house two-zone workbench shape.
+ */
+
+.sym-control {
+  padding-top: 0.9rem;
+  border-top: 1px solid var(--color-border);
+}
+
+.sym-control h3 {
+  font-size: 0.72rem;
+  letter-spacing: 0.07em;
+  text-transform: uppercase;
+  color: var(--color-fg-subtle);
+  margin: 0 0 0.5rem;
+}
+
+.sym-control-note {
+  font-size: 0.78rem;
+  line-height: 1.45;
+  color: var(--color-fg-subtle);
+  margin: 0.5rem 0 0;
+}
+
+/* Search configuration: a vertical list, because the entries form a LADDER and each one adds a
+   mechanism to the one above it. Wrapping them as horizontal pills would lose that ordering. */
+.sym-variant-list {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+  display: flex;
+  flex-direction: column;
+  gap: 0.22rem;
+}
+
+.sym-variant-button {
+  width: 100%;
+  text-align: left;
+  font: inherit;
+  font-size: 0.84rem;
+  color: var(--color-fg);
+  background: none;
+  border: 1px solid var(--color-border);
+  border-radius: 7px;
+  padding: 0.3rem 0.6rem;
+  cursor: pointer;
+  transition: background 110ms ease, border-color 110ms ease;
+}
+
+.sym-variant-button:hover {
+  border-color: var(--color-accent);
+}
+
+.sym-variant-button.on {
+  background: var(--color-accent);
+  border-color: var(--color-accent);
+  color: var(--color-accent-contrast, #fff);
+  font-weight: 600;
+}
+
+.sym-control-chips {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.35rem;
+}
+
+.sym-slider-block {
+  display: grid;
+  grid-template-columns: 1fr auto;
+  gap: 0.25rem 0.5rem;
+  align-items: center;
+  margin-top: 0.7rem;
+  font-size: 0.78rem;
+  color: var(--color-fg-subtle);
+}
+
+.sym-slider-block span {
+  grid-column: 1 / -1;
+}
+
+.sym-slider-block output {
+  font-variant-numeric: tabular-nums;
+  font-weight: 600;
+  color: var(--color-fg);
+}
+
+/* The live readout. Two blocks: the facts, then the two counts that are the point of the lab. */
+.sym-readout dl {
+  display: grid;
+  grid-template-columns: 1fr auto;
+  gap: 0.18rem 0.7rem;
+  margin: 0;
+  font-variant-numeric: tabular-nums;
+}
+
+.sym-readout dt {
+  font-size: 0.78rem;
+  color: var(--color-fg-subtle);
+}
+
+.sym-readout dd {
+  margin: 0;
+  font-size: 0.88rem;
+  font-weight: 600;
+  text-align: right;
+}
+
+.sym-readout-rates {
+  margin-top: 0.6rem !important;
+  padding: 0.5rem 0.6rem;
+  border-left: 2px solid var(--color-accent);
+  background: var(--color-bg-subtle, transparent);
+  border-radius: 0 7px 7px 0;
+}
+
+.symlab-side .sym-catalogue-note {
+  border-top: 1px solid var(--color-border);
+  padding-top: 0.8rem;
+  margin-top: 0.9rem;
+  font-size: 0.76rem;
 }

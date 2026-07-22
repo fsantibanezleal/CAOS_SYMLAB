@@ -1,5 +1,14 @@
 import { Callout, Cite, Equation, InlineMath, Refs, SubTabs } from '@fasl-work/caos-app-shell';
 
+import {
+  FigCertificate,
+  FigLinearScaling,
+  FigParetoFront,
+  FigProtectedVsRejected,
+  FigTripleEquivalence,
+  FigUnitTyped,
+} from '../render/Figures';
+
 import { useLang } from '../lib/useLang';
 
 /**
@@ -38,6 +47,7 @@ export default function Methodology() {
                 : 'The admissibility condition. B is the input box, widened beyond the training range; M is a magnitude bound that discards expressions that are defined but numerically useless.'
             }
           />
+          <FigProtectedVsRejected es={es} />
           <Callout variant="honest" title={es ? 'Lo que esto cuesta' : 'What this costs'}>
             <p>
               {es
@@ -79,6 +89,7 @@ export default function Methodology() {
               : 'The second is nonlinear fitting of ALL numeric leaves by Levenberg-Marquardt, written back into the tree so the improvement is inherited rather than rediscovered each generation. A rank-deficient Jacobian is detected explicitly: when two constants are redundant, infinitely many pairs give the same output and the fitted values carry no information, so they are reported as not identifiable rather than presented as if they did.'}{' '}
             <Cite id="kommenda2020" paren />
           </p>
+          <FigLinearScaling es={es} />
           <Callout variant="honest" title={es ? 'El escalado cambia lo que significa la expresion' : 'Scaling changes what the expression means'}>
             <p>
               {es
@@ -115,6 +126,7 @@ export default function Methodology() {
                 : 'The automatic epsilon for case j: the median absolute deviation of the errors on that case, across the individuals still surviving.'
             }
           />
+          <FigParetoFront es={es} />
           <Callout variant="honest" title={es ? 'Lo que cuesta, medido en este build' : 'What it costs, measured in this build'}>
             <p>
               {es
@@ -162,6 +174,7 @@ export default function Methodology() {
                 : 'The dimensional rules that govern generation. A square root halves the exponents and is REFUSED when any is odd, because that result does not exist in the integer exponent lattice.'
             }
           />
+          <FigUnitTyped es={es} />
           <Callout variant="honest" title={es ? 'Necesario, nunca suficiente' : 'Necessary, never sufficient'}>
             <p>
               {es
@@ -212,6 +225,7 @@ export default function Methodology() {
               <InlineMath tex="\hat{\sigma}^2" /> {es ? 'la varianza residual de maxima verosimilitud' : 'the maximum-likelihood residual variance'}
             </li>
           </ul>
+          <FigTripleEquivalence es={es} />
           <Callout variant="honest" title={es ? 'Por que NO se elige por mejor exactitud' : 'Why the choice is NOT best accuracy'}>
             <p>
               {es
@@ -234,6 +248,7 @@ export default function Methodology() {
               ? 'Todos los demas metodos devuelven la mejor expresion que ENCONTRARON. La enumeracion acotada devuelve la mejor que EXISTE, hasta una complejidad dada sobre un conjunto de primitivas dado. Esa diferencia es lo que justifica su costo, y tambien lo que la convierte en la mejor demostracion interactiva del producto: el espacio es finito y se puede ver encogerse cuando se aprietan las restricciones.'
               : 'Every other method returns the best expression it FOUND. Bounded enumeration returns the best that EXISTS, up to a given complexity over a given primitive set. That difference is what justifies its cost, and also what makes it the best interactive demonstration in the product: the space is finite and can be watched shrinking as the constraints tighten.'}
           </p>
+          <FigCertificate es={es} />
           <Callout variant="honest" title={es ? 'La redaccion exacta del certificado importa' : 'The exact wording of the certificate matters'}>
             <p>
               {es
