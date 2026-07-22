@@ -135,8 +135,8 @@ export default function Methodology() {
             </p>
             <p>
               {es
-                ? 'Ese numero se publica porque un metodo de seleccion que compra calidad a 22 veces el tiempo debe compararse a igual PRESUPUESTO, no a igual numero de generaciones. La injusticia de presupuesto es uno de los problemas que la propia literatura de benchmarks reconoce.'
-                : 'That number is published because a selection method buying quality at 22 times the wall-clock must be compared at equal BUDGET, not at equal generation count. Budget unfairness is one of the standing problems the benchmark literature acknowledges itself.'}
+                ? 'Ese numero se publica porque un metodo de seleccion que compra calidad a 22 veces el tiempo debe compararse a igual PRESUPUESTO, no a igual numero de generaciones. La injusticia de presupuesto es uno de los problemas que la propia literatura de benchmarks reconoce. El 22 viene de una medicion AISLADA con presupuesto pequeno a proposito, asi que es una atribucion limpia y no una cifra de titular: la pagina de Experimentos reporta lo que cuesta cada escalon con los presupuestos PUBLICADOS, sobre los casos reales, y esos multiplos son mayores. Ambos son ciertos y miden cosas distintas.'
+                : 'That number is published because a selection method buying quality at 22 times the wall clock must be compared at equal BUDGET, not at equal generation count. Budget unfairness is one of the standing problems the benchmark literature acknowledges itself. The 22 comes from an ISOLATED measurement at a deliberately small budget, so it is a clean attribution rather than a headline figure: the Experiments page reports what each rung costs at the PUBLISHED budgets, over the real cases, and those multiples are larger. Both are true and they measure different things.'}
             </p>
           </Callout>
           <p>

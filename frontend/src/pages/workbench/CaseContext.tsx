@@ -104,6 +104,40 @@ export function CaseContext({ run, lang }: { run: RunPayload; lang: 'en' | 'es' 
         </Callout>
       )}
 
+      {(notes.contract_warnings?.length ?? 0) > 0 && (
+        <Callout
+          variant="honest"
+          title={es ? 'El contrato de ingesta levanto avisos' : 'The ingestion contract raised warnings'}
+        >
+          <p>
+            {es
+              ? 'Estos los levanto la tuberia al cargar los datos, ANTES de cualquier busqueda. Se muestran aqui y no solo en el manifiesto de auditoria: un aviso de fuga es inutil para el lector que mas lo necesita si vive en un archivo que la aplicacion nunca abre.'
+              : 'These were raised by the pipeline when the data was loaded, BEFORE any search ran. They are shown here rather than only in the audit manifest: a leakage warning is useless to the reader who most needs it if it lives in a file the app never opens.'}
+          </p>
+          <ul lang="en">
+            {notes.contract_warnings!.map((warning, index) => (
+              <li key={index}>{warning}</li>
+            ))}
+          </ul>
+        </Callout>
+      )}
+
+      {(notes.defects_applied?.length ?? 0) > 0 && (
+        <>
+          <h3>{es ? 'Lo que el cargador tuvo que hacer' : 'What the loader had to do'}</h3>
+          <p className="sym-note">
+            {es
+              ? 'Cambios aplicados a los datos en la ingesta, registrados literalmente en vez de limpiados. Cada uno cambia lo que el resultado puede afirmar.'
+              : 'Changes applied to the data on the way in, recorded verbatim rather than tidied away. Each one changes what the result is allowed to claim.'}
+          </p>
+          <ul lang="en">
+            {notes.defects_applied!.map((defect, index) => (
+              <li key={index}>{defect}</li>
+            ))}
+          </ul>
+        </>
+      )}
+
       <h3>{es ? 'Que muestra cada variante' : 'What each variant shows'}</h3>
       <ul>
         {notes.variants.map((variant) => (

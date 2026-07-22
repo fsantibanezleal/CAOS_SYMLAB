@@ -264,6 +264,13 @@ export interface SamplingEntry {
 export interface Certificate {
   statement: string;
   caveats: string[];
+  /** The ingestion contract's own warnings, carried into the web payload rather than only into the
+   *  audit manifest. A leakage warning the pipeline raised is useless to the one reader who most
+   *  needs it if it only exists in a file the app never opens. */
+  contract_warnings?: string[];
+  /** What the loader had to do to the data on the way in: rows dropped, folds ignored, aggregation
+   *  applied. Recorded verbatim rather than tidied away. */
+  defects_applied?: string[];
   /** False means the enumeration was truncated and the completeness claim does NOT hold. */
   complete: boolean;
   n_enumerated: number;
@@ -307,6 +314,13 @@ export interface CaseNotes {
   regime?: string;
   real_or_synthetic: 'real' | 'synthetic';
   caveats: string[];
+  /** The ingestion contract's own warnings, carried into the web payload rather than only into the
+   *  audit manifest. A leakage warning the pipeline raised is useless to the one reader who most
+   *  needs it if it only exists in a file the app never opens. */
+  contract_warnings?: string[];
+  /** What the loader had to do to the data on the way in: rows dropped, folds ignored, aggregation
+   *  applied. Recorded verbatim rather than tidied away. */
+  defects_applied?: string[];
   split_note: string;
   features_note: string;
   sampling: SamplingEntry[];

@@ -225,6 +225,13 @@ def build_run(
             "regime": prepared.regime,
             "real_or_synthetic": case.real_or_synthetic,
             "caveats": list(case.caveats),
+            # The ingestion contract's own warnings, carried into the WEB payload rather than only
+            # into the audit manifest. The pipeline detects, for instance, that the flotation target
+            # takes 719 distinct values across 4097 rows and warns that fitting at that resolution
+            # may leak it. That warning lived in manifests/<case>.json, which the app never reads,
+            # so the reader most in need of it was the only one who could not see it.
+            "contract_warnings": list(prepared.contract_report.get("warnings", [])),
+            "defects_applied": list(prepared.contract_report.get("defects_applied", [])),
             "split_note": prepared.split_note,
             "features_note": features.note,
             "sampling": features.sampling,
