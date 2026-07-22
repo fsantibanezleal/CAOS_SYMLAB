@@ -1,4 +1,11 @@
-# 12. Bounded exhaustive search: the only rung that can prove a negative
+# 06. Bounded exhaustive search: the only method here that can prove a negative
+
+It is NOT a rung of the ladder. This page was numbered 12 and called it "the only rung", which is
+wrong twice: the ladder has eight rungs plus the parsimony arm, and enumeration is not among them.
+It runs separately, once per case, and only where it is affordable and meaningful, which
+`pipeline.py` defines as a case with at most three inputs baked at full budget. It produces a
+`Certificate`, not a variant, and where it does not run the app says so rather than showing an
+empty panel.
 
 Every other method returns the best expression it FOUND. Bounded enumeration returns the best that
 EXISTS, up to a given complexity over a given primitive set. That difference justifies the cost, and

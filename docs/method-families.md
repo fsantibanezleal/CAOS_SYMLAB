@@ -1,6 +1,6 @@
 # Method families
 
-Every rung of the ladder, with the mathematics this build uses and the exact constants it applies.
+Every mechanism this build uses, with its mathematics and the exact constants it applies.
 A page that describes the literature instead of the build is a reading list, and a reader cannot
 check a number with it.
 
@@ -11,12 +11,14 @@ check a number with it.
 | [03 selection and survival](method-families/03_selection-and-survival.md) | 4, 5, 6 | Pareto survival, epsilon-lexicase, age-fitness with islands |
 | [04 deduplication](method-families/04_deduplication.md) | 7 | Structural and semantic hashing, and its measured cost |
 | [05 units as a constraint](method-families/05_units.md) | 8 | Dimensional analysis constraining GENERATION |
-| [06 exhaustive search](method-families/06_exhaustive.md) | 12 | The only rung that can prove a negative |
+| [06 exhaustive search](method-families/06_exhaustive.md) | not a rung | Enumeration, run once per case where affordable: the only method here that can prove a negative |
 | [07 sparse regression](method-families/07_sparse-regression.md) | arm | The non-evolutionary family: a fixed library, a sparsity sweep, no search at all |
 
-Pages 01 to 06 describe mechanisms inside one genetic-programming search. Page 07 does not: it is a
-different family, run as its own arm on every case, and it is here because a ladder made only of GP
-rungs is an excellent ablation of GP and a poor survey of symbolic regression.
+Pages 01 to 05 describe mechanisms inside one genetic-programming search, and map onto rungs of the
+ladder. Page 06 does not: bounded enumeration runs separately, once per case, only where the input
+space is small enough for it to be affordable and meaningful. Page 07 does not either: it is a
+different search FAMILY, run as its own arm on every case, and it is here because a ladder made only
+of GP rungs is an excellent ablation of GP and a poor survey of symbolic regression.
 
 ## The ladder as configurations
 

@@ -13,8 +13,11 @@ this lab reports the two separately, always, and never merges them into one succ
 - **[architecture/](architecture/)**, how the repo works: the frozen base, the two data contracts, determinism
   and trace, the live/precompute gate, the staged pipeline, model evaluation, deploy.
 - **[method-families/](method-families/)**, the deep method pages: representation, scaling and constant fitting,
-  selection and survival, deduplication, dimensional typing, bounded exhaustive search. Each carries the theory,
-  the equations and the citations behind one rung of the search ladder.
+  selection and survival, deduplication, dimensional typing, bounded exhaustive search, and sparse regression
+  over a fixed basis. Each carries the theory, the equations and the citations behind one mechanism. The first
+  six sit inside the genetic-programming ladder; the seventh is the NON-evolutionary family, and calling it a
+  rung would repeat exactly the conflation this lab is built to avoid, since a ladder of GP rungs alone is an
+  ablation of GP rather than a survey of the field.
 - **[frameworks/](frameworks/)**, one card per engine or library the research examined: what it is, its licence,
   its install reality, and whether this repo uses it or deliberately does not.
 - **[guides/](guides/)**, runnable how-tos: read the workbench, run the precompute pipeline, bring your own data,

@@ -311,8 +311,8 @@ export function FigCertificate({ es }: { es: boolean }) {
     <Fig
       caption={
         es
-          ? 'La busqueda exhaustiva acotada es el unico escalon que puede probar un negativo, y sus limites forman parte del certificado.'
-          : 'Bounded exhaustive search is the only rung that can prove a negative, and its bounds are part of the certificate.'
+          ? 'La busqueda exhaustiva acotada es el unico metodo aqui que puede probar un negativo. No es un escalon de la escalera: se ejecuta aparte, una vez por caso y solo donde el espacio de entradas es lo bastante pequeno, y sus limites forman parte del certificado.'
+          : 'Bounded exhaustive search is the only method here that can prove a negative. It is NOT a rung of the ladder: it runs separately, once per case and only where the input space is small enough, and its bounds are part of the certificate.'
       }
     >
       <rect className="bx bx-good" x="16" y="24" width="608" height="66" rx="7" />
