@@ -22,7 +22,7 @@ import time
 from dataclasses import replace
 from pathlib import Path
 
-from .cases.registry import CASES, Case, coverage_summary, list_cases
+from .cases.registry import Case, coverage_summary, list_cases
 from .core.contract import SCHEMA_VERSION
 from .io.sources import FEYNMAN_SELECTION, STROGATZ_SELECTION
 from .stages import evaluate as evaluate_stage

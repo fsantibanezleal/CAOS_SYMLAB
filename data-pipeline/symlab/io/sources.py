@@ -23,7 +23,7 @@ repository.
 from __future__ import annotations
 
 import hashlib
-from dataclasses import dataclass, field
+from dataclasses import dataclass
 from pathlib import Path
 
 #: Where raw downloads land. Never inside the repository.

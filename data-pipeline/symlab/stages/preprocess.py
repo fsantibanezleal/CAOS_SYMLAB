@@ -26,7 +26,6 @@ import numpy as np
 from ..cases.generators import GENERATORS, make_dataset
 from ..cases.registry import Case
 from ..io.loaders import LOADERS, LoadedDataset, load_pmlb
-from ..model.units import DIMENSIONLESS, Dims
 
 #: Fraction of rows held out for the interior test split.
 TEST_FRACTION = 0.25

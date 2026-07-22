@@ -25,12 +25,11 @@ contributions a lab of this size can credibly make, precisely because nobody cur
 """
 from __future__ import annotations
 
-import math
 from dataclasses import dataclass, field
 
 import numpy as np
 
-from ..model.complexity import description_length, node_count, weighted_complexity
+from ..model.complexity import description_length
 from ..model.expr import KIND_CONST, KIND_VAR, Node, evaluate, is_valid, variables_used, walk
 from .infer import VariantInference
 from .preprocess import PreparedCase
