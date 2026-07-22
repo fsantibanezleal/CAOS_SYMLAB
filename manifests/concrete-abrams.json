@@ -1,0 +1,168 @@
+{
+  "schema": "symlab.manifest/v1",
+  "case_id": "concrete-abrams",
+  "category": "I",
+  "engine": {
+    "package": "symlab",
+    "version": "0.02.000"
+  },
+  "seed": 0,
+  "artifact": {
+    "path": "concrete-abrams/run.json",
+    "format": "json",
+    "schema_version": "1.0.0",
+    "bytes": 1594767
+  },
+  "lane": "precompute",
+  "data": {
+    "source_id": "concrete",
+    "citation": "Yeh, I.-C. Concrete Compressive Strength. UCI Machine Learning Repository, doi:10.24432/C5PK67. 1,030 mixes, 8 inputs.",
+    "licence": "CC BY 4.0 (UCI Machine Learning Repository)",
+    "redistribution": "mirror",
+    "real_or_synthetic": "real",
+    "defects_applied": [
+      "The workbook column names carry units inside the label; they are replaced by short machine keys and the units are recorded separately, so a discovered expression renders as mathematics rather than as a spreadsheet caption."
+    ]
+  },
+  "contract": {
+    "n_rows": 1030,
+    "n_inputs": 8,
+    "input_keys": [
+      "cement",
+      "slag",
+      "fly_ash",
+      "water",
+      "superplasticizer",
+      "coarse_aggregate",
+      "fine_aggregate",
+      "age"
+    ],
+    "target_key": "strength",
+    "distinct_target_values": 938,
+    "target_repeat_ratio": 1.098,
+    "constant_inputs": [],
+    "warnings": [],
+    "defects_applied": [
+      "The workbook column names carry units inside the label; they are replaced by short machine keys and the units are recorded separately, so a discovered expression renders as mathematics rather than as a spreadsheet caption."
+    ],
+    "licence": "CC BY 4.0 (UCI Machine Learning Repository)",
+    "redistribution": "mirror",
+    "citation": "Yeh, I.-C. Concrete Compressive Strength. UCI Machine Learning Repository, doi:10.24432/C5PK67. 1,030 mixes, 8 inputs.",
+    "n_train": 657,
+    "n_test": 219,
+    "n_extrapolation": 154
+  },
+  "units_declared": 0,
+  "split_note": "extrapolation split holds out the lowest and highest 77 rows of 'cement', so the training region is an interior box and the extrapolation rows lie outside the support the search ever saw",
+  "variants": [
+    {
+      "id": "r1-koza-baseline",
+      "seconds": 2.372,
+      "evaluations": 12000,
+      "front_size": 9,
+      "selected_complexity": 13,
+      "test_r2": 0.47847795,
+      "accuracy_solution": 0,
+      "exact_recovery": null,
+      "symbolic_test_decided": null,
+      "irrelevant_features": 0
+    },
+    {
+      "id": "r2-linear-scaling",
+      "seconds": 3.531,
+      "evaluations": 12000,
+      "front_size": 12,
+      "selected_complexity": 23,
+      "test_r2": 0.6596637,
+      "accuracy_solution": 0,
+      "exact_recovery": null,
+      "symbolic_test_decided": null,
+      "irrelevant_features": 0
+    },
+    {
+      "id": "r3-constant-tuning",
+      "seconds": 4.705,
+      "evaluations": 12240,
+      "front_size": 18,
+      "selected_complexity": 21,
+      "test_r2": 0.62804651,
+      "accuracy_solution": 0,
+      "exact_recovery": null,
+      "symbolic_test_decided": null,
+      "irrelevant_features": 0
+    },
+    {
+      "id": "r4-multi-objective",
+      "seconds": 2.849,
+      "evaluations": 12240,
+      "front_size": 2,
+      "selected_complexity": 7,
+      "test_r2": 0.33798114,
+      "accuracy_solution": 0,
+      "exact_recovery": null,
+      "symbolic_test_decided": null,
+      "irrelevant_features": 0
+    },
+    {
+      "id": "r5-epsilon-lexicase",
+      "seconds": 59.621,
+      "evaluations": 12240,
+      "front_size": 2,
+      "selected_complexity": 7,
+      "test_r2": 0.33798114,
+      "accuracy_solution": 0,
+      "exact_recovery": null,
+      "symbolic_test_decided": null,
+      "irrelevant_features": 0
+    },
+    {
+      "id": "r6-age-fitness-islands",
+      "seconds": 46.938,
+      "evaluations": 12960,
+      "front_size": 2,
+      "selected_complexity": 7,
+      "test_r2": 0.33798114,
+      "accuracy_solution": 0,
+      "exact_recovery": null,
+      "symbolic_test_decided": null,
+      "irrelevant_features": 0
+    },
+    {
+      "id": "r7-deduplication",
+      "seconds": 339.402,
+      "evaluations": 12960,
+      "front_size": 3,
+      "selected_complexity": 7,
+      "test_r2": 0.33798114,
+      "accuracy_solution": 0,
+      "exact_recovery": null,
+      "symbolic_test_decided": null,
+      "irrelevant_features": 0
+    },
+    {
+      "id": "parsimony-arm",
+      "seconds": 3.065,
+      "evaluations": 12240,
+      "front_size": 17,
+      "selected_complexity": 23,
+      "test_r2": 0.6596637,
+      "accuracy_solution": 0,
+      "exact_recovery": null,
+      "symbolic_test_decided": null,
+      "irrelevant_features": 0
+    }
+  ],
+  "summary": {
+    "n_variants": 8,
+    "accuracy_solutions": 0,
+    "accuracy_solution_rate": 0.0,
+    "exact_recoveries": 0,
+    "exact_recovery_rate": null,
+    "mean_structural_distance": null,
+    "symbolic_test_failure_rate": null,
+    "test_disagreement_count": 0,
+    "total_seconds": 462.48,
+    "total_evaluations": 98880,
+    "variants_with_irrelevant_features": 0
+  }
+}

@@ -15,7 +15,7 @@ from pathlib import Path
 ROOT = Path(__file__).resolve().parents[1]
 sys.path.insert(0, str(ROOT / "data-pipeline"))
 
-from symlab.cases.registry import coverage_summary  # noqa: E402
+from symlab.cases.registry import CATEGORIES, coverage_summary, get_case  # noqa: E402
 from symlab.stages.export import build_index  # noqa: E402
 
 MANIFESTS = ROOT / "manifests"
@@ -31,9 +31,26 @@ def main() -> int:
         if not artifact.exists():
             print(f"  skipping {path.name}: artifact missing")
             continue
+        # Display names come from the registry rather than the manifest, so an index can be
+        # rebuilt for artifacts baked before these fields existed without re-running any search.
+        try:
+            case = get_case(manifest["case_id"])
+            name_en, name_es = case.name_en, case.name_es
+            ground_truth_known = case.ground_truth_known
+            real_or_synthetic = case.real_or_synthetic
+        except KeyError:
+            name_en = name_es = manifest["case_id"]
+            ground_truth_known = False
+            real_or_synthetic = "unknown"
+
         entries.append({
             "case_id": manifest["case_id"],
             "category": manifest["category"],
+            "category_name": CATEGORIES.get(manifest["category"], manifest["category"]),
+            "name_en": name_en,
+            "name_es": name_es,
+            "ground_truth_known": ground_truth_known,
+            "real_or_synthetic": real_or_synthetic,
             "manifest_path": f"manifests/{path.name}",
             "artifact_path": manifest["artifact"]["path"],
             "bytes": manifest["artifact"]["bytes"],

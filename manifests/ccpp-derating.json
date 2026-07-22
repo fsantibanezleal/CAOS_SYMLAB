@@ -1,0 +1,166 @@
+{
+  "schema": "symlab.manifest/v1",
+  "case_id": "ccpp-derating",
+  "category": "I",
+  "engine": {
+    "package": "symlab",
+    "version": "0.02.000"
+  },
+  "seed": 0,
+  "artifact": {
+    "path": "ccpp-derating/run.json",
+    "format": "json",
+    "schema_version": "1.0.0",
+    "bytes": 3389885
+  },
+  "lane": "precompute",
+  "data": {
+    "source_id": "ccpp",
+    "citation": "Tufekci, P. and Kaya, H. Combined Cycle Power Plant. UCI Machine Learning Repository, doi:10.24432/C5002N. 9,568 hourly records from a combined cycle plant at full load.",
+    "licence": "CC BY 4.0 (UCI Machine Learning Repository)",
+    "redistribution": "mirror",
+    "real_or_synthetic": "real",
+    "defects_applied": [
+      "Only the first of the five shuffled folds in the workbook is read. The folds are reorderings of the same 9,568 records; concatenating them would duplicate every row five times and destroy any held-out split.",
+      "Deterministically subsampled to 4000 of the available rows (seed 0) to keep the search budget on the structure rather than on redundant rows."
+    ]
+  },
+  "contract": {
+    "n_rows": 4000,
+    "n_inputs": 4,
+    "input_keys": [
+      "AT",
+      "V",
+      "AP",
+      "RH"
+    ],
+    "target_key": "PE",
+    "distinct_target_values": 2893,
+    "target_repeat_ratio": 1.383,
+    "constant_inputs": [],
+    "warnings": [],
+    "defects_applied": [
+      "Only the first of the five shuffled folds in the workbook is read. The folds are reorderings of the same 9,568 records; concatenating them would duplicate every row five times and destroy any held-out split.",
+      "Deterministically subsampled to 4000 of the available rows (seed 0) to keep the search budget on the structure rather than on redundant rows."
+    ],
+    "licence": "CC BY 4.0 (UCI Machine Learning Repository)",
+    "redistribution": "mirror",
+    "citation": "Tufekci, P. and Kaya, H. Combined Cycle Power Plant. UCI Machine Learning Repository, doi:10.24432/C5002N. 9,568 hourly records from a combined cycle plant at full load.",
+    "n_train": 2550,
+    "n_test": 850,
+    "n_extrapolation": 600
+  },
+  "units_declared": 0,
+  "split_note": "extrapolation split holds out the lowest and highest 300 rows of 'RH', so the training region is an interior box and the extrapolation rows lie outside the support the search ever saw",
+  "variants": [
+    {
+      "id": "r1-koza-baseline",
+      "seconds": 5.819,
+      "evaluations": 12000,
+      "front_size": 12,
+      "selected_complexity": 15,
+      "test_r2": 0.16181555,
+      "accuracy_solution": 0,
+      "exact_recovery": null,
+      "symbolic_test_decided": null,
+      "irrelevant_features": 0
+    },
+    {
+      "id": "r2-linear-scaling",
+      "seconds": 4.96,
+      "evaluations": 12000,
+      "front_size": 13,
+      "selected_complexity": 17,
+      "test_r2": 0.93066302,
+      "accuracy_solution": 0,
+      "exact_recovery": null,
+      "symbolic_test_decided": null,
+      "irrelevant_features": 0
+    },
+    {
+      "id": "r3-constant-tuning",
+      "seconds": 12.869,
+      "evaluations": 12240,
+      "front_size": 16,
+      "selected_complexity": 15,
+      "test_r2": 0.92791379,
+      "accuracy_solution": 0,
+      "exact_recovery": null,
+      "symbolic_test_decided": null,
+      "irrelevant_features": 0
+    },
+    {
+      "id": "r4-multi-objective",
+      "seconds": 3.351,
+      "evaluations": 12240,
+      "front_size": 2,
+      "selected_complexity": 7,
+      "test_r2": 0.8979442,
+      "accuracy_solution": 0,
+      "exact_recovery": null,
+      "symbolic_test_decided": null,
+      "irrelevant_features": 0
+    },
+    {
+      "id": "r5-epsilon-lexicase",
+      "seconds": 71.838,
+      "evaluations": 12240,
+      "front_size": 2,
+      "selected_complexity": 7,
+      "test_r2": 0.8979442,
+      "accuracy_solution": 0,
+      "exact_recovery": null,
+      "symbolic_test_decided": null,
+      "irrelevant_features": 0
+    },
+    {
+      "id": "r6-age-fitness-islands",
+      "seconds": 42.747,
+      "evaluations": 12960,
+      "front_size": 2,
+      "selected_complexity": 7,
+      "test_r2": 0.8979442,
+      "accuracy_solution": 0,
+      "exact_recovery": null,
+      "symbolic_test_decided": null,
+      "irrelevant_features": 0
+    },
+    {
+      "id": "r7-deduplication",
+      "seconds": 351.071,
+      "evaluations": 12960,
+      "front_size": 3,
+      "selected_complexity": 7,
+      "test_r2": 0.8979442,
+      "accuracy_solution": 0,
+      "exact_recovery": null,
+      "symbolic_test_decided": null,
+      "irrelevant_features": 0
+    },
+    {
+      "id": "parsimony-arm",
+      "seconds": 11.723,
+      "evaluations": 12240,
+      "front_size": 13,
+      "selected_complexity": 25,
+      "test_r2": 0.92623925,
+      "accuracy_solution": 0,
+      "exact_recovery": null,
+      "symbolic_test_decided": null,
+      "irrelevant_features": 0
+    }
+  ],
+  "summary": {
+    "n_variants": 8,
+    "accuracy_solutions": 0,
+    "accuracy_solution_rate": 0.0,
+    "exact_recoveries": 0,
+    "exact_recovery_rate": null,
+    "mean_structural_distance": null,
+    "symbolic_test_failure_rate": null,
+    "test_disagreement_count": 0,
+    "total_seconds": 504.38,
+    "total_evaluations": 98880,
+    "variants_with_irrelevant_features": 0
+  }
+}

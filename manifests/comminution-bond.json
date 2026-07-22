@@ -1,0 +1,159 @@
+{
+  "schema": "symlab.manifest/v1",
+  "case_id": "comminution-bond",
+  "category": "M",
+  "engine": {
+    "package": "symlab",
+    "version": "0.02.000"
+  },
+  "seed": 0,
+  "artifact": {
+    "path": "comminution-bond/run.json",
+    "format": "json",
+    "schema_version": "1.0.0",
+    "bytes": 580531
+  },
+  "lane": "precompute",
+  "data": {
+    "source_id": "comminution-bond",
+    "citation": "Bond comminution law, verified reference transcription (research dossier 7.2.4)",
+    "licence": "MIT (generator authored in this repository)",
+    "redistribution": "mirror",
+    "real_or_synthetic": "synthetic",
+    "defects_applied": []
+  },
+  "contract": {
+    "n_rows": 400,
+    "n_inputs": 3,
+    "input_keys": [
+      "F80",
+      "P80",
+      "Wi"
+    ],
+    "target_key": "E",
+    "distinct_target_values": 400,
+    "target_repeat_ratio": 1.0,
+    "constant_inputs": [],
+    "warnings": [],
+    "defects_applied": [],
+    "licence": "MIT (generator authored in this repository)",
+    "redistribution": "mirror",
+    "citation": "Bond comminution law, verified reference transcription (research dossier 7.2.4)",
+    "n_train": 255,
+    "n_test": 85,
+    "n_extrapolation": 60
+  },
+  "units_declared": 1,
+  "split_note": "extrapolation split holds out the lowest and highest 30 rows of 'F80', so the training region is an interior box and the extrapolation rows lie outside the support the search ever saw",
+  "variants": [
+    {
+      "id": "r1-koza-baseline",
+      "seconds": 1.204,
+      "evaluations": 12000,
+      "front_size": 7,
+      "selected_complexity": 4,
+      "test_r2": 0.46217605,
+      "accuracy_solution": 0,
+      "exact_recovery": null,
+      "symbolic_test_decided": null,
+      "irrelevant_features": 0
+    },
+    {
+      "id": "r2-linear-scaling",
+      "seconds": 5.38,
+      "evaluations": 12000,
+      "front_size": 15,
+      "selected_complexity": 8,
+      "test_r2": 0.7895088,
+      "accuracy_solution": 0,
+      "exact_recovery": null,
+      "symbolic_test_decided": null,
+      "irrelevant_features": 0
+    },
+    {
+      "id": "r3-constant-tuning",
+      "seconds": 3.943,
+      "evaluations": 12240,
+      "front_size": 20,
+      "selected_complexity": 8,
+      "test_r2": 0.7895088,
+      "accuracy_solution": 0,
+      "exact_recovery": null,
+      "symbolic_test_decided": null,
+      "irrelevant_features": 0
+    },
+    {
+      "id": "r4-multi-objective",
+      "seconds": 2.501,
+      "evaluations": 12240,
+      "front_size": 2,
+      "selected_complexity": 5,
+      "test_r2": 0.43514399,
+      "accuracy_solution": 0,
+      "exact_recovery": null,
+      "symbolic_test_decided": null,
+      "irrelevant_features": 0
+    },
+    {
+      "id": "r5-epsilon-lexicase",
+      "seconds": 67.828,
+      "evaluations": 12240,
+      "front_size": 2,
+      "selected_complexity": 5,
+      "test_r2": 0.43514399,
+      "accuracy_solution": 0,
+      "exact_recovery": null,
+      "symbolic_test_decided": null,
+      "irrelevant_features": 0
+    },
+    {
+      "id": "r6-age-fitness-islands",
+      "seconds": 35.93,
+      "evaluations": 12960,
+      "front_size": 2,
+      "selected_complexity": 5,
+      "test_r2": 0.43514399,
+      "accuracy_solution": 0,
+      "exact_recovery": null,
+      "symbolic_test_decided": null,
+      "irrelevant_features": 0
+    },
+    {
+      "id": "r7-deduplication",
+      "seconds": 231.161,
+      "evaluations": 12960,
+      "front_size": 2,
+      "selected_complexity": 5,
+      "test_r2": 0.43514399,
+      "accuracy_solution": 0,
+      "exact_recovery": null,
+      "symbolic_test_decided": null,
+      "irrelevant_features": 0
+    },
+    {
+      "id": "r8-unit-typed",
+      "seconds": 498.602,
+      "evaluations": 12960,
+      "front_size": 4,
+      "selected_complexity": 5,
+      "test_r2": 0.43514399,
+      "accuracy_solution": 0,
+      "exact_recovery": null,
+      "symbolic_test_decided": null,
+      "irrelevant_features": 0
+    }
+  ],
+  "summary": {
+    "n_variants": 8,
+    "accuracy_solutions": 0,
+    "accuracy_solution_rate": 0.0,
+    "exact_recoveries": 0,
+    "exact_recovery_rate": null,
+    "mean_structural_distance": null,
+    "symbolic_test_failure_rate": null,
+    "test_disagreement_count": 0,
+    "total_seconds": 846.55,
+    "total_evaluations": 99600,
+    "variants_with_irrelevant_features": 0
+  }
+}
