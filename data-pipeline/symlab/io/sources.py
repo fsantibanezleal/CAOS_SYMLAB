@@ -109,17 +109,19 @@ FLOTATION = _register(Source(
         "22102136, resolved through the OpenML API. A fetcher that trusts the status code cannot catch "
         "this; the pipeline verifies the attribute names before accepting the file.",
         "THE TARGET IS BROADCAST. The iron and silica concentrate assays are HOURLY laboratory "
-        "measurements repeated across every 20-second row, about 13.5 repeats per distinct value, "
-        "over only 3,981 distinct timestamps. Fitting row-wise leaks the target 13.5 times over. "
-        "The pipeline aggregates to the hourly grid BEFORE any fitting and refuses to proceed "
-        "otherwise.",
+        "measurements copied across every 20-second row: 737,453 rows over 4,097 distinct "
+        "timestamps, so each assay appears 180 times. Fitting row-wise scores a model against 180 "
+        "copies of the same measurement. The pipeline aggregates to the hourly grid BEFORE any "
+        "fitting and refuses to proceed otherwise.",
         "The file uses a comma as the decimal separator inside quoted fields. A naive parse silently "
         "produces wrong numbers rather than an error.",
     ),
     notes=(
-        "Measured during research on the parsed file: 699,816 of 737,453 rows parse cleanly; "
-        "corr(Fe_feed, Si_feed) = -0.9720; OLS gives Fe = 67.11 - 0.738*Si against the two-mineral "
-        "stoichiometric prediction 69.94 - 0.699*Si. That discrepancy is itself a case."
+        "Measured with the parser this repository ships: all 737,453 data lines parse cleanly, and "
+        "corr(Fe_feed, Si_feed) = -0.9718. OLS gives Fe = 67.08 - 0.736*Si against the two-mineral "
+        "stoichiometric prediction 69.94 - 0.699*Si, and that discrepancy is itself a case. The feed "
+        "assays do not vary within an hour, so the hourly fit is the same line, "
+        "Fe = 67.0831 - 0.7363*Si."
     ),
 ))
 

@@ -4,8 +4,9 @@ Each loader owns the quirks of ONE source, and every quirk it handles is a docum
 the research phase rather than a defensive guess. Three of them exist specifically because the
 source lies about itself:
 
-- The flotation file states hourly laboratory assays on 20-second rows, so a row-wise fit leaks the
-  target about 13.5 times over. `load_flotation` aggregates to the hourly grid and REFUSES to return
+- The flotation file states hourly laboratory assays on 20-second rows: 737,453 rows over 4,097
+  timestamps, so each assay is copied 180 times and a row-wise fit is scored against 180 copies of
+  the same measurement. `load_flotation` aggregates to the hourly grid and REFUSES to return
   row-level data at all, so the leak is structurally unavailable rather than merely discouraged.
   It also parses the comma decimal separator, which a naive reader turns into wrong numbers silently.
 - The water-treatment landing page states there are no missing values; the file has 591.
@@ -140,8 +141,9 @@ def load_pmlb(dataset: str) -> LoadedDataset:
 
 HOURLY_AGGREGATION_NOTE = (
     "Aggregated to the hourly grid before any fitting. The concentrate assays are hourly laboratory "
-    "measurements repeated across every 20-second process row; fitting at row level would leak the "
-    "target about 13.5 times over. Row-level access is not offered by this loader."
+    "measurements copied across every 20-second process row, 737,453 rows over 4,097 timestamps, so "
+    "each assay appears 180 times; fitting at row level scores the model against 180 copies of the "
+    "same measurement. Row-level access is not offered by this loader."
 )
 
 
