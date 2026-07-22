@@ -26,10 +26,10 @@ Measured here on the Feynman Gaussian, with both search families at published bu
 
 | Family | Configuration | R2 (test) | Recovered | Seconds |
 |---|---|---|---|---|
-| genetic programming | Koza baseline | 0.989307 | no | 2.21 |
-| genetic programming | + linear scaling | 1 - 5.6e-06 | no | 4.14 |
-| genetic programming | + deduplication | 0.996795 | no | 377.11 |
-| sparse regression | sparse regression (non-GP) | 1 - 1.8e-09 | no | 0.00 |
+| genetic programming | Koza baseline | 0.989307 | no | 1.99 |
+| genetic programming | + linear scaling | 1 - 5.6e-06 | no | 3.46 |
+| genetic programming | + deduplication | 0.996795 | no | 386.17 |
+| sparse regression | sparse regression (non-GP) | 1 - 1.8e-09 | no | 0.01 |
 
 <!-- headline:end -->
 
@@ -46,8 +46,10 @@ zero. Reporting an unmeasurable quantity as a failure would be a false statement
   non-evolutionary arm (a fixed nonlinear library with sequentially thresholded least squares, the
   FFX and SINDy family) which is deterministic, produces its front by construction, and runs in
   milliseconds. A ladder of GP rungs alone is an ablation of GP, not a survey of the field.
-- **25 cases** across physics with published laws, industrial process, mining and metallurgy, biology
-  and ecology, environment and energy, and first-principles generators. Seven are real measured data.
+- **25 registry entries, 55 published problems.** Two of the entries are benchmark suites that expand
+  to one problem per law, and the rest are single cases: physics with published laws, industrial
+  process, mining and metallurgy, biology and ecology, environment and energy, and first-principles
+  generators. Seven are real measured data.
 - **35 verified truth expressions**: 17 of 18 generators, 17 of 18 selected Feynman laws, and one
   exact identity over real plant data. Each is checked against its own data before it is allowed to
   score, because a wrong truth publishes a confident "not recovered" against a method that succeeded.
@@ -71,7 +73,7 @@ zero. Reporting an unmeasurable quantity as a failure would be a false statement
 
 ```bash
 ./scripts/setup.sh                      # or scripts/setup.ps1 on Windows
-./scripts/precompute.sh                 # the offline pipeline, into data/derived/ and manifests/
+./scripts/precompute.sh all --expand    # the offline pipeline, into data/derived/ and manifests/
 .venv/bin/python -m pytest              # .venv/Scripts/python.exe on Windows
 cd frontend && npm install && node copy-data.mjs && npm run dev
 ```

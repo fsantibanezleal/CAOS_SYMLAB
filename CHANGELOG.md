@@ -143,9 +143,13 @@ Each of these exists because the corresponding defect survived a green build:
   without declaring, compiles perfectly.
 - `tests/test_sparse_search.py`: evaluating the published expression must reproduce the reported
   loss, the arm must be deterministic, and a law inside the library's span must be recovered.
-- `tools/visual-verify/symlab-workbench.mjs`: six tabs across both themes and both languages,
-  asserting the provenance labels, populated dropdowns, no overflow, no console error, no
-  untranslated interface copy, and that every class the app renders has a CSS rule behind it.
+- `tools/visual-verify/workbench.mjs`: six tabs across both themes and both languages, asserting
+  the provenance labels, populated dropdowns, no overflow, no console error, no untranslated
+  interface copy, and that every class the app renders has a CSS rule behind it. It, the two other
+  visual harnesses and the live-parity harness were written against this product but lived outside
+  the repository, so every claim of the form "this is checked rather than asserted" pointed at
+  something a reader could not run. They are in `tools/` now, with `tools/README.md` describing
+  what each one asserts and how to run it.
 
 ## 0.03.000 - 2026-07-22
 
