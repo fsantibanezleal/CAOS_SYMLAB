@@ -15,9 +15,9 @@ re-litigated); per-product rework lives only in the **core**, models/algorithms,
 A measured **[gate](03_the-gate.md)** decides live vs replay per case.
 
 ## The flow
-`data/raw` → **[CONTRACT 1](08_data-contracts.md)** (`io/contract.py`) → staged pipeline
-(preprocess → feature_extraction → train → infer → evaluate → export) → **[CONTRACT 2](08_data-contracts.md)**
-(`core/manifest.py`, compact artifact) → `data/derived/` (committed) → `frontend/` replays it.
+`data/raw` to **[CONTRACT 1](08_data-contracts.md)** (`io/contract.py`) to staged pipeline
+(preprocess to feature_extraction to train to infer to evaluate to export) to **[CONTRACT 2](08_data-contracts.md)**
+(`core/manifest.py`, compact artifact) to `data/derived/` (committed) to `frontend/` replays it.
 
 ## Frozen base vs rework
 - **Frozen:** the folder layout, the two contracts, the staged pipeline names, the gate, the manifest/trace,
