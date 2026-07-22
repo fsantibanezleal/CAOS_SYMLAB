@@ -1,0 +1,6 @@
+# Offline pipeline dependencies. Heavy or native packages belong here, never in requirements.txt,
+# which must stay Pyodide-safe for the browser lane.
+numpy==2.3.4
+scipy==1.16.3
+openpyxl==3.1.5          # UCI Combined Cycle Power Plant ships its data as .xlsx
+xlrd==2.0.2              # UCI Concrete ships its data as a legacy .xls
