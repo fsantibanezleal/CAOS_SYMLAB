@@ -6,8 +6,8 @@
 | Category | M, mining and metallurgy |
 | Data | synthetic, first-principles generator |
 | Ground truth known | YES |
-| Machine-comparable truth | YES, a `truth_node` is defined |
-| Recovery regime | **structure** |
+| Machine-comparable truth | YES, verified against its own generator to 1e-9 relative |
+| Recovery regime | `structure` |
 | Generator | `comminution-bond`, with `comminution-kick` shipped as the rival |
 | Rows per run | 400, noise levels 0, 0.01, 0.1 |
 

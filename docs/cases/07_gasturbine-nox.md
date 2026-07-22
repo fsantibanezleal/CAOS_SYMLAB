@@ -6,7 +6,7 @@
 | Category | I, industrial process |
 | Data | REAL, 36,733 hourly records over five years |
 | Ground truth known | NO |
-| Machine-comparable truth | no |
+| Machine-comparable truth | NO, loaded from a file; no in-repo expression to compare against |
 | Recovery regime | `unknown` |
 | Loader | `gasturbine-nox`, `load_gas_turbine` |
 

@@ -6,7 +6,7 @@
 | Category | M, mining and metallurgy |
 | Data | REAL, an operating iron concentrator |
 | Ground truth known | NO |
-| Machine-comparable truth | no |
+| Machine-comparable truth | NO, loaded from a file; no in-repo expression to compare against |
 | Recovery regime | `unknown` |
 | Loader | `flotation-silica`, `load_flotation(target="silica")` |
 | Registry row count | 4,097 on the hourly grid |

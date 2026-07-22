@@ -6,8 +6,8 @@
 | Category | I, industrial process |
 | Data | synthetic, first-principles generator |
 | Ground truth known | YES |
-| Machine-comparable truth | NO, no `truth_node` is defined |
-| Recovery regime | **structure+constants** |
+| Machine-comparable truth | YES, verified against its own generator to 1e-9 relative |
+| Recovery regime | `structure+constants` |
 | Generator | `cstr-conversion` |
 | Rows per run | 400, noise levels 0, 0.01, 0.1 |
 

@@ -6,8 +6,8 @@
 | Category | E, environment and energy |
 | Data | synthetic, first-principles generator |
 | Ground truth known | YES |
-| Machine-comparable truth | NO, no `truth_node` is defined |
-| Recovery regime | **structure+constants** |
+| Machine-comparable truth | NO, no truth node; see the generator for the recorded reason |
+| Recovery regime | `structure+constants` |
 | Generator | `wind-power-curve` |
 | Rows per run | 400, noise levels 0, 0.01, 0.1 |
 

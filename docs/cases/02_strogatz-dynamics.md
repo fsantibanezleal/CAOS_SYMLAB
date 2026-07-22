@@ -6,8 +6,8 @@
 | Category | P, physics ground truth |
 | Data | synthetic (analytic right-hand sides evaluated along trajectories) |
 | Ground truth known | yes |
-| Machine-comparable truth | no |
-| Recovery regime | `unknown` (loaded from a file, not from an in-repo generator) |
+| Machine-comparable truth | NO, loaded from a file; no in-repo expression to compare against |
+| Recovery regime | `unknown` |
 | Loader | `pmlb:strogatz`, a SUITE expanded by the pipeline into one case per right-hand side |
 
 ## What the quantity is

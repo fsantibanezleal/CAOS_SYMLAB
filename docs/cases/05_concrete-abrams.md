@@ -6,7 +6,7 @@
 | Category | I, industrial process |
 | Data | REAL, 1,030 laboratory-tested mixes |
 | Ground truth known | NO |
-| Machine-comparable truth | no |
+| Machine-comparable truth | NO, loaded from a file; no in-repo expression to compare against |
 | Recovery regime | `unknown` |
 | Loader | `concrete-abrams`, `load_concrete` |
 

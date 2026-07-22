@@ -6,7 +6,7 @@
 | Category | M, mining and metallurgy |
 | Data | REAL, the same operating concentrator as case [10](10_flotation-silica.md) |
 | Ground truth known | YES, a stoichiometric reference line |
-| Machine-comparable truth | no |
+| Machine-comparable truth | NO, loaded from a file; no in-repo expression to compare against |
 | Recovery regime | `unknown` |
 | Loader | `ore-mineralogy-closure`, `load_flotation_mineralogy` |
 | Inputs | ONE |

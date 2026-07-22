@@ -6,8 +6,8 @@
 | Category | P, physics ground truth |
 | Data | synthetic (noise-free analytic evaluation on uniformly sampled inputs) |
 | Ground truth known | yes |
-| Machine-comparable truth | no |
-| Recovery regime | `unknown` (loaded from a file, not from an in-repo generator) |
+| Machine-comparable truth | YES, 17 of 18 expanded problems carry a verified law; 1 cannot be written in this operator set |
+| Recovery regime | `structure` |
 | Loader | `pmlb:feynman`, a SUITE expanded by the pipeline into one case per equation |
 
 ## What the quantity is

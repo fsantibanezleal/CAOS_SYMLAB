@@ -6,7 +6,7 @@
 | Category | P, physics ground truth |
 | Data | REAL, 1933 laboratory measurements |
 | Ground truth known | NO |
-| Machine-comparable truth | no |
+| Machine-comparable truth | NO, loaded from a file; no in-repo expression to compare against |
 | Recovery regime | `unknown` |
 | Loader | `nikuradse-friction`, via `load_nikuradse` over the PMLB carrier |
 | Rows | 362, the full measured set, no subsampling |

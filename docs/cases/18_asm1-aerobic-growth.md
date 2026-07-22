@@ -6,8 +6,8 @@
 | Category | E, environment and energy |
 | Data | synthetic, first-principles generator |
 | Ground truth known | YES |
-| Machine-comparable truth | YES, a `truth_node` is defined |
-| Recovery regime | **structure+constants** |
+| Machine-comparable truth | YES, verified against its own generator to 1e-9 relative |
+| Recovery regime | `structure+constants` |
 | Generator | `asm1-aerobic-growth` |
 | Rows per run | 400, noise levels 0, 0.01, 0.1 |
 

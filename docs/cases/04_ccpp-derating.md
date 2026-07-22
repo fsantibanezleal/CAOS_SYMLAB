@@ -6,7 +6,7 @@
 | Category | I, industrial process |
 | Data | REAL, 9,568 hourly records from an operating plant |
 | Ground truth known | NO |
-| Machine-comparable truth | no |
+| Machine-comparable truth | NO, loaded from a file; no in-repo expression to compare against |
 | Recovery regime | `unknown` |
 | Loader | `ccpp-derating`, `load_ccpp` |
 

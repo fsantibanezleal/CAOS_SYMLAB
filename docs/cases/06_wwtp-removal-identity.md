@@ -6,7 +6,7 @@
 | Category | I, industrial process |
 | Data | REAL, daily records from an urban wastewater plant |
 | Ground truth known | YES, exact by the definition of the column |
-| Machine-comparable truth | no |
+| Machine-comparable truth | NO, loaded from a file; no in-repo expression to compare against |
 | Recovery regime | `unknown` |
 | Loader | `wwtp-removal-identity`, `load_water_treatment` |
 | Rows | 380 retained of 527 shipped |
