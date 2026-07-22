@@ -22,6 +22,7 @@
 import { useMemo } from 'react';
 
 import type { RunPayload } from '../lib/contract.types';
+import { formatR2 } from '../lib/format';
 
 interface RungRow {
   id: string;
@@ -208,7 +209,7 @@ export function AblationResult({ runs, lang }: { runs: RunPayload[]; lang: 'en' 
                   <td>
                     {rung.accuracy} / {rung.cases}
                   </td>
-                  <td>{rung.medianR2 === null ? 'n/a' : rung.medianR2.toFixed(4)}</td>
+                  <td>{formatR2(rung.medianR2, 4)}</td>
                   <td>{rung.medianSeconds === null ? 'n/a' : rung.medianSeconds.toFixed(1)}</td>
                   <td>
                     {costRatio === null

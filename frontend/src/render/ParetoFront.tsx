@@ -19,6 +19,7 @@ import { scaleLinear, scaleLog } from 'd3-scale';
 import { useMemo, useState } from 'react';
 
 import type { ParetoMember } from '../lib/contract.types';
+import { formatR2 } from '../lib/format';
 
 export interface ParetoFrontProps {
   members: ParetoMember[];
@@ -176,7 +177,7 @@ export function ParetoFront({
         </div>
         <div>
           <span>R2 {lang === 'es' ? 'prueba' : 'test'}</span>
-          <strong>{shown.r2_test === null ? 'n/a' : shown.r2_test.toFixed(5)}</strong>
+          <strong>{formatR2(shown.r2_test)}</strong>
         </div>
         <div>
           <span>{lang === 'es' ? 'long. descripcion' : 'description length'}</span>

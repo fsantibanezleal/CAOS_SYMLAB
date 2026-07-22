@@ -16,6 +16,7 @@ import type React from 'react';
 import { useEffect, useMemo, useRef } from 'react';
 
 import type { ParetoMember, VariantScore } from '../lib/contract.types';
+import { formatR2 } from '../lib/format';
 
 /**
  * Mark the wrapper when its mathematics is wider than its box, so the fade and the scrollbar
@@ -179,7 +180,7 @@ export function ExpressionPanel({
           <dl className="sym-side-metrics">
             <div>
               <dt>R2 {es ? 'prueba' : 'test'}</dt>
-              <dd>{member.r2_test === null ? 'n/a' : member.r2_test.toFixed(5)}</dd>
+              <dd>{formatR2(member.r2_test)}</dd>
             </div>
             <div>
               <dt>{es ? 'complejidad' : 'complexity'}</dt>

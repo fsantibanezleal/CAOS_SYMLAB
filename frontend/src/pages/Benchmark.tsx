@@ -5,6 +5,7 @@ import { loadIndex, loadRun } from '../lib/data';
 import type { CaseIndex, RunPayload } from '../lib/contract.types';
 import { useLang } from '../lib/useLang';
 import { groupDigits } from '../lib/format';
+import { formatR2 } from '../lib/format';
 
 /**
  * Benchmark: numbers read from the committed artifacts, never typed into the page.
@@ -125,7 +126,7 @@ export default function Benchmark() {
                     <td>{row.label}</td>
                     <td>{row.score.selected_complexity}</td>
                     <td>
-                      {row.score.best_test_r2 === null ? '-' : row.score.best_test_r2.toFixed(4)}
+                      {formatR2(row.score.best_test_r2, 4)}
                     </td>
                     <td>{row.score.accuracy_solution ? (es ? 'si' : 'yes') : 'no'}</td>
                     <td>
@@ -193,7 +194,7 @@ export default function Benchmark() {
             </li>
             <li>
               {es ? 'R2 mediano en prueba' : 'median test R2'}:{' '}
-              <strong>{totals.medianR2 === null ? '-' : totals.medianR2.toFixed(4)}</strong>
+              <strong>{formatR2(totals.medianR2, 4)}</strong>
             </li>
             <li>
               {es ? 'evaluaciones totales' : 'total evaluations'}:{' '}
