@@ -695,3 +695,34 @@
   line-height: 1.5;
   color: var(--color-fg-subtle);
 }
+
+/* The ablation summary table. Wide content scrolls inside its own box: the page body must never
+   scroll sideways. */
+.sym-table-scroll {
+  overflow-x: auto;
+  scrollbar-width: thin;
+}
+
+.sym-ablation th[scope="row"] {
+  white-space: nowrap;
+  font-weight: 500;
+}
+
+.sym-ablation td {
+  font-variant-numeric: tabular-nums;
+  white-space: nowrap;
+}
+
+.sym-delta {
+  margin-left: 0.4rem;
+  font-size: 0.76rem;
+  font-variant-numeric: tabular-nums;
+}
+
+.sym-delta.is-up {
+  color: var(--sym-term-2);
+}
+
+.sym-delta.is-down {
+  color: var(--sym-term-4);
+}

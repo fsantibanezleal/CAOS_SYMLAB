@@ -324,7 +324,8 @@ export function ExpressionPanel({
         )}
       </div>
 
-      {member.units_ok === false && (
+      {/* `=== false` never fired while the exporter wrote 0 for false. */}
+      {member.units_ok !== null && !member.units_ok && (
         <p className="sym-note sym-warn">
           {es ? 'Coherencia dimensional: ' : 'Dimensional consistency: '}
           {member.units_reason}

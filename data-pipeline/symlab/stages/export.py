@@ -58,6 +58,17 @@ def _plain(value):
         return {k: _plain(v) for k, v in value.items()}
     if isinstance(value, (list, tuple)):
         return [_plain(v) for v in value]
+    # BOOLEANS FIRST. `bool` is a subclass of `int` in Python, and `np.bool_` answers to the numpy
+    # integer check, so the integer branch below used to swallow every boolean in the artifact and
+    # write it as 0 or 1. The web contract declares these fields `boolean | null`, so the payload
+    # was quietly violating its own schema everywhere: `symbolic`, `numerical`, `agreed`,
+    # `accuracy_solution`, `on_front`, `units_ok`, `complete`, `accepted`.
+    #
+    # It survived because almost every consumer tested truthiness, where 1 and true behave alike.
+    # It broke the moment one of them compared identity: `member.units_ok === false` is false when
+    # the value is 0, so the dimensional-consistency warning could never render.
+    if isinstance(value, (bool, np.bool_)):
+        return bool(value)
     if isinstance(value, (np.floating, float)):
         v = float(value)
         return None if not np.isfinite(v) else round(v, 8)

@@ -1,10 +1,11 @@
 import { Callout, Cite, Equation, Refs, SubTabs } from '@fasl-work/caos-app-shell';
 
+import { AblationResult } from '../render/AblationResult';
 import { FigThreeSplits, FigTripleEquivalence } from '../render/Figures';
 import { useEffect, useState } from 'react';
 
-import { loadIndex } from '../lib/data';
-import type { CaseIndex } from '../lib/contract.types';
+import { loadIndex, loadRun } from '../lib/data';
+import type { CaseIndex, RunPayload } from '../lib/contract.types';
 import { useLang } from '../lib/useLang';
 
 /**
@@ -17,9 +18,18 @@ import { useLang } from '../lib/useLang';
 export default function Experiments() {
   const es = useLang() === 'es';
   const [index, setIndex] = useState<CaseIndex | null>(null);
+  const [runs, setRuns] = useState<RunPayload[]>([]);
 
   useEffect(() => {
-    loadIndex().then(setIndex).catch(() => setIndex(null));
+    loadIndex()
+      .then((loaded) => {
+        setIndex(loaded);
+        // The ablation summary needs every run, not the index: the per-rung equivalence verdict
+        // lives on the variant score, which the index does not carry.
+        return Promise.all(loaded.cases.map((entry) => loadRun(entry.case_id).catch(() => null)));
+      })
+      .then((loaded) => setRuns(loaded.filter((r): r is RunPayload => r !== null)))
+      .catch(() => setIndex(null));
   }, []);
 
   const tabs = [
@@ -96,6 +106,11 @@ export default function Experiments() {
           </Callout>
         </section>
       ),
+    },
+    {
+      id: 'result',
+      label: es ? 'Lo que midio' : 'What it measured',
+      content: <AblationResult runs={runs} lang={es ? 'es' : 'en'} />,
     },
     {
       id: 'protocol',
