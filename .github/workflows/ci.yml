@@ -21,9 +21,15 @@ jobs:
         run: ruff check data-pipeline tests
       - name: Tests
         run: pytest
-      - name: Pipeline smoke (regenerate one case)
-        run: python -m symlab.pipeline monod-saturation
-      - name: CONTRACT 2, manifests <-> artifacts consistent (no drift)
+      - name: Pipeline smoke (regenerate one case into a sandbox)
+        # SYMLAB_OUTPUT_DIR is MANDATORY here. Without it, baking a single case rewrites
+        # manifests/index.json with that one case, truncating the committed 55-case index to 1.
+        # The next step then reports drift and fails, so this job was red on every run for a reason
+        # that had nothing to do with the change under test. It is the same rule the tests enforce:
+        # a bake must never write the canonical tree, and the smoke bake is a bake.
+        run: SYMLAB_OUTPUT_DIR="${RUNNER_TEMP}/symlab-smoke" python -m symlab.pipeline monod-saturation
+      - name: CONTRACT 2, the COMMITTED manifests and artifacts are consistent (no drift)
+        # Runs against the checked-out tree, which the sandboxed smoke bake above did not touch.
         run: python scripts/check_artifacts.py
 
   guards:

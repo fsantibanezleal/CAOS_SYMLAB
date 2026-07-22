@@ -100,3 +100,27 @@ def test_the_live_worker_does_not_keep_its_own_module_list() -> None:
         "the worker names an engine module directly, which means a second list has come back. "
         "The copier is the only party that knows what exists on disk."
     )
+
+
+def test_the_smoke_bake_is_sandboxed(ci: str) -> None:
+    """A single-case bake in the working tree rewrites the whole index with that one case.
+
+    CI runs a smoke bake ("regenerate one case") and then check_artifacts, which now has a coverage
+    check. Baking monod-saturation into the checkout truncates manifests/index.json from 55 cases to
+    1, and the coverage check then reports 54 artifacts absent from the index and exits 1. The job
+    goes red for a reason unrelated to the change under test.
+
+    So the smoke bake MUST redirect its output. This asserts that the pipeline invocation in CI
+    carries SYMLAB_OUTPUT_DIR on the same line, which is the same rule the artifact-protection tests
+    enforce for the test suite: a bake never writes the canonical tree.
+    """
+    bake_lines = [
+        line for line in ci.splitlines()
+        if "symlab.pipeline" in line and "python" in line
+    ]
+    assert bake_lines, "CI no longer runs a pipeline smoke bake"
+    for line in bake_lines:
+        assert "SYMLAB_OUTPUT_DIR" in line, (
+            f"the CI bake `{line.strip()}` writes the checked-out tree. It must set "
+            "SYMLAB_OUTPUT_DIR, or it truncates the committed index and the next step fails."
+        )
