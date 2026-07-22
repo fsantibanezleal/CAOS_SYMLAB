@@ -1,0 +1,188 @@
+/**
+ * The Live lane: a real symbolic-regression search running in the reader's browser.
+ *
+ * This is the differentiator, and it exists because of a hard constraint found during research:
+ * there is no maintained JavaScript, TypeScript or WebAssembly symbolic-regression library. The only
+ * two options were to run the Python core under Pyodide, or to fork the core into TypeScript. The
+ * fork was rejected because it would create two engines that must be kept in agreement forever, and
+ * an offline-versus-live parity failure is exactly the kind of defect that produces published
+ * numbers nobody can reproduce.
+ *
+ * So the browser runs the SAME code the pipeline runs. The engine is imported from the committed
+ * package source, at a reduced budget, on data generated in the browser from the same generator the
+ * offline lane uses. Reduced budget, identical algorithm: the honest form of a live demonstration.
+ *
+ * Nothing starts automatically. Loading a Python runtime and running an evolutionary search on page
+ * view would burn a reader's battery for a result they did not ask for.
+ */
+import { Callout } from '@fasl-work/caos-app-shell';
+import { useCallback, useRef, useState } from 'react';
+
+import type { RunPayload } from '../../lib/contract.types';
+
+type Status = 'idle' | 'loading' | 'running' | 'done' | 'error';
+
+interface LiveResult {
+  latex: string;
+  infix: string;
+  complexity: number;
+  mse: number;
+  seconds: number;
+  generations: number;
+  population: number;
+}
+
+export function LiveLane({ run, lang }: { run: RunPayload; lang: 'en' | 'es' }) {
+  const es = lang === 'es';
+  const [status, setStatus] = useState<Status>('idle');
+  const [message, setMessage] = useState('');
+  const [result, setResult] = useState<LiveResult | null>(null);
+  const [population, setPopulation] = useState(80);
+  const [generations, setGenerations] = useState(12);
+  const [seed, setSeed] = useState(0);
+  const workerRef = useRef<Worker | null>(null);
+
+  const start = useCallback(() => {
+    setStatus('loading');
+    setMessage(es ? 'Cargando el motor de Python en el navegador...' : 'Loading the Python engine in the browser...');
+    setResult(null);
+
+    const worker = new Worker(new URL('../../live/search.worker.ts', import.meta.url), {
+      type: 'module',
+    });
+    workerRef.current?.terminate();
+    workerRef.current = worker;
+
+    worker.onmessage = (event: MessageEvent) => {
+      const data = event.data as { kind: string; text?: string; result?: LiveResult };
+      if (data.kind === 'status') {
+        setStatus('running');
+        setMessage(data.text ?? '');
+      } else if (data.kind === 'result' && data.result) {
+        setResult(data.result);
+        setStatus('done');
+        setMessage('');
+      } else if (data.kind === 'error') {
+        setStatus('error');
+        setMessage(data.text ?? 'unknown error');
+      }
+    };
+
+    worker.postMessage({
+      caseId: run.notes.case_id,
+      population,
+      generations,
+      seed,
+    });
+  }, [run.notes.case_id, population, generations, seed, es]);
+
+  const stop = useCallback(() => {
+    workerRef.current?.terminate();
+    workerRef.current = null;
+    setStatus('idle');
+    setMessage('');
+  }, []);
+
+  return (
+    <div className="sym-live">
+      <Callout variant="note" title={es ? 'La misma implementacion, presupuesto reducido' : 'The same implementation, reduced budget'}>
+        <p>
+          {es
+            ? 'Esta busqueda ejecuta EL MISMO codigo que el horneado sin conexion, cargado en el navegador. No es una reimplementacion en JavaScript: mantener dos motores de acuerdo para siempre es exactamente el tipo de defecto que produce numeros publicados que nadie puede reproducir. Lo unico que cambia es el presupuesto.'
+            : 'This search runs THE SAME code as the offline bake, loaded into the browser. It is not a JavaScript reimplementation: keeping two engines in agreement forever is exactly the kind of defect that produces published numbers nobody can reproduce. The only thing that changes is the budget.'}
+        </p>
+        <p>
+          {es
+            ? 'Nada se ejecuta hasta que lo pidas. Cargar un runtime de Python y correr una busqueda evolutiva al abrir la pagina gastaria la bateria del lector por un resultado que no pidio.'
+            : 'Nothing runs until you ask. Loading a Python runtime and running an evolutionary search on page view would burn a reader battery for a result they did not ask for.'}
+        </p>
+      </Callout>
+
+      <div className="sym-live-controls">
+        <label>
+          {es ? 'poblacion' : 'population'}
+          <input
+            type="range"
+            min={30}
+            max={200}
+            step={10}
+            value={population}
+            onChange={(event) => setPopulation(Number(event.target.value))}
+            disabled={status === 'running' || status === 'loading'}
+          />
+          <output>{population}</output>
+        </label>
+        <label>
+          {es ? 'generaciones' : 'generations'}
+          <input
+            type="range"
+            min={4}
+            max={40}
+            step={2}
+            value={generations}
+            onChange={(event) => setGenerations(Number(event.target.value))}
+            disabled={status === 'running' || status === 'loading'}
+          />
+          <output>{generations}</output>
+        </label>
+        <label>
+          {es ? 'semilla' : 'seed'}
+          <input
+            type="number"
+            min={0}
+            max={999}
+            value={seed}
+            onChange={(event) => setSeed(Number(event.target.value))}
+            disabled={status === 'running' || status === 'loading'}
+          />
+        </label>
+        {status === 'running' || status === 'loading' ? (
+          <button type="button" className="chip on" onClick={stop}>
+            {es ? 'detener' : 'stop'}
+          </button>
+        ) : (
+          <button type="button" className="chip on" onClick={start}>
+            {es ? 'ejecutar la busqueda aqui' : 'run the search here'}
+          </button>
+        )}
+      </div>
+
+      {message && <p className="sym-live-status">{message}</p>}
+
+      {status === 'error' && (
+        <Callout variant="honest" title={es ? 'La ejecucion en vivo fallo' : 'The live run failed'}>
+          <p>{message}</p>
+          <p>
+            {es
+              ? 'La vista de reproduccion sigue disponible: el resultado horneado no depende de este panel.'
+              : 'The replay view is unaffected: the baked result does not depend on this panel.'}
+          </p>
+        </Callout>
+      )}
+
+      {result && (
+        <div className="sym-live-result">
+          <h4>{es ? 'Lo que encontro tu navegador' : 'What your browser found'}</h4>
+          <pre className="sym-live-expression">{result.infix}</pre>
+          <dl>
+            <dt>{es ? 'complejidad' : 'complexity'}</dt>
+            <dd>{result.complexity}</dd>
+            <dt>MSE</dt>
+            <dd>{result.mse.toExponential(3)}</dd>
+            <dt>{es ? 'segundos' : 'seconds'}</dt>
+            <dd>{result.seconds.toFixed(1)}</dd>
+            <dt>{es ? 'presupuesto' : 'budget'}</dt>
+            <dd>
+              {result.population} x {result.generations}
+            </dd>
+          </dl>
+          <p className="sym-note">
+            {es
+              ? 'Compara esto con el resultado horneado de la misma variante. Una diferencia no es un error: el presupuesto es mucho menor aqui, y ver cuanto cambia el resultado con el presupuesto es en si mismo el punto.'
+              : 'Compare this with the baked result for the same variant. A difference is not an error: the budget here is far smaller, and seeing how much the result moves with the budget is itself the point.'}
+          </p>
+        </div>
+      )}
+    </div>
+  );
+}

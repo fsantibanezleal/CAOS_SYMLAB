@@ -1,0 +1,11 @@
+# Offline pipeline dependencies. Heavy or native packages belong here, never in requirements.txt,
+# which must stay Pyodide-safe for the browser lane.
+numpy==2.3.4
+scipy==1.16.3
+openpyxl==3.1.5          # UCI Combined Cycle Power Plant ships its data as .xlsx
+xlrd==2.0.2              # UCI Concrete ships its data as a legacy .xls
+
+# The evaluation harness, extracted as its own MIT package because the problem is not specific to
+# this lab. Pinned to a git tag until the first PyPI release lands, then swapped to a version pin.
+sreval[symbolic] @ git+https://github.com/fsantibanezleal/CAOS_SREVAL@main
+sympy>=1.12             # required by sreval's symbolic equivalence test

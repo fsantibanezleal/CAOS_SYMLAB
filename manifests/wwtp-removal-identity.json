@@ -1,0 +1,126 @@
+{
+  "schema": "symlab.manifest/v1",
+  "case_id": "wwtp-removal-identity",
+  "category": "I",
+  "engine": {
+    "package": "symlab",
+    "version": "0.01.000"
+  },
+  "seed": 0,
+  "artifact": {
+    "path": "wwtp-removal-identity/run.json",
+    "format": "json",
+    "schema_version": "1.0.0",
+    "bytes": 249133
+  },
+  "lane": "precompute",
+  "data": {
+    "source_id": "water-treatment",
+    "citation": "Water Treatment Plant. UCI Machine Learning Repository, doi:10.24432/C5854H. 527 days.",
+    "licence": "CC BY 4.0 (UCI Machine Learning Repository)",
+    "redistribution": "mirror",
+    "real_or_synthetic": "real",
+    "defects_applied": [
+      "The UCI landing page states there are no missing values. The shipped file contains 591 occurrences of '?'. Rows containing any are DROPPED, not imputed: imputing into an exact identity would manufacture the relationship this case exists to recover. 380 of 527 rows retained."
+    ]
+  },
+  "contract": {
+    "n_rows": 380,
+    "n_inputs": 2,
+    "input_keys": [
+      "DBO-E",
+      "DBO-S"
+    ],
+    "target_key": "RD-DBO-G",
+    "distinct_target_values": 134,
+    "target_repeat_ratio": 2.836,
+    "constant_inputs": [],
+    "warnings": [],
+    "defects_applied": [
+      "The UCI landing page states there are no missing values. The shipped file contains 591 occurrences of '?'. Rows containing any are DROPPED, not imputed: imputing into an exact identity would manufacture the relationship this case exists to recover. 380 of 527 rows retained."
+    ],
+    "licence": "CC BY 4.0 (UCI Machine Learning Repository)",
+    "redistribution": "mirror",
+    "citation": "Water Treatment Plant. UCI Machine Learning Repository, doi:10.24432/C5854H. 527 days.",
+    "n_train": 243,
+    "n_test": 81,
+    "n_extrapolation": 56
+  },
+  "units_declared": 0,
+  "split_note": "extrapolation split holds out the lowest and highest 28 rows of 'DBO-E', so the training region is an interior box and the extrapolation rows lie outside the support the search ever saw",
+  "variants": [
+    {
+      "id": "r1-koza-baseline",
+      "seconds": 0.462,
+      "evaluations": 5000,
+      "front_size": 2,
+      "selected_complexity": 2,
+      "test_r2": -0.01661601,
+      "accuracy_solution": 0,
+      "exact_recovery": null,
+      "symbolic_test_decided": null,
+      "irrelevant_features": 0
+    },
+    {
+      "id": "r2-linear-scaling",
+      "seconds": 0.697,
+      "evaluations": 5000,
+      "front_size": 12,
+      "selected_complexity": 7,
+      "test_r2": 0.99994104,
+      "accuracy_solution": 1,
+      "exact_recovery": null,
+      "symbolic_test_decided": null,
+      "irrelevant_features": 0
+    },
+    {
+      "id": "r3-constant-tuning",
+      "seconds": 0.541,
+      "evaluations": 5150,
+      "front_size": 4,
+      "selected_complexity": 7,
+      "test_r2": 0.99994104,
+      "accuracy_solution": 1,
+      "exact_recovery": null,
+      "symbolic_test_decided": null,
+      "irrelevant_features": 0
+    },
+    {
+      "id": "r4-multi-objective",
+      "seconds": 0.726,
+      "evaluations": 5150,
+      "front_size": 2,
+      "selected_complexity": 7,
+      "test_r2": 0.99994104,
+      "accuracy_solution": 1,
+      "exact_recovery": null,
+      "symbolic_test_decided": null,
+      "irrelevant_features": 0
+    },
+    {
+      "id": "r7-deduplication",
+      "seconds": 143.81,
+      "evaluations": 5600,
+      "front_size": 2,
+      "selected_complexity": 7,
+      "test_r2": 0.99994104,
+      "accuracy_solution": 1,
+      "exact_recovery": null,
+      "symbolic_test_decided": null,
+      "irrelevant_features": 0
+    }
+  ],
+  "summary": {
+    "n_variants": 5,
+    "accuracy_solutions": 4,
+    "accuracy_solution_rate": 0.8,
+    "exact_recoveries": 0,
+    "exact_recovery_rate": null,
+    "mean_structural_distance": null,
+    "symbolic_test_failure_rate": null,
+    "test_disagreement_count": 0,
+    "total_seconds": 146.24,
+    "total_evaluations": 25900,
+    "variants_with_irrelevant_features": 0
+  }
+}
