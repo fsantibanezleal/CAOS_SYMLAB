@@ -3,7 +3,8 @@
  *
  * Why this rather than the shell `CaseSelector`: that component renders a chip deck, one chip per
  * case under a heading per category. That shape is right for a deck of six or eight cases. This lab
- * publishes twenty-five across six categories, and in a sidebar the deck becomes a wall of chips
+ * publishes dozens (two registry entries are SUITES that bake out to one case per member, eighteen
+ * Feynman and seven Strogatz), and in a sidebar the deck becomes a wall of chips
  * with no ordering a reader can hold in their head. So the same information is bound to native
  * `<select>` elements: category narrows, case picks, and the sidebar stays one screen tall no
  * matter how many cases the registry grows to.

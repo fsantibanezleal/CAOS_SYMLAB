@@ -3,7 +3,8 @@
  *
  * The cost panel is not bookkeeping. The benchmark literature names budget unfairness as a standing
  * problem, and this lab measured a selection method that buys quality at roughly 22 times the
- * baseline wall-clock. Showing seconds and evaluations next to the loss curve is what lets a reader
+ * baseline wall-clock in isolation, and around 30 times cumulatively at the published budgets.
+ * Showing seconds and evaluations next to the loss curve is what lets a reader
  * ask whether a rung earned its price, instead of comparing rungs at equal generation count and
  * calling that fair.
  */

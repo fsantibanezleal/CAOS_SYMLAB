@@ -41,8 +41,8 @@ export default function Experiments() {
           <h3>{es ? 'Que pregunta responde cada experimento' : 'What question each experiment answers'}</h3>
           <p>
             {es
-              ? 'Las variantes de un caso no son un recorrido de metodos. Cada una difiere de su vecina en exactamente UN mecanismo, de modo que una diferencia medida se atribuye a un cambio con nombre y no a un paquete de cambios. Esa es la diferencia entre una ablacion y una demostracion.'
-              : 'The variants of a case are not a tour of methods. Each differs from its neighbour by exactly ONE mechanism, so a measured difference is attributable to a named change rather than to a bundle of changes. That is the difference between an ablation and a demonstration.'}
+              ? 'Las variantes de un caso no son un recorrido de metodos. La mayoria anade exactamente UN mecanismo a la anterior, de modo que una diferencia medida se atribuye a ese cambio con nombre. Tres no lo hacen, y decirlo es justamente el sentido de una ablacion: r2 activa a la vez el escalado lineal Y la guarda de intervalos, porque la contribucion de Keijzer son ambas; r6 anade edad-aptitud e islas mientras APAGA la supervivencia multiobjetivo; r7 la vuelve a encender junto con los dos interruptores de deduplicacion. Lee esos tres como pasos compuestos, marcados abajo, y los demas como incrementos limpios.'
+              : 'The variants of a case are not a tour of methods. Most rungs add exactly ONE mechanism to the one above them, so a measured difference is attributable to that named change. Three do not, and saying so is the point of an ablation: r2 turns on linear scaling AND the interval guard together, because the Keijzer contribution is both; r6 adds age-fitness and islands while turning multi-objective survival OFF; r7 turns it back on alongside both deduplication switches. Read those three as compound steps, marked below, and the rest as clean increments.'}
           </p>
           <div className="sym-table-scroll">
             <table className="sym-table">
@@ -61,7 +61,10 @@ export default function Experiments() {
                 </tr>
                 <tr>
                   <td>2</td>
-                  <td>{es ? 'escalado lineal y guardas de intervalo' : 'linear scaling and interval guards'}</td>
+                  <td>
+                    {es ? 'escalado lineal y guardas de intervalo' : 'linear scaling and interval guards'}{' '}
+                    <em>{es ? '(compuesto: dos interruptores)' : '(compound: two switches)'}</em>
+                  </td>
                   <td>{es ? 'cuanto del trabajo era resolver constantes en vez de buscar forma' : 'how much of the work was solving constants rather than searching for shape'}</td>
                 </tr>
                 <tr>
@@ -81,12 +84,22 @@ export default function Experiments() {
                 </tr>
                 <tr>
                   <td>6</td>
-                  <td>{es ? 'edad-aptitud e islas' : 'age-fitness and islands'}</td>
+                  <td>
+                    {es
+                      ? 'edad-aptitud e islas, con la supervivencia multiobjetivo APAGADA'
+                      : 'age-fitness and islands, with multi-objective survival turned OFF'}{' '}
+                    <em>{es ? '(compuesto: tres cambios)' : '(compound: three changes)'}</em>
+                  </td>
                   <td>{es ? 'si la convergencia prematura estaba limitando el resultado' : 'whether premature convergence was limiting the result'}</td>
                 </tr>
                 <tr>
                   <td>7</td>
-                  <td>{es ? 'deduplicacion' : 'deduplication'}</td>
+                  <td>
+                    {es
+                      ? 'deduplicacion estructural y semantica, con la supervivencia multiobjetivo encendida de nuevo'
+                      : 'structural and semantic deduplication, with multi-objective survival turned back on'}{' '}
+                    <em>{es ? '(compuesto: tres cambios)' : '(compound: three changes)'}</em>
+                  </td>
                   <td>{es ? 'que fraccion del presupuesto se gastaba en repetir evaluaciones' : 'what fraction of the budget was spent repeating evaluations'}</td>
                 </tr>
                 <tr>
@@ -276,8 +289,8 @@ export default function Experiments() {
         <h1>{es ? 'Experimentos' : 'Experiments'}</h1>
         <p className="lede">
           {es
-            ? 'El diseno, el protocolo y la matriz de cobertura leida de los artefactos reales. Cada variante difiere de su vecina en exactamente un mecanismo, que es la diferencia entre una ablacion y una demostracion.'
-            : 'The design, the protocol, and the coverage matrix read from the real artifacts. Each variant differs from its neighbour by exactly one mechanism, which is the difference between an ablation and a demonstration.'}
+            ? 'El diseno, el protocolo y la matriz de cobertura leida de los artefactos reales. Cuatro de los siete pasos de la escalera anaden exactamente un mecanismo al anterior; los otros tres son compuestos y se marcan como tales, que es la diferencia entre una ablacion y una demostracion.'
+            : 'The design, the protocol, and the coverage matrix read from the real artifacts. Four of the seven steps up the ladder add exactly one mechanism to the rung above; the other three are compound and are marked as such, which is the difference between an ablation and a demonstration.'}
         </p>
       </div>
       <SubTabs tabs={tabs} ariaLabel={es ? 'Aspectos experimentales' : 'Experimental aspects'} />

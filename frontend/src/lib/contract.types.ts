@@ -156,6 +156,20 @@ export interface HistoryPayload {
   }[];
 }
 
+/**
+ * The input columns behind every variant's parity arrays, exported once per case.
+ *
+ * A data column does not depend on which expression is being scored, so carrying it inside each
+ * variant multiplied it by the number of rungs. `stride` and row order match the per-variant parity
+ * arrays by construction: the exporter derives both from one function.
+ */
+export interface ParityInputs {
+  stride: number;
+  n_shown: number;
+  n_total: number;
+  columns: Record<string, number[]>;
+}
+
 export interface ValidationPayload {
   parity?: {
     y_true: number[];
@@ -165,7 +179,6 @@ export interface ValidationPayload {
     n_shown: number;
     n_total: number;
   };
-  residuals_by_input?: Record<string, { x: number[]; residual: number[] }>;
   pdp?: { var: string; grid: number[]; mean: (number | null)[]; support: [number, number] }[];
   extrapolation?: {
     var: string;
@@ -336,6 +349,8 @@ export interface CaseNotes {
    *  applied. Recorded verbatim rather than tidied away. */
   defects_applied?: string[];
   split_note: string;
+  /** The input columns behind every variant's parity arrays, on one shared stride. */
+  parity_inputs?: ParityInputs;
   features_note: string;
   sampling: SamplingEntry[];
   variants: VariantPayload[];

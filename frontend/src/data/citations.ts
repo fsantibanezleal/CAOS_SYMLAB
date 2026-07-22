@@ -1,10 +1,12 @@
 /**
- * The citation registry. Every entry carries a real, resolvable DOI or arXiv identifier.
+ * The citation registry. Every entry carries a resolvable link: a DOI where the work has one, an
+ * arXiv identifier where it does not, and a publisher or archive URL for the two items that have
+ * neither (the 1992 book, and the 1933 measurements as redistributed through PMLB).
  *
  * A bare author-year with no link is treated as a failure here, not as a stylistic lapse: it is
  * indistinguishable from a fabricated reference, and this lab's entire argument depends on its
- * claims being checkable. Every one of these was verified against a primary source during the
- * research phase that preceded any code.
+ * claims being checkable. Every DOI in this file was resolved against Crossref during the content
+ * audit, and the volume, issue and page numbers below are the ones Crossref returns.
  */
 import type { Citation } from '@fasl-work/caos-app-shell';
 
@@ -69,7 +71,7 @@ export const CITATIONS: Citation[] = [
     id: 'defranca2024',
     label: 'de Franca et al. 2024',
     citation:
-      'de Franca, F. O., Virgolin, M., Kommenda, M. et al. (2024). SRBench++: principled benchmarking of symbolic regression with domain-expert interpretation. IEEE Transactions on Evolutionary Computation 29(4), 1127-1134.',
+      'de Franca, F. O., Virgolin, M., Kommenda, M. et al. (2024). SRBench++: principled benchmarking of symbolic regression with domain-expert interpretation. IEEE Transactions on Evolutionary Computation 29(4), 1127-1137.',
     doi: '10.1109/TEVC.2024.3423681',
   },
   {
@@ -160,7 +162,7 @@ export const CITATIONS: Citation[] = [
     id: 'bartlett2023',
     label: 'Bartlett et al. 2023',
     citation:
-      'Bartlett, D. J., Desmond, H. and Ferreira, P. G. (2023). Exhaustive symbolic regression. IEEE Transactions on Evolutionary Computation.',
+      'Bartlett, D. J., Desmond, H. and Ferreira, P. G. (2023). Exhaustive symbolic regression. IEEE Transactions on Evolutionary Computation 28(4), 950-964.',
     doi: '10.1109/TEVC.2023.3280250',
   },
   {

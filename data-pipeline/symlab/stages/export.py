@@ -34,6 +34,7 @@ from ..core.contract import (
     history_payload,
     pareto_member_payload,
     run_payload,
+    parity_input_columns,
     validation_payload,
 )
 from ..model.expr import Node
@@ -258,6 +259,13 @@ def build_run(
             "contract_warnings": list(prepared.contract_report.get("warnings", [])),
             "defects_applied": list(prepared.contract_report.get("defects_applied", [])),
             "split_note": prepared.split_note,
+            # The input columns behind every variant's parity arrays, once. See the note in
+            # core/contract.py: these used to be repeated inside each variant, once per input.
+            "parity_inputs": parity_input_columns(
+                prepared.X_train,
+                X_test=prepared.X_test,
+                input_keys=prepared.dataset.input_keys,
+            ),
             "features_note": features.note,
             "sampling": features.sampling,
             "variants": variants_payload,

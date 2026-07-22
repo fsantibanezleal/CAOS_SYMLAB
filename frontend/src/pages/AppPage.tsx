@@ -188,7 +188,14 @@ export default function AppPage() {
     {
       id: 'validation',
       label: es ? 'Paridad y residuos' : 'Parity and residuals',
-      content: variant ? <ValidationPanel validation={variant.validation} lang={lang} /> : null,
+      content:
+        variant && run ? (
+          <ValidationPanel
+            validation={variant.validation}
+            parityInputs={run.notes.parity_inputs}
+            lang={lang}
+          />
+        ) : null,
     },
     {
       id: 'live',
@@ -292,8 +299,8 @@ export default function AppPage() {
               <p className="sym-control-note">
                 {(variant?.method ?? 'gp') === 'gp'
                   ? es
-                    ? 'Dentro de la escalera, cada escalon anade UN mecanismo al anterior, asi que la diferencia medida es atribuible a ese cambio y no a la suma de varios.'
-                    : 'Within the ladder, each rung adds ONE mechanism to the one before it, so a measured difference is attributable to that change rather than to several at once.'
+                    ? 'La mayoria de los escalones anade exactamente UN mecanismo al anterior, asi que la diferencia medida es atribuible a ese cambio concreto. Tres no lo hacen, y decirlo es justamente el sentido de una ablacion: r2 enciende el escalado lineal Y la guarda de intervalos a la vez, porque la aportacion de Keijzer son ambos; r6 anade age-fitness e islas mientras APAGA la supervivencia multiobjetivo; r7 la vuelve a encender junto con las dos deduplicaciones. Lee esos tres como pasos compuestos.'
+                    : 'Most rungs add exactly ONE mechanism to the one above them, so a measured difference is attributable to that named change. Three do not, and saying so is the point of an ablation: r2 turns on linear scaling AND the interval guard together, because Keijzer\'s contribution is both; r6 adds age-fitness and islands while turning multi-objective survival OFF; r7 turns it back on alongside both deduplication switches. Read those three as compound steps.'
                   : es
                     ? 'Esta no es un escalon de la escalera sino OTRA familia de busqueda. Comparala con la escalera completa, no con el escalon de arriba: no anade un mecanismo a nada.'
                     : 'This is not a rung of the ladder but a DIFFERENT search family. Compare it against the ladder as a whole rather than against the entry above it: it does not add a mechanism to anything.'}

@@ -112,7 +112,19 @@ from symlab.search.sparse import SparseRegressionSearch
 from symlab.model.expr import to_infix
 from symlab.model.latex import to_latex
 
-generator = GENERATORS.get(${JSON.stringify(generatorId)}) or GENERATORS["monod-saturation"]
+case_id = ${JSON.stringify(generatorId)}
+generator = GENERATORS.get(case_id)
+if generator is None:
+    # REFUSE rather than substitute. This line used to fall back to the Monod generator, so a
+    # reader on a measured plant dataset pressed Run and got a result for a completely different
+    # problem, rendered under their case's heading. Nine of the twenty-five registry cases have no
+    # generator behind them, so that was not an edge case.
+    raise ValueError(
+        "no generator is registered for '" + case_id + "'. The live lane regenerates its data in "
+        "the browser from a first-principles generator, so it can only run synthetic cases. This "
+        "case is measured data or a published-physics suite loaded from a file, and running "
+        "something else under its name would be worse than not running at all."
+    )
 X, y = make_dataset(generator, n_rows=240, seed=${seed})
 
 config = replace(

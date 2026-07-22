@@ -212,8 +212,8 @@ export default function Benchmark() {
         <Callout variant="honest" title={es ? 'Una tasa de exactitud alta no es un descubrimiento' : 'A high accuracy rate is not a discovery'}>
           <p>
             {es
-              ? 'La columna de exactitud dice que la expresion ajusta las filas retenidas. La columna de recuperacion dice que es la expresion CORRECTA. Sobre un conjunto de descubrimiento cientifico, un metodo preentrenado alcanzo 26,7 por ciento en la primera con 0,00 por ciento en la segunda. Leer la primera columna como si fuera la segunda es el error que esta pagina existe para impedir.'
-              : 'The accuracy column says the expression fits the held-out rows. The recovery column says it is the CORRECT expression. On a scientific-discovery benchmark, a pretrained method reached 26.7 percent on the first with 0.00 percent on the second. Reading the first column as if it were the second is the mistake this page exists to prevent.'}{' '}
+              ? 'La columna de exactitud dice que la expresion ajusta las filas retenidas. La columna de recuperacion dice que es la expresion CORRECTA. En el nivel FACIL del conjunto SRSD-Feynman, un transformador preentrenado alcanzo 26,7 por ciento en la primera con 0,00 por ciento en la segunda. Leer la primera columna como si fuera la segunda es el error que esta pagina existe para impedir.'
+              : 'The accuracy column says the expression fits the held-out rows. The recovery column says it is the CORRECT expression. On the EASY tier of the SRSD-Feynman set, a pretrained transformer reached 26.7 percent on the first with 0.00 percent on the second. Reading the first column as if it were the second is the mistake this page exists to prevent.'}{' '}
             <Cite id="matsubara2022" paren />
           </p>
         </Callout>

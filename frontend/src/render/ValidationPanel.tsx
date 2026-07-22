@@ -11,7 +11,7 @@
 import { scaleLinear } from 'd3-scale';
 import { useMemo, useState } from 'react';
 
-import type { ValidationPayload } from '../lib/contract.types';
+import type { ParityInputs, ValidationPayload } from '../lib/contract.types';
 import { ExtrapolationPlot, ParityPlot, PartialDependence } from './ModelValidation';
 
 const W = 300;
@@ -86,13 +86,33 @@ function ResidualScatter({
 
 export function ValidationPanel({
   validation,
+  parityInputs,
   lang,
 }: {
   validation: ValidationPayload;
+  parityInputs?: ParityInputs;
   lang: 'en' | 'es';
 }) {
   const es = lang === 'es';
-  const residuals = Object.entries(validation.residuals_by_input ?? {});
+
+  // The residual against each input is derived here rather than downloaded. The artifact used to
+  // carry it as {input: {x, residual}} inside every variant, where `residual` was a byte-for-byte
+  // copy of y_true - y_pred repeated once per input, and `x` was a data column repeated once per
+  // rung. On the flotation case that was 12.1 MB of a 12.6 MB file. The columns now arrive once
+  // per case, on the same stride and row order, and the subtraction happens here.
+  const residuals = useMemo(() => {
+    const columns = parityInputs?.columns;
+    const { y_true: yTrue, y_pred: yPred } = validation.parity ?? {};
+    if (!columns || !yTrue || !yPred) return [];
+    const predicted = yPred;
+    const residual = yTrue.map((t, i) => {
+      const p = predicted[i];
+      return p == null ? NaN : t - p;
+    });
+    return Object.entries(columns)
+      .filter(([, x]) => x.length === residual.length)
+      .map(([name, x]) => [name, { x, residual }] as const);
+  }, [parityInputs, validation.parity]);
   const [showAllResiduals, setShowAllResiduals] = useState(false);
   const shownResiduals = showAllResiduals ? residuals : residuals.slice(0, 6);
 

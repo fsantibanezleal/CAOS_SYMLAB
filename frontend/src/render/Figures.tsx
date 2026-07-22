@@ -111,9 +111,9 @@ export function FigLinearScaling({ es }: { es: boolean }) {
       <text className="sub" x="368" y="168">{es ? 'Optimo por construccion, en cada candidato.' : 'Optimal by construction, on every candidate.'}</text>
 
       <rect className="bx" x="16" y="192" width="608" height="66" rx="7" />
-      <text className="ttl" x="30" y="214">{es ? 'Medido en este build, sobre datos reales de planta' : 'Measured in this build, on real plant data'}</text>
-      <text className="sub" x="30" y="234">{es ? 'base Koza: R2 de prueba -23,37, es decir peor que predecir la media' : 'Koza baseline: test R2 of -23.37, meaning worse than predicting the mean'}</text>
-      <text className="sub" x="30" y="250">{es ? 'anadiendo escalado lineal: R2 de prueba 0,947, hallando -9,806 ln(SiO2) + 81,63' : 'adding linear scaling: test R2 of 0.947, finding -9.806 ln(SiO2) + 81.63'}</text>
+      <text className="ttl" x="30" y="214">{es ? 'Cuanto compra, medido' : 'What it buys, measured'}</text>
+      <text className="sub" x="30" y="234">{es ? 'Esta figura no lleva numeros escritos a mano: el efecto por escalon cambia en cada' : 'This figure carries no hand-written numbers: the per-rung effect moves with every'}</text>
+      <text className="sub" x="30" y="250">{es ? 'horneado. La tabla de ablacion de Experimentos lo lee de los artefactos publicados.' : 'bake. The ablation table on the Experiments page reads it from the published artifacts.'}</text>
     </Fig>
   );
 }
@@ -355,8 +355,8 @@ export function FigLeakage({ es }: { es: boolean }) {
     <Fig
       caption={
         es
-          ? 'La trampa de la difusion del objetivo en datos reales de planta: un ensayo de laboratorio horario repetido sobre filas de veinte segundos. Ajustar a nivel de fila filtra el objetivo unas 13,5 veces.'
-          : 'The target-broadcast trap in real plant data: an hourly laboratory assay repeated across twenty-second rows. Fitting at row level leaks the target about 13.5 times over.'
+          ? 'La trampa de la difusion del objetivo en datos reales de planta: un ensayo de laboratorio horario repetido sobre filas de veinte segundos. Ajustar a nivel de fila filtra el objetivo unas 13,3 veces, re-derivado del archivo crudo.'
+          : 'The target-broadcast trap in real plant data: an hourly laboratory assay repeated across twenty-second rows. Fitting at row level leaks the target about 13.3 times over, re-derived from the raw file.'
       }
     >
       <text className="ttl" x="16" y="20">{es ? 'El archivo crudo' : 'The raw file'}</text>

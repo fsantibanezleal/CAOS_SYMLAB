@@ -458,6 +458,42 @@ def history_payload(
 # --------------------------------------------------------------------------------------------
 
 
+def parity_stride(n_rows: int, max_points: int) -> int:
+    """The one definition of the parity stride.
+
+    It has to be one definition because two blocks are exported separately and then read side by
+    side: the per-variant parity arrays, and the per-case input columns below. If those two ever
+    used different strides the app would plot a residual against the wrong row's input and nothing
+    would look wrong on screen.
+    """
+    return max(1, n_rows // max_points)
+
+
+def parity_input_columns(
+    X_train: np.ndarray,
+    *,
+    X_test: np.ndarray | None = None,
+    input_keys: Sequence[str] | None = None,
+    max_parity_points: int = 2000,
+) -> dict:
+    """The input columns behind the parity arrays, exported ONCE per case.
+
+    A column of the data is a property of the case, not of the expression being scored, so storing
+    it inside each variant multiplied it by the number of rungs for no information. Row order and
+    stride match `validation_payload` exactly, by construction: both call `parity_stride`, and both
+    stack train before test.
+    """
+    keys = list(input_keys or [f"x{i}" for i in range(X_train.shape[1])])
+    X_all = np.vstack([X_train, X_test]) if X_test is not None else X_train
+    stride = parity_stride(len(X_all), max_parity_points)
+    return {
+        "stride": stride,
+        "n_shown": int(len(X_all[::stride])),
+        "n_total": int(len(X_all)),
+        "columns": {key: X_all[::stride, j].tolist() for j, key in enumerate(keys)},
+    }
+
+
 def validation_payload(
     root: Node,
     X_train: np.ndarray,
@@ -487,7 +523,7 @@ def validation_payload(
         X_all, y_all, split = X_train, y_train, np.zeros(len(y_train), dtype=int)
 
     y_pred = evaluate(root, X_all)
-    stride = max(1, len(y_all) // max_parity_points)
+    stride = parity_stride(len(y_all), max_parity_points)
     parity = {
         "y_true": y_all[::stride].tolist(),
         "y_pred": (y_pred[::stride] if is_valid(y_pred) else np.full_like(y_all[::stride], np.nan)).tolist(),
@@ -496,14 +532,15 @@ def validation_payload(
         "n_total": int(len(y_all)),
     }
 
-    residuals_by_input = {}
-    if is_valid(y_pred):
-        residual = y_all - y_pred
-        for j, key in enumerate(keys):
-            residuals_by_input[key] = {
-                "x": X_all[::stride, j].tolist(),
-                "residual": residual[::stride].tolist(),
-            }
+    # NOTE: the residual-against-each-input series is NOT stored here, and that is a size decision
+    # with a measured cause. It used to be, as {input: {x, residual}} for all inputs of all variants,
+    # and both halves were redundant: `residual` is exactly `y_true - y_pred` from the parity block
+    # two lines up, byte for byte, repeated once per input, and `x` is a column of the data, which
+    # does not depend on which expression is being scored and so was repeated once per variant too.
+    # On the flotation case, 21 inputs by 3400 rows by 8 variants came to 12.1 MB of the 12.6 MB
+    # artifact. The reader downloaded all of it to see a residual plot that the app can subtract for
+    # itself. The x columns are now exported ONCE per case by `parity_input_columns` below, on the
+    # same stride, and the residual is subtracted in the browser.
 
     pdp: list[dict] = []
     extrapolation: list[dict] = []
@@ -538,7 +575,6 @@ def validation_payload(
 
     return {
         "parity": parity,
-        "residuals_by_input": residuals_by_input,
         "pdp": pdp,
         "extrapolation": extrapolation,
         "term_contributions": term_contributions,

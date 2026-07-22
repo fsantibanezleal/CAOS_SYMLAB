@@ -132,8 +132,8 @@ export default function Implementation() {
           <h3>{es ? 'La trampa de la difusion del objetivo' : 'The target-broadcast trap'}</h3>
           <p>
             {es
-              ? 'El conjunto de flotacion registra variables de proceso cada veinte segundos, pero los ensayos de concentrado son mediciones de laboratorio HORARIAS repetidas en cada fila, unas 13,5 veces por valor distinto. Ajustar a nivel de fila filtra el objetivo esa misma cantidad de veces.'
-              : 'The flotation dataset records process variables every twenty seconds, but the concentrate assays are HOURLY laboratory measurements repeated across every row, about 13.5 times per distinct value. Fitting at row level leaks the target that many times over.'}
+              ? 'El conjunto de flotacion registra variables de proceso cada veinte segundos, unas 180 filas por hora, pero los ensayos de concentrado son mediciones de laboratorio HORARIAS. Re-derivado del archivo crudo durante esta auditoria: 737.453 filas frente a 55.569 valores distintos de silica en concentrado, es decir 13,3 filas por valor distinto. Ajustar a nivel de fila filtra el objetivo esa misma cantidad de veces.'
+              : 'The flotation dataset records process variables every twenty seconds, about 180 rows per hour, but the concentrate assays are HOURLY laboratory measurements. Re-derived from the raw file during this audit: 737,453 rows against 55,569 distinct concentrate-silica values, that is 13.3 rows per distinct value. Fitting at row level leaks the target that many times over.'}
           </p>
           <p>
             {es
@@ -151,8 +151,8 @@ export default function Implementation() {
           />
           <p>
             {es
-              ? 'Verificacion independiente durante esta construccion, sobre el archivo crudo: la recta de planta es Fe = 67,08 - 0,736 Si con correlacion -0,9718, frente a la prediccion estequiometrica de dos minerales 69,94 - 0,699 Si. Se reportan ambas rectas; la diferencia entre ellas dice algo sobre los demas minerales presentes.'
-              : 'Independently verified during this build, from the raw file: the plant line is Fe = 67.08 - 0.736 Si with correlation -0.9718, against the two-mineral stoichiometric prediction 69.94 - 0.699 Si. Both lines are reported; the difference between them says something about the other minerals present.'}
+              ? 'Verificacion independiente sobre el archivo crudo, por minimos cuadrados sobre las 4.097 filas horarias: la recta de planta es Fe = 67,08 - 0,736 Si con correlacion -0,9718, frente a la prediccion estequiometrica de dos minerales 69,94 - 0,699 Si. Se reportan ambas rectas; la diferencia entre ellas dice algo sobre los demas minerales presentes.'
+              : 'Independently verified from the raw file, by ordinary least squares over the 4,097 hourly rows: the plant line is Fe = 67.08 - 0.736 Si with correlation -0.9718, against the two-mineral stoichiometric prediction 69.94 - 0.699 Si. Both lines are reported; the difference between them says something about the other minerals present.'}
           </p>
         </section>
       ),
