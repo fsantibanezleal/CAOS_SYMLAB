@@ -26,7 +26,7 @@ size-specific-energy refinement), it is not shipped as a scored target.
 """
 from __future__ import annotations
 
-from dataclasses import dataclass, field
+from dataclasses import dataclass
 from typing import Callable
 
 import numpy as np
@@ -714,7 +714,10 @@ THETA_LOGISTIC = Generator(
 
 def _lotka_volterra(rng: np.random.Generator, n: int) -> tuple[np.ndarray, np.ndarray]:
     # Parameters chosen to reproduce roughly the ten-year lynx-hare cycle.
-    alpha, beta, gamma, delta = 0.55, 0.028, 0.84, 0.026
+    # Only the prey right-hand side is generated here, so only alpha and beta are used. The
+    # predator parameters gamma and delta belong to the second equation of the system and to
+    # the conserved quantity, both of which ship as their own variants.
+    alpha, beta = 0.55, 0.028
     hares = rng.uniform(5.0, 90.0, size=n)
     lynx = rng.uniform(5.0, 60.0, size=n)
     y = alpha * hares - beta * hares * lynx

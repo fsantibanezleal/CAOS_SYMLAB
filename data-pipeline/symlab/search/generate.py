@@ -21,7 +21,7 @@ from __future__ import annotations
 import numpy as np
 
 from ..model.expr import OPERATORS, Node
-from ..model.units import DIMENSIONLESS, Dims, add, halves, scale, sub
+from ..model.units import DIMENSIONLESS, Dims, halves, scale, sub
 
 
 def _terminal(rng: np.random.Generator, n_vars: int, const_range: tuple[float, float],

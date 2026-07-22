@@ -19,12 +19,12 @@ from __future__ import annotations
 
 import math
 import time
-from dataclasses import dataclass, field, replace as dataclass_replace
+from dataclasses import dataclass, replace as dataclass_replace
 
 import numpy as np
 
 from ..model import scaling as scaling_mod
-from ..model.complexity import node_count, pareto_front, pareto_score, weighted_complexity
+from ..model.complexity import node_count, pareto_front, pareto_score
 from ..model.expr import (
     PRIMITIVE_SETS,
     Node,

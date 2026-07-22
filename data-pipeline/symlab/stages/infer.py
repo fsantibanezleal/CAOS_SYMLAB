@@ -17,7 +17,7 @@ from dataclasses import dataclass
 
 import numpy as np
 
-from ..model.expr import Node, evaluate, is_valid
+from ..model.expr import Node, evaluate
 from .preprocess import PreparedCase
 from .train import TrainedVariant
 

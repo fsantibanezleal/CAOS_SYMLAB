@@ -20,7 +20,6 @@ from __future__ import annotations
 
 import gzip
 import io
-import json
 import zipfile
 from dataclasses import dataclass, field
 from pathlib import Path
@@ -507,6 +506,5 @@ LOADERS = {
     "concrete-abrams": load_concrete,
     "wwtp-removal-identity": load_water_treatment,
     "gasturbine-nox": load_gas_turbine,
-    "concrete-abrams": load_concrete,
     "nikuradse-friction": load_nikuradse,
 }
