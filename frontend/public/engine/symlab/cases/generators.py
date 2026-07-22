@@ -42,6 +42,31 @@ R_DRY_AIR = 287.058
 G0 = 9.80665
 
 
+
+def _pow_const(base: Node, exponent: float) -> Node:
+    """`base ** exponent` as exp(exponent * log(base)), for a strictly positive base.
+
+    The operator set has no general power primitive, deliberately: an unrestricted power is the
+    fastest way for a search to manufacture an unphysical expression that fits. Every use below is
+    on a quantity its generator samples strictly positive (a Reynolds number, a Prandtl number, a
+    population ratio), so the identity holds across the sampled domain. It is not a general
+    substitute for a power operator and must not be used as one.
+    """
+    return Node.call("exp", Node.call("mul", Node.const(exponent), Node.call("log", base)))
+
+
+def _pow_var(base: Node, exponent: Node) -> Node:
+    """`base ** exponent` where the exponent is itself an input column."""
+    return Node.call("exp", Node.call("mul", exponent, Node.call("log", base)))
+
+
+def _log10(value: Node) -> Node:
+    return Node.call("div", Node.call("log", value), Node.const(_LN10))
+
+
+_LN10 = 2.302585092994046
+_R_GAS = 8.314462618
+
 @dataclass(frozen=True)
 class InputSpec:
     """One input column: how it is named, what it means, and what unit it carries."""
@@ -234,6 +259,16 @@ CSTR = Generator(
         "The activation energy and pre-exponential factor are FIXED here rather than sampled, so the "
         "target is a function of two inputs. Sampling them too would make the problem trivially "
         "separable and remove the point of the case.",
+    ),
+    truth_node=lambda: (
+        lambda damkohler: Node.call("div", damkohler, Node.call("add", Node.const(1.0), damkohler))
+    )(
+        Node.call(
+            "mul",
+            Node.call("mul", Node.var(0), Node.const(1e7)),
+            Node.call("exp", Node.call("neg", Node.call(
+                "div", Node.const(60000.0), Node.call("mul", Node.const(_R_GAS), Node.var(1))))),
+        )
     ),
     regime="structure+constants",
 )
@@ -477,6 +512,10 @@ DITTUS_BOELTER = Generator(
         "from it cannot be fitted by one at low Reynolds number, which the lab ships as a clean "
         "demonstration of model misspecification.",
     ),
+    truth_node=lambda: Node.call(
+        "mul", Node.const(0.023),
+        Node.call("mul", _pow_const(Node.var(0), 0.8), _pow_const(Node.var(1), 0.4)),
+    ),
     regime="structure+constants",
 )
 
@@ -507,6 +546,21 @@ GNIELINSKI = Generator(
     caveats=(
         "This case is designed to be UNRECOVERABLE by the obvious hypothesis. Reporting a good "
         "power-law fit here and stopping is exactly the failure the lab exists to demonstrate.",
+    ),
+    truth_node=lambda: (
+        lambda f8: Node.call(
+            "div",
+            Node.call("mul", Node.call("mul", f8, Node.call("sub", Node.var(0), Node.const(1000.0))),
+                      Node.var(1)),
+            Node.call("add", Node.const(1.0), Node.call(
+                "mul",
+                Node.call("mul", Node.const(12.7), Node.call("sqrt", f8)),
+                Node.call("sub", _pow_const(Node.var(1), 2.0 / 3.0), Node.const(1.0)))),
+        )
+    )(
+        Node.call("div", Node.call("inv", Node.call("square", Node.call(
+            "sub", Node.call("mul", Node.const(0.79), Node.call("log", Node.var(0))),
+            Node.const(1.64)))), Node.const(8.0))
     ),
     regime="structure+constants",
 )
@@ -548,6 +602,13 @@ FRICTION_FACTOR = Generator(
         "calibrate the engine, real data to expose what the correlation misses.",
     ),
     real_data_twin="nikuradse-friction",
+    truth_node=lambda: Node.call(
+        "div", Node.const(0.25),
+        Node.call("square", _log10(Node.call(
+            "add",
+            Node.call("div", Node.var(1), Node.const(3.7)),
+            Node.call("div", Node.const(5.74), _pow_const(Node.var(0), 0.9))))),
+    ),
     regime="structure+constants",
 )
 
@@ -629,6 +690,12 @@ ANTOINE = Generator(
         "search to detect that, which is a change-point question dressed as a fitting question.",
         "Real-data twin: the batch distillation dataset names its three chemical systems, so the true "
         "Antoine constants of every component are independently obtainable rather than assumed.",
+    ),
+    truth_node=lambda: Node.call(
+        "exp", Node.call("mul", Node.const(_LN10), Node.call(
+            "sub", Node.const(8.07131),
+            Node.call("div", Node.const(1730.63),
+                      Node.call("add", Node.const(233.426), Node.var(0))))),
     ),
     regime="structure+constants",
 )
@@ -726,6 +793,11 @@ WIND_POWER = Generator(
         "an honest partial fit or an overconfident smooth one.",
         "Real-data twin: the Kelmarsh farm, using the same swept area and rated power.",
     ),
+    #: NO truth node. The curve is piecewise: zero below cut-in, zero above cut-out, and capped at
+    #: rated power in between. The operator set has no comparison, no minimum and no indicator, so
+    #: the law cannot be written in the language the search uses. An approximation would let the app
+    #: show a recovery verdict that describes the primitive set rather than the method, so recovery
+    #: is reported as not checkable and the reason is published.
     regime="structure+constants",
 )
 
@@ -765,6 +837,12 @@ THETA_LOGISTIC = Generator(
         "can be compared against a published one rather than only against the residual.",
     ),
     real_data_twin="gpdd-density-dependence",
+    truth_node=lambda: Node.call(
+        "mul",
+        Node.call("mul", Node.var(1), Node.var(0)),
+        Node.call("sub", Node.const(1.0),
+                  _pow_var(Node.call("div", Node.var(0), Node.var(2)), Node.var(3))),
+    ),
     regime="structure",
 )
 

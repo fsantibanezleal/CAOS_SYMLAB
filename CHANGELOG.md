@@ -3,6 +3,103 @@
 All notable changes are documented here. Format follows Keep a Changelog; newest on top.
 Version format is X.XX.XXX; the manifest carries the semver form with zeros dropped.
 
+## 0.04.000 - 2026-07-22
+
+The version this lab starts actually taking its own headline measurement, and the measurement
+immediately shows the gap the product was built to show. On the re-baked Feynman cases:
+
+| Case | Law | Accuracy | Recovery | Structural distance |
+|---|---|---|---|---|
+| I.12.1 | F = mu*Nn | 8/8 | 8/8 | 0.000 |
+| I.12.5 | F = q2*Ef | 8/8 | 8/8 | 0.000 |
+| I.6.2a | Gaussian | 5/8 | 0/8 | 0.788 |
+
+Five of eight configurations cleared the accuracy threshold on the Gaussian and none recovered the
+structure. The symbolic test failure rate on that case is 0.0, so the zero is a real result rather
+than a scorer that could not decide, which is exactly why that rate is published separately.
+
+### Added
+
+- **Recovery scoring, which had never run.** `pipeline.py` passed `truth=None` to the evaluator at
+  both call sites, so the triple-equivalence test never executed and `exact_recovery_rate` was
+  `null` on every case ever baked. The gap between clearing an accuracy threshold and recovering
+  the law is the measurement this product is built around, and it was not being taken. The truth is
+  now resolved per case, carried on `PreparedCase`, and handed to the evaluator and the export. The
+  search still never receives it.
+- **35 verified truth expressions.** 17 of 18 generators, 17 of 18 selected Feynman laws, and one
+  measured identity. Every one is checked against its own data before it is allowed to score,
+  because a wrong truth does not fail loudly: it publishes a confident "not recovered" against a
+  method that recovered the law perfectly.
+- **A recovery REGIME on every scoreable case.** "structure" means the physical parameters were
+  input columns so only the form was unknown, which is the convention the published physics
+  benchmarks use; "structure+constants" means the numbers had to be found too. Two materially
+  different claims previously wore the same word.
+- **Full row accounting** in the artifact: source, used, train, test, extrapolation. `n_rows` alone
+  is the TRAINING count and contradicted the case description on every subsampled case, so the app
+  showed "2 550 rows" under a description reading "9,568 hourly records".
+- **The wiki pages that were promised and absent**: 22 framework cards with licence and
+  MIT-compatibility per row, and one page per case for all 25.
+- **`docs/guides/00_read-the-workbench.md`**, which says what every control does and what every
+  panel CLAIMS.
+- Spanish category names in the registry, so the taxonomy is bilingual at its source rather than
+  translated in the frontend where a second copy would drift.
+
+### Changed
+
+- **The App is a comparison, not a display.** The Expression tab puts what the search FOUND beside
+  the relationship we EXPECTED, each labelled above its own mathematics, with the equivalence
+  verdict between them. A reader previously had no way to tell the result from the input, and that
+  distinction is the entire claim of the product.
+- Six tabs in reading order: Expression, Structure, Parity and residuals, Live, Front and search,
+  Context. Parity, residuals per input, extrapolation and partial dependence were previously
+  stacked underneath the equation.
+- **Residuals against each input**, a view that was missing entirely. It is where a missing term
+  shows and where a parity plot hides it.
+- The case navigator is three dropdowns (source, category, case) rather than a chip deck. Twenty-five
+  cases across six categories do not fit a deck in a sidebar column.
+- The manifests describe the real install: `scipy` removed (pinned for months, never installed,
+  never imported), numpy and ruff aligned to the verified versions, `sreval` moved from a git ref to
+  the published `0.1.0`, and `data-pipeline/requirements.txt` reduced to a pointer, because two
+  files claiming one lane is how a pin drifts.
+
+### Fixed
+
+- **The app never applied the stored theme.** The header toggle wrote `caos.theme` at runtime but
+  nothing read it back, so a reader who chose light got dark again on every reload and every deep
+  link.
+- **The Abrams law shipped as `f_c pprox rac{A}{B^{w/c}}`.** The literal was written
+  without an `r` prefix, so `` became BEL, `` became formfeed and `	` became a tab; marking
+  it raw afterwards froze the damage. Ruff was clean, tests passed, and KaTeX rendered the wreckage.
+- Two expanded cases were unreachable in the app while the catalogue still counted them as
+  published: the index fell back to lane `"unknown"`, which the navigator does not offer.
+- Long expressions clipped silently in a half-width column; they now stack to full width and show
+  their overflow.
+- Tree nodes rendered raw LaTeX clipped inside their circles, so a variable read as `{amb`.
+- Component terms printed their own LaTeX source instead of rendering as mathematics.
+- uPlot read the generation axis as UNIX time and labelled it `12/31/69 9:00pm`; the log axis
+  emitted a tick per minor step and smeared into an unreadable column.
+- Every count went through the browser locale, so 2550 rows rendered as "2.550" and 12000
+  evaluations as "12.000" for a Spanish-locale reader of the English page.
+- The sidebar readout borrowed the chart-hover class, which is `display:flex`, putting its heading
+  beside its numbers and cutting the last row.
+- The subsample note reported "4000 of 4000 rows" because it read the array after replacing it.
+
+### Guards added
+
+Each of these exists because the corresponding defect survived a green build:
+
+- `tests/test_generator_truths.py` and `tests/test_physics_truths.py`: every truth reproduces its
+  own data, every absence carries a written reason of more than 25 words, and every tolerance
+  carries a justification so "the identity is approximate" cannot be confused with "we widened the
+  tolerance until it passed".
+- `tests/test_no_control_characters.py`: no control byte in the package source.
+- `tests/test_manifests_match_reality.py`: every pin installed at its pinned version, every pinned
+  runtime package actually imported, every third-party import pinned somewhere.
+- `tests/test_case_docs_match_code.py`: no case page may contradict the code it documents.
+- `tools/visual-verify/symlab-workbench.mjs`: six tabs across both themes and both languages,
+  asserting the provenance labels, populated dropdowns, no overflow, no console error, no
+  untranslated interface copy, and that every class the app renders has a CSS rule behind it.
+
 ## 0.03.000 - 2026-07-22
 
 ### Added
