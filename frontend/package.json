@@ -1,7 +1,7 @@
 {
   "name": "symlab-web",
   "private": true,
-  "version": "0.1.0",
+  "version": "0.4.0",
   "license": "MIT",
   "type": "module",
   "description": "SymLab SPA: symbolic regression across the full method ladder, presenting a Pareto front of candidate laws as readable equations and interactive expression trees, replayed from committed artifacts with a live in-browser search lane.",
