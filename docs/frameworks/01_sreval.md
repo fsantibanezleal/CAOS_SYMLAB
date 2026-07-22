@@ -23,6 +23,20 @@ reports how often the symbolic test could not decide.
 | Numerical probing | Cheap and robust to the simplifier's limits | Cannot separate "equivalent everywhere" from "agrees on the sampled box", which is exactly what breaks under extrapolation |
 | Structural edit distance | The only graded verdict, so "wrong by one term" is distinguishable from "wrong entirely" | Sensitive to algebraically equivalent rewrites a reader would call the same answer |
 
+## What this card claimed before, and what was true
+
+This card said the package was used in `stages/evaluate.py`. It was imported there, pinned in
+`requirements-precompute.txt`, and never called: nothing in the module referenced the imported
+names. The dependency was decoration, and the card asserted otherwise.
+
+`structural_distance` now delegates to `sreval.equivalence.structural_distance` when the package is
+installed, keeping the local implementation as the fallback for the browser lane, which never
+installs it. `tests/test_sreval_agrees.py` asserts the two produce identical numbers across every
+generator truth and across the shapes where an edit-distance metric usually goes wrong, because a
+browser run and an offline run reporting different structural distances would contradict the app's
+own claim that they are the same engine.
+
+
 ## Licence, and whether this MIT repo may use it
 
 MIT (`LICENSE`, copyright 2026 Felipe Santibanez-Leal), declared as `license = { text = "MIT" }` in

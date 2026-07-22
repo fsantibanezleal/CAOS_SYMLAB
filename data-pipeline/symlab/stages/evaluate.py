@@ -168,10 +168,22 @@ def structural_distance(candidate: Node, truth: Node) -> float:
     is O(n*m) instead of O(n^2 m^2), and on expressions of the sizes this lab produces the two agree
     closely enough that the extra cost buys nothing. The choice is stated here because the metric is
     reported, and a reported metric whose definition is implicit is not reproducible.
+
+    DELEGATES to `sreval` when it is installed, which is the whole reason that package was extracted:
+    the scorer is a general problem and it should not have a second private implementation living
+    here. The local loop below is the browser-lane fallback, because Pyodide never installs sreval,
+    and `tests/test_sreval_agrees.py` asserts the two produce identical numbers so the fallback can
+    never quietly diverge from the published scorer.
+
+    Until this call existed, `sreval` was imported at the top of this file, pinned in
+    `requirements-precompute.txt`, and documented as "used here", while nothing in the module ever
+    referenced it.
     """
     a, b = _canonical_labels(candidate), _canonical_labels(truth)
     if not a and not b:
         return 0.0
+    if HAS_SREVAL:
+        return round(min(1.0, float(sreval_structural_distance(a, b).distance)), 6)
     previous = list(range(len(b) + 1))
     for i, token_a in enumerate(a, start=1):
         current = [i]

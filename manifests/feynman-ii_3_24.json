@@ -1,0 +1,174 @@
+{
+  "schema": "symlab.manifest/v1",
+  "case_id": "feynman-ii_3_24",
+  "category": "P",
+  "engine": {
+    "package": "symlab",
+    "version": "0.04.000"
+  },
+  "seed": 0,
+  "artifact": {
+    "path": "feynman-ii_3_24/run.json",
+    "format": "json",
+    "schema_version": "1.0.0",
+    "bytes": 4217809
+  },
+  "lane": "precompute",
+  "data": {
+    "source_id": "pmlb-feynman_II_3_24",
+    "citation": "Romano, J. D. et al. PMLB v1.0: an open source dataset collection for benchmarking machine learning methods. arXiv:2012.00058. MIT licensed.",
+    "licence": "MIT (EpistasisLab/pmlb)",
+    "redistribution": "mirror",
+    "real_or_synthetic": "real",
+    "defects_applied": [
+      "Deterministically subsampled to 4000 of 100000 rows (seed 0). The source ships 100,000 rows of a smooth low-dimensional law; the extra rows carry no additional information about its structure and would spend the whole search budget on redundancy."
+    ]
+  },
+  "contract": {
+    "n_rows": 4000,
+    "n_inputs": 2,
+    "input_keys": [
+      "Pwr",
+      "r"
+    ],
+    "target_key": "target",
+    "distinct_target_values": 4000,
+    "target_repeat_ratio": 1.0,
+    "constant_inputs": [],
+    "warnings": [],
+    "defects_applied": [
+      "Deterministically subsampled to 4000 of 100000 rows (seed 0). The source ships 100,000 rows of a smooth low-dimensional law; the extra rows carry no additional information about its structure and would spend the whole search budget on redundancy."
+    ],
+    "licence": "MIT (EpistasisLab/pmlb)",
+    "redistribution": "mirror",
+    "citation": "Romano, J. D. et al. PMLB v1.0: an open source dataset collection for benchmarking machine learning methods. arXiv:2012.00058. MIT licensed.",
+    "n_train": 2550,
+    "n_test": 850,
+    "n_extrapolation": 600
+  },
+  "units_declared": false,
+  "split_note": "extrapolation split holds out the lowest and highest 300 rows of 'r', so the training region is an interior box and the extrapolation rows lie outside the support the search ever saw",
+  "variants": [
+    {
+      "id": "r1-koza-baseline",
+      "seconds": 1.911,
+      "evaluations": 9000,
+      "front_size": 15,
+      "selected_complexity": 30,
+      "test_r2": 0.9180275006,
+      "accuracy_solution": false,
+      "exact_recovery": false,
+      "symbolic_test_decided": true,
+      "irrelevant_features": 0
+    },
+    {
+      "id": "r2-linear-scaling",
+      "seconds": 1.123,
+      "evaluations": 9000,
+      "front_size": 9,
+      "selected_complexity": 7,
+      "test_r2": 1.0,
+      "accuracy_solution": true,
+      "exact_recovery": false,
+      "symbolic_test_decided": true,
+      "irrelevant_features": 0
+    },
+    {
+      "id": "r3-constant-tuning",
+      "seconds": 1.353,
+      "evaluations": 9180,
+      "front_size": 7,
+      "selected_complexity": 7,
+      "test_r2": 1.0,
+      "accuracy_solution": true,
+      "exact_recovery": false,
+      "symbolic_test_decided": true,
+      "irrelevant_features": 0
+    },
+    {
+      "id": "r4-multi-objective",
+      "seconds": 1.127,
+      "evaluations": 9180,
+      "front_size": 4,
+      "selected_complexity": 8,
+      "test_r2": 0.9253551185,
+      "accuracy_solution": false,
+      "exact_recovery": false,
+      "symbolic_test_decided": true,
+      "irrelevant_features": 0
+    },
+    {
+      "id": "r5-epsilon-lexicase",
+      "seconds": 23.032,
+      "evaluations": 9180,
+      "front_size": 4,
+      "selected_complexity": 8,
+      "test_r2": 0.9253551185,
+      "accuracy_solution": false,
+      "exact_recovery": false,
+      "symbolic_test_decided": true,
+      "irrelevant_features": 0
+    },
+    {
+      "id": "r6-age-fitness-islands",
+      "seconds": 14.773,
+      "evaluations": 9720,
+      "front_size": 5,
+      "selected_complexity": 11,
+      "test_r2": 0.9306188308,
+      "accuracy_solution": false,
+      "exact_recovery": false,
+      "symbolic_test_decided": true,
+      "irrelevant_features": 0
+    },
+    {
+      "id": "r7-deduplication",
+      "seconds": 95.253,
+      "evaluations": 9720,
+      "front_size": 5,
+      "selected_complexity": 11,
+      "test_r2": 0.9306188308,
+      "accuracy_solution": false,
+      "exact_recovery": false,
+      "symbolic_test_decided": true,
+      "irrelevant_features": 0
+    },
+    {
+      "id": "parsimony-arm",
+      "seconds": 0.514,
+      "evaluations": 9180,
+      "front_size": 4,
+      "selected_complexity": 8,
+      "test_r2": 0.9253551185,
+      "accuracy_solution": false,
+      "exact_recovery": false,
+      "symbolic_test_decided": true,
+      "irrelevant_features": 0
+    },
+    {
+      "id": "sparse-regression",
+      "seconds": 0.005,
+      "evaluations": 0,
+      "front_size": 2,
+      "selected_complexity": 37,
+      "test_r2": 0.9774680758,
+      "accuracy_solution": false,
+      "exact_recovery": false,
+      "symbolic_test_decided": true,
+      "irrelevant_features": 0
+    }
+  ],
+  "summary": {
+    "n_variants": 9,
+    "accuracy_solutions": 2,
+    "accuracy_solution_rate": 0.2222,
+    "exact_recoveries": 0,
+    "exact_recovery_rate": 0.0,
+    "mean_structural_distance": 0.7788,
+    "symbolic_test_failure_rate": 0.0,
+    "test_disagreement_count": 2,
+    "total_seconds": 139.09,
+    "total_evaluations": 74160,
+    "variants_with_irrelevant_features": 0
+  }
+}
