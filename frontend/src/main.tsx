@@ -22,7 +22,7 @@ import NotFound from './pages/NotFound';
 createRoot(document.getElementById('root')!).render(
   <StrictMode>
     <CitationsProvider items={CITATIONS}>
-      <BrowserRouter basename={import.meta.env.BASE_URL}>
+      <BrowserRouter>
         <AppShell
           config={{
             product: { name: 'SymLab', mark: <FlaskConical size={20} /> },
