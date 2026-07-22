@@ -70,3 +70,38 @@ def test_every_relative_link_resolves(text: str) -> None:
         if not path.exists():
             broken.append(target)
     assert not broken, f"README links that do not resolve: {broken}"
+
+
+def test_the_headline_table_matches_the_artifact() -> None:
+    """The README leads with measured numbers, which makes it the easiest file to leave stale.
+
+    The hand-written version of this table was already wrong when it was checked: it said the
+    deduplication rung took 153.25 seconds when the artifact said 377.11. Every figure comes from
+    one artifact that is re-baked whenever the engine, the sampling or the export changes, so the
+    table is generated between markers by scripts/sync_readme_headline.py.
+    """
+    import subprocess
+    import sys
+
+    root = README.parent
+    before = README.read_text(encoding="utf-8")
+    result = subprocess.run(
+        [sys.executable, str(root / "scripts" / "sync_readme_headline.py")],
+        capture_output=True,
+        text=True,
+        cwd=root,
+    )
+    if "not baked yet" in result.stdout:
+        pytest.skip("the headline case is not baked in this checkout")
+    after = README.read_text(encoding="utf-8")
+    assert before == after, (
+        "the README headline table disagrees with the artifact it quotes. "
+        "Run scripts/sync_readme_headline.py."
+    )
+
+
+def test_the_headline_table_is_generated_not_typed() -> None:
+    text = README.read_text(encoding="utf-8")
+    assert "<!-- headline:start -->" in text and "<!-- headline:end -->" in text, (
+        "the headline table has lost its generator markers, so nothing keeps it honest"
+    )

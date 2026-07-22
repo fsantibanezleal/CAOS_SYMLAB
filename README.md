@@ -22,12 +22,16 @@ So this lab reports the two **separately, on every case, and never averages them
 
 Measured here on the Feynman Gaussian, with both search families at published budgets:
 
+<!-- headline:start -->
+
 | Family | Configuration | R2 (test) | Recovered | Seconds |
 |---|---|---|---|---|
-| genetic programming | Koza baseline | 0.989307 | no | 3.97 |
-| genetic programming | + linear scaling | 1 - 6.0e-6 | no | 3.03 |
-| genetic programming | + deduplication | 0.996795 | no | 153.25 |
-| sparse regression | non-evolutionary arm | 1 - 1.8e-9 | no | 0.01 |
+| genetic programming | Koza baseline | 0.989307 | no | 2.21 |
+| genetic programming | + linear scaling | 1 - 5.6e-06 | no | 4.14 |
+| genetic programming | + deduplication | 0.996795 | no | 377.11 |
+| sparse regression | sparse regression (non-GP) | 1 - 1.8e-09 | no | 0.00 |
+
+<!-- headline:end -->
 
 Two method families with nothing in common, one reaching a near-perfect fit in ten milliseconds, and
 neither recovers the law. Every accuracy-only benchmark scores this as solved.
@@ -47,8 +51,9 @@ zero. Reporting an unmeasurable quantity as a failure would be a false statement
 - **35 verified truth expressions**: 17 of 18 generators, 17 of 18 selected Feynman laws, and one
   exact identity over real plant data. Each is checked against its own data before it is allowed to
   score, because a wrong truth publishes a confident "not recovered" against a method that succeeded.
-- **A live lane.** The same Python engine runs in the browser through Pyodide at a reduced budget, so
-  the published numbers are checkable rather than merely asserted.
+- **A live lane.** The same Python engine modules run in the browser through Pyodide at a reduced
+  budget. At the same case, seed and budget both lanes return the IDENTICAL expression, which is
+  checked by a harness that drives the browser and the pipeline and compares them, not asserted.
 - **A `docs/` wiki**: the architecture, seven method families with their mathematics and citations,
   22 framework cards with licences and whether this repo uses each one, and a page per case.
 
@@ -88,8 +93,10 @@ Each of these exists because the corresponding defect survived a green build:
   WAS recovered; the contradiction is not.
 - A published expression must reproduce the loss reported for it. The non-evolutionary arm once
   fitted one function and published another.
-- Source defects are recorded verbatim rather than tidied away. Four sources the research had marked
-  good turned out to be defective on download, and every one returned HTTP 200.
+- Source defects are recorded verbatim rather than tidied away, and the failures split two ways: the
+  flotation file id and the PMLB raw route both answered HTTP 200 with the wrong bytes, while the
+  host cited for the Nikuradse measurements answered HTTP 404. A status code decides nothing; only
+  reading the content does.
 
 ## Licence
 
