@@ -110,10 +110,37 @@ def _to_sympy(expression: Node, variables: list[str]):
     return convert(expression)
 
 
+#: Significant digits every numeric coefficient is rounded to before the symbolic comparison.
+#:
+#: The comparison used to be bit-exact, and a coefficient one unit in the last place away from the
+#: truth therefore read as a different law. Measured: the sparse arm returned `1 * (mu * Nn)` on
+#: feynman-i_12_1 with a least-squares coefficient of 1 plus 2.2e-16, the numerical test agreed to a
+#: maximum relative error of 7.6e-16, and the artifact published "structure NOT recovered" next to a
+#: printed expression identical to the truth.
+#:
+#: Twelve digits is far beyond what any search recovers meaningfully and far short of that noise. A
+#: genuinely wrong constant differs in the second or third significant digit.
+SYMBOLIC_COEFFICIENT_DIGITS = 12
+
+
+def _round_floats(expression, digits: int = SYMBOLIC_COEFFICIENT_DIGITS):
+    """Round every Float atom, so the comparison is about STRUCTURE and not about last-bit noise."""
+    import sympy
+
+    replacements = {}
+    for atom in expression.atoms(sympy.Float):
+        value = float(atom)
+        replacements[atom] = sympy.Float(f"{value:.{digits}g}")
+    return expression.xreplace(replacements) if replacements else expression
+
+
 def symbolic_equivalence(
     candidate: Node, truth: Node, variables: list[str], *, timeout_seconds: float = 10.0
 ) -> tuple[bool | None, str]:
     """Simplify the difference and test for zero. Returns (verdict, error) with verdict None on failure.
+
+    Numeric coefficients are rounded to `SYMBOLIC_COEFFICIENT_DIGITS` in both expressions first; see
+    the note there for the measurement that forced it.
 
     A failure here is a defect of the SCORER, not of the search, and is reported as such. The
     standard practice of counting it against the method is one of the honesty traps the research
@@ -122,7 +149,9 @@ def symbolic_equivalence(
     try:
         import sympy
 
-        difference = sympy.simplify(_to_sympy(candidate, variables) - _to_sympy(truth, variables))
+        a = _round_floats(_to_sympy(candidate, variables))
+        b = _round_floats(_to_sympy(truth, variables))
+        difference = sympy.simplify(a - b)
         return bool(difference == 0), ""
     except Exception as error:  # noqa: BLE001 - any simplifier failure is a scorer failure
         return None, f"{type(error).__name__}: {error}"

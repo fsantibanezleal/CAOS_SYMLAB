@@ -52,6 +52,18 @@ def _expected_budgets() -> dict[str, tuple[int, int]]:
     return out
 
 
+#: The one variant a case may legitimately omit. See stages/train.py.
+UNIT_TYPED = "r8-unit-typed"
+
+
+def _declared_variant_ids() -> dict[str, list[str]]:
+    """Case id to the variant ids the registry declares for it, suites expanded."""
+    from symlab.cases.registry import list_cases
+    from symlab.pipeline import expand_suites
+
+    return {case.id: [v.id for v in case.variants] for case in expand_suites(list_cases())}
+
+
 @pytest.mark.skipif(not ARTIFACTS, reason="nothing baked yet")
 @pytest.mark.parametrize("path", ARTIFACTS, ids=lambda p: p.parent.name)
 def test_artifact_used_the_published_population(path: Path) -> None:
@@ -89,18 +101,37 @@ def test_artifact_carries_every_declared_variant(path: Path) -> None:
     Failing is correct. An artifact missing a variant renders a case whose method list disagrees
     with every other case, and the ablation table silently summarises that rung over fewer cases
     than the reader is told.
+
+    ONE omission is legitimate, and it is named rather than counted. `stages/train.py` skips
+    `r8-unit-typed` where the case declares no physical dimensions, because running it would produce
+    a chip whose label promises a constraint the data cannot supply. This asserts exactly that rule:
+    every declared variant present, except the unit-typed rung, and only when the manifest agrees
+    that units were not declared.
+
+    That is stronger than the count check it replaces, which would have passed a case that dropped
+    epsilon-lexicase while gaining some other rung.
     """
     document = json.loads(path.read_text(encoding="utf-8"))
     case_id = document["notes"]["case_id"]
-    expected = _expected_budgets().get(case_id)
-    if expected is None:
+    declared = _declared_variant_ids().get(case_id)
+    if declared is None:
         pytest.skip(f"{case_id} is not in the registry")
 
-    _, expected_variants = expected
-    present = len(document["notes"]["variants"])
-    assert present >= expected_variants, (
-        f"{case_id} carries {present} variants and the registry declares {expected_variants}. "
-        "This artifact predates a configuration that now exists; re-bake it."
+    present = {v["id"] for v in document["notes"]["variants"]}
+    missing = [v for v in declared if v not in present]
+
+    if missing == [UNIT_TYPED]:
+        manifest = ROOT / "manifests" / f"{case_id}.json"
+        units_declared = json.loads(manifest.read_text(encoding="utf-8")).get("units_declared")
+        assert units_declared is False, (
+            f"{case_id} is missing {UNIT_TYPED}, which is only allowed when the case declares no "
+            f"units, but its manifest records units_declared={units_declared!r}."
+        )
+        return
+
+    assert not missing, (
+        f"{case_id} is missing {missing}. Either this artifact predates a configuration that now "
+        "exists, in which case re-bake it, or a rung was dropped, which is a defect."
     )
 
 

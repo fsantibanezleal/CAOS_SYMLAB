@@ -219,6 +219,9 @@ export interface VariantScore {
    *  different ones, so the app rendered one model's formula beside another model's numbers. */
   selected_index_full_front?: number;
   equivalence: {
+    /** The lab's verdict: the symbolic test where it decided, the numerical one where it did not.
+     *  Exported rather than re-derived, because a rule implemented twice is a rule that drifts. */
+    recovered?: boolean;
     symbolic: boolean | null;
     symbolic_error: string;
     numerical: boolean | null;

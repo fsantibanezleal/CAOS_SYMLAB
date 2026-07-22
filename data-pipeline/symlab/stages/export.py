@@ -178,6 +178,12 @@ def build_run(
         score_payload = _plain(score)
         score_payload["selected_index"] = selected
         score_payload["selected_index_full_front"] = int(score.selected_index)
+        # `recovered` is a PROPERTY on EquivalenceVerdict, so `asdict` skips it and the artifact
+        # shipped the three test results without the verdict they combine into. The app then
+        # re-derived it in TypeScript, which put the lab's single most important claim behind two
+        # implementations of one rule. It is exported now, and the app reads it.
+        if score_payload.get("equivalence") is not None and score.equivalence is not None:
+            score_payload["equivalence"]["recovered"] = bool(score.equivalence.recovered)
         # A non-GP arm has no population and no generations. Exporting the ladder's numbers for it
         # would put figures in the audit record that describe a search it never ran.
         gp = entry.variant.method == "gp"
