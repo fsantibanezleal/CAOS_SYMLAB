@@ -21,17 +21,19 @@ export default function Introduction() {
             <>
               La regresion simbolica busca una expresion explicita <InlineMath tex="f(\mathbf{x})" /> que
               explique los datos, en lugar de ajustar una funcion cuyo interior nadie puede leer. Este
-              laboratorio recorre toda la escalera de metodos sobre los mismos casos abiertos con el mismo
-              protocolo, y reporta un frente de Pareto de leyes candidatas en vez de un ganador. No afirma
-              que la regresion simbolica descubra leyes naturales: esa distincion es el tema de esta pagina.
+              laboratorio recorre dos familias de busqueda sobre los mismos casos abiertos con el mismo
+              protocolo, una escalera de programacion genetica y un brazo disperso no evolutivo, y reporta un
+              frente de Pareto de leyes candidatas en vez de un ganador. No afirma que la regresion simbolica
+              descubra leyes naturales: esa distincion es el tema de esta pagina.
             </>
           ) : (
             <>
               Symbolic regression searches for an explicit expression <InlineMath tex="f(\mathbf{x})" /> that
               explains the data, rather than fitting a function whose internals nobody can read. This lab runs
-              the full method ladder over the same open cases with the same protocol, and reports a Pareto
-              front of candidate laws rather than a winner. It does not claim that symbolic regression
-              discovers natural laws, and that distinction is what this page is about.
+              two search families over the same open cases with the same protocol, a genetic-programming
+              ladder and a non-evolutionary sparse arm, and reports a Pareto front of candidate laws rather
+              than a winner. It does not claim that symbolic regression discovers natural laws, and that
+              distinction is what this page is about.
             </>
           )}
         </p>
