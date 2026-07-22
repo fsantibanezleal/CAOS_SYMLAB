@@ -28,6 +28,8 @@ and all of them resolve to the work cited.
 | Dev | [`requirements-dev.txt`](../requirements-dev.txt) | `pytest`, `ruff` |
 | API | [`requirements-api.txt`](../requirements-api.txt) | dormant, fully commented out |
 | GPU | [`requirements-gpu.txt`](../requirements-gpu.txt) | intentionally empty, with the reason written in the file |
+| App | [`frontend/package.json`](../frontend/package.json) | `@fasl-work/caos-app-shell`, `@types/katex`, `d3-hierarchy`, `d3-scale`, `d3-shape`, `katex`, `lucide-react`, `react`, `react-dom`, `react-router-dom`, `uplot` (Vite and TypeScript are dev-only) |
+| Verification | [`package.json`](../package.json) | `playwright`, for the harnesses in [`tools/`](../tools/README.md). Nothing here ships to a reader. |
 
 Four third-party packages are imported anywhere in `symlab`, and all four sit in the precompute lane:
 `openpyxl` and `xlrd` inside the two spreadsheet loaders in
