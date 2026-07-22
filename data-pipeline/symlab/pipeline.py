@@ -1,89 +1,184 @@
-"""The offline pipeline orchestrator + CLI (ADR-0057). Runs the named stages per case, applies CONTRACT 1, writes
-the compact artifact + manifest (CONTRACT 2) and a flat index.json.
+"""The offline pipeline orchestrator and its command line.
 
-    python -m examplelab.pipeline            # all cases
-    python -m examplelab.pipeline EX02_epidemic --seed 7
+    python -m symlab.pipeline                     # every case
+    python -m symlab.pipeline ccpp-derating       # one case
+    python -m symlab.pipeline --list              # what exists
+    python -m symlab.pipeline --quick             # a reduced budget, for a smoke run
+
+A run is a pure function of `(case, config, seed, data)`. Nothing here reads the clock into an
+artifact, so regenerating a case produces byte-identical output and a re-bake never dirties git
+without a real change behind it.
+
+The suite cases (the published-physics collections) expand into one sub-case per problem, because a
+case in the app is one dataset with one workbench. Presenting eighteen different physical laws as a
+single case would make every number on that workbench an average over incomparable things.
 """
 from __future__ import annotations
 
 import argparse
+import json
+import sys
 import time
+from dataclasses import replace
 from pathlib import Path
 
-from . import registry
-from .core.manifest import build_index
-from .core.rng import make_rng
-from .io.contract import validate_rows
-from .io.formats import write_json
-from .io.schema import SIRParams
-from .stages import evaluate, export, infer, train
+from .cases.registry import CASES, Case, coverage_summary, list_cases
+from .core.contract import SCHEMA_VERSION
+from .io.sources import FEYNMAN_SELECTION, STROGATZ_SELECTION
+from .stages import evaluate as evaluate_stage
+from .stages import export as export_stage
+from .stages import feature_extraction as features_stage
+from .stages import infer as infer_stage
+from .stages import preprocess as preprocess_stage
+from .stages import train as train_stage
 
-# data-pipeline/examplelab/pipeline.py -> parents[2] = repo root (works under `pip install -e .` too)
 REPO_ROOT = Path(__file__).resolve().parents[2]
 DERIVED = REPO_ROOT / "data" / "derived"
-MANIFESTS = DERIVED / "manifests"
-MODELS = REPO_ROOT / "models"
+MANIFESTS = REPO_ROOT / "manifests"
 
 STAGES = ("preprocess", "feature_extraction", "train", "infer", "evaluate", "export")
 
 
-def _train_model() -> dict:
-    # didactic surrogate: train on the non-degenerate case params; held-out eval uses a disjoint synthetic draw
-    params = [c.params for c in registry.list_cases() if c.params.I0 > 0]
-    return train.run(params, str(MODELS))
-
-
-def _holdout_params(seed: int) -> list[SIRParams]:
-    rng = make_rng(seed + 999)  # disjoint from training => leakage-safe
-    out: list[SIRParams] = []
-    for i in range(20):
-        out.append(SIRParams(f"_holdout{i}", beta=float(rng.uniform(0.15, 1.2)),
-                             gamma=float(rng.uniform(0.15, 0.40)), N=100_000.0, I0=50.0))
+def expand_suites(cases: list[Case]) -> list[Case]:
+    """Turn a suite case into one case per underlying problem."""
+    out: list[Case] = []
+    for case in cases:
+        if case.loader == "pmlb:feynman":
+            for dataset in FEYNMAN_SELECTION:
+                short = dataset.replace("feynman_", "").lower()
+                out.append(replace(
+                    case, id=f"feynman-{short}", loader=f"pmlb-dataset:{dataset}",
+                    name_en=f"Feynman {short.replace('_', '.').upper()}",
+                    name_es=f"Feynman {short.replace('_', '.').upper()}",
+                ))
+        elif case.loader == "pmlb:strogatz":
+            for dataset in STROGATZ_SELECTION:
+                short = dataset.replace("strogatz_", "").lower()
+                out.append(replace(
+                    case, id=f"strogatz-{short}", loader=f"pmlb-dataset:{dataset}",
+                    name_en=f"Strogatz {short}", name_es=f"Strogatz {short}",
+                ))
+        else:
+            out.append(case)
     return out
 
 
-def precompute(case_id: str, seed: int = 42, model: dict | None = None) -> dict:
-    case = registry.get_case(case_id)
-    if model is None:
-        model = _train_model()
-    t0 = time.perf_counter()
-    # run CONTRACT 1 on the case params (proves the gate + carries flags); a real product reads raw data here
-    rep = validate_rows([{"case_id": case.params.case_id, "beta": case.params.beta, "gamma": case.params.gamma,
-                          "N": case.params.N, "I0": case.params.I0, "days": case.params.days}])
-    params = rep.accepted[0] if rep.accepted else case.params
-    result = infer.run(params)
-    metrics = evaluate.run(model, _holdout_params(seed))
-    run_ms = (time.perf_counter() - t0) * 1000.0
-    return export.run(case=case, params=params, result=result, seed=seed, run_ms=run_ms,
-                      flags=rep.flagged, metrics=metrics, derived_dir=str(DERIVED), manifests_dir=str(MANIFESTS))
+def _quick(case: Case) -> Case:
+    """A reduced budget for a smoke run. Never used for published numbers."""
+    variants = tuple(
+        replace(v, config=replace(v.config, population=60, generations=8))
+        for v in case.variants[:3]
+    )
+    return replace(case, variants=variants)
 
 
-def run_all(seed: int = 42) -> list[dict]:
-    model = _train_model()
-    entries = []
-    for c in registry.list_cases():
-        precompute(c.id, seed=seed, model=model)
-        entries.append({"case_id": c.id, "category": c.category, "manifest_path": f"manifests/{c.id}.json"})
-    write_json(MANIFESTS / "index.json", build_index(entries))
-    return entries
+def run_case(case: Case, *, seed: int = 0, noise: float = 0.0, quick: bool = False) -> dict:
+    """Run every stage for one case and write its artifact and manifest."""
+    if quick:
+        case = _quick(case)
+
+    prepared = preprocess_stage.run(case, noise=noise, seed=seed, max_rows=600 if quick else 4000)
+    features = features_stage.run(prepared)
+    trained = train_stage.run(prepared, features, case, seed=seed)
+    inferred = infer_stage.run(prepared, trained)
+    scores = evaluate_stage.run(prepared, trained, inferred, truth=None, seed=seed)
+
+    certificate = None
+    if not quick and prepared.n_inputs <= 3:
+        # The completeness certificate is only affordable, and only meaningful, on a small input
+        # space. Where it does not run, the app says so rather than showing an empty panel.
+        exhaustive = train_stage.run_certificate(prepared, max_nodes=6)
+        best = exhaustive.expressions[exhaustive.best_index]
+        from .model.expr import to_infix
+
+        certificate = {
+            "statement": exhaustive.certificate.statement,
+            "caveats": list(exhaustive.certificate.caveats),
+            "complete": exhaustive.certificate.complete,
+            "n_enumerated": exhaustive.certificate.n_enumerated,
+            "n_admissible": exhaustive.certificate.n_admissible,
+            "max_nodes": exhaustive.certificate.max_nodes,
+            "best_infix": to_infix(best, prepared.dataset.input_keys),
+            "best_mse": round(float(exhaustive.losses[exhaustive.best_index]), 10),
+        }
+
+    run = export_stage.build_run(case, prepared, features, trained, inferred, scores,
+                                 seed=seed, truth=None, certificate=certificate)
+    manifest = export_stage.build_manifest(case, prepared, features, scores, seed=seed,
+                                           artifact_relative=f"{case.id}/run.json",
+                                           artifact_bytes=0)
+    _artifact, _manifest, size = export_stage.write(
+        case, run, manifest, derived_dir=DERIVED, manifests_dir=MANIFESTS
+    )
+    return {
+        "case_id": case.id,
+        "category": case.category,
+        "manifest_path": f"manifests/{case.id}.json",
+        "artifact_path": f"{case.id}/run.json",
+        "bytes": size,
+        "n_variants": len(trained),
+        "summary": evaluate_stage.summarise(scores),
+    }
 
 
-def main() -> None:
-    ap = argparse.ArgumentParser(prog="examplelab.pipeline")
-    ap.add_argument("case", nargs="?", default="all", help="a case id, or 'all'")
-    ap.add_argument("--seed", type=int, default=42)
-    args = ap.parse_args()
-    if args.case == "all":
-        entries = run_all(args.seed)
-        print(f"precomputed {len(entries)} cases -> {DERIVED}")
-        for e in entries:
-            print(f"  {e['case_id']:20s} [{e['category']}]")
-        print(f"index -> {MANIFESTS / 'index.json'}")
-    else:
-        m = precompute(args.case, args.seed)
-        print(f"precomputed {args.case}: lane={m['lane']} bytes={m['artifact']['bytes']} "
-              f"metrics={m['metrics']} -> {DERIVED / m['artifact']['path']}")
+def main() -> int:
+    parser = argparse.ArgumentParser(prog="symlab.pipeline")
+    parser.add_argument("case", nargs="?", default="all")
+    parser.add_argument("--seed", type=int, default=0)
+    parser.add_argument("--noise", type=float, default=0.0)
+    parser.add_argument("--quick", action="store_true",
+                        help="reduced budget; never for published numbers")
+    parser.add_argument("--list", action="store_true")
+    parser.add_argument("--expand", action="store_true",
+                        help="expand the physics suites into one case per problem")
+    args = parser.parse_args()
+
+    cases = expand_suites(list_cases()) if args.expand else list_cases()
+
+    if args.list:
+        print(f"{len(cases)} cases, contract schema {SCHEMA_VERSION}")
+        for case in cases:
+            print(f"  {case.category}  {case.id:30s} {len(case.variants)} variants  {case.name_en[:52]}")
+        print(json.dumps(coverage_summary(), indent=2))
+        return 0
+
+    if args.case != "all":
+        cases = [c for c in cases if c.id == args.case]
+        if not cases:
+            print(f"unknown case: {args.case}")
+            return 1
+
+    entries: list[dict] = []
+    failures: list[tuple[str, str]] = []
+    started = time.perf_counter()
+    for case in cases:
+        case_started = time.perf_counter()
+        try:
+            entry = run_case(case, seed=args.seed, noise=args.noise, quick=args.quick)
+            entries.append(entry)
+            elapsed = time.perf_counter() - case_started
+            rate = entry["summary"].get("accuracy_solution_rate")
+            print(f"  {case.id:30s} {entry['n_variants']:2d} var {entry['bytes']/1024:8.1f} KB "
+                  f"{elapsed:7.1f}s  acc-rate {rate}")
+        except Exception as error:  # noqa: BLE001 - one failing case must not abort the bake
+            failures.append((case.id, f"{type(error).__name__}: {error}"))
+            print(f"  {case.id:30s} FAILED  {type(error).__name__}: {str(error)[:70]}")
+
+    if entries:
+        index = export_stage.build_index(entries, coverage_summary())
+        MANIFESTS.mkdir(parents=True, exist_ok=True)
+        (MANIFESTS / "index.json").write_text(json.dumps(index, indent=2), encoding="utf-8")
+        total_kb = sum(e["bytes"] for e in entries) / 1024
+        print(f"\n  index -> manifests/index.json  ({len(entries)} cases, {total_kb:.0f} KB total)")
+
+    print(f"  total {time.perf_counter() - started:.1f}s")
+    if failures:
+        print(f"\n  {len(failures)} FAILED:")
+        for case_id, message in failures:
+            print(f"    {case_id}: {message}")
+        return 1
+    return 0
 
 
 if __name__ == "__main__":
-    main()
+    sys.exit(main())

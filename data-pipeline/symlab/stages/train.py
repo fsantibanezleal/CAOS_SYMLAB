@@ -1,35 +1,74 @@
-"""Stage 3, train (OFFLINE): fit a tiny surrogate (numpy least-squares) mapping R0 -> peak-infected fraction,
-using the SIR engine as ground truth on the TRAINING params. Saves coeffs to models/surrogate.json. Skippable for
-products with no learned tier. (EXAMPLE, a real product trains its research-chosen model here, exporting ONNX.)"""
+"""Stage 3: run the search. This is where the ladder rungs actually execute.
+
+One variant equals one search run equals one configuration. Nothing here decides anything about the
+science; the decisions live in the variant configurations, which is what makes the ablation
+attributable.
+
+The wall-clock of each run is recorded. That is not bookkeeping: the measured cost of a rung is part
+of its evaluation, because a selection method that buys quality at 22 times the baseline runtime has
+to be compared at equal budget rather than equal generation count, and the benchmark literature
+names budget unfairness as one of its standing problems.
+"""
 from __future__ import annotations
 
-import math
-from pathlib import Path
+import time
+from dataclasses import dataclass
 
 import numpy as np
 
-from ..io.formats import write_json
-from ..io.schema import SIRParams
-from ..model.sir import simulate
+from ..cases.registry import Case, Variant
+from ..search.engine import Engine, SearchResult
+from ..search.exhaustive import ExhaustiveResult, run_exhaustive
+from .feature_extraction import Features
+from .preprocess import PreparedCase
 
 
-def _design(r0: float) -> list[float]:
-    r0 = max(1e-6, r0)
-    return [1.0, r0, math.log(r0), 1.0 / r0]
+@dataclass
+class TrainedVariant:
+    """One variant's search result, with its measured cost."""
+
+    variant: Variant
+    result: SearchResult
+    seconds: float
 
 
-def run(train_params: list[SIRParams], models_dir: str) -> dict:
-    X, y = [], []
-    for p in train_params:
-        r0 = (p.beta / p.gamma) if p.gamma > 0 else 1e-6
-        X.append(_design(r0))
-        y.append((simulate(p).peak_I / p.N) if p.N > 0 else 0.0)
-    coeffs, _res, _rank, _sv = np.linalg.lstsq(np.array(X), np.array(y), rcond=None)
-    model = {"kind": "linear-lstsq", "basis": ["1", "r0", "ln(r0)", "1/r0"], "coeffs": coeffs.tolist()}
-    Path(models_dir).mkdir(parents=True, exist_ok=True)
-    write_json(Path(models_dir) / "surrogate.json", model)
-    return model
+def run(
+    prepared: PreparedCase,
+    features: Features,
+    case: Case,
+    *,
+    seed: int = 0,
+    only: tuple[str, ...] | None = None,
+) -> list[TrainedVariant]:
+    """Run every variant of a case, in order."""
+    out: list[TrainedVariant] = []
+    for variant in case.variants:
+        if only is not None and variant.id not in only:
+            continue
+        # The unit-typed rung is only meaningful where units were declared. Running it anyway would
+        # produce a chip whose label promises a constraint the data cannot supply.
+        if variant.config.unit_typed and not features.units_declared:
+            continue
+        engine = Engine(
+            variant.config,
+            input_dims=features.input_dims if features.units_declared else None,
+            target_dims=features.target_dims if features.units_declared else None,
+        )
+        started = time.perf_counter()
+        result = engine.run(prepared.X_train, prepared.y_train, seed=seed)
+        out.append(TrainedVariant(variant=variant, result=result,
+                                  seconds=round(time.perf_counter() - started, 3)))
+    return out
 
 
-def predict(model: dict, r0: float) -> float:
-    return float(np.dot(np.array(model["coeffs"]), np.array(_design(r0))))
+def run_certificate(
+    prepared: PreparedCase, *, max_nodes: int = 7, primitives: tuple[str, ...] | None = None
+) -> ExhaustiveResult:
+    """Run the bounded exhaustive search, which is the only rung that can prove a negative."""
+    from ..model.expr import PRIMITIVE_SETS
+
+    return run_exhaustive(
+        prepared.X_train, prepared.y_train,
+        primitives=primitives or PRIMITIVE_SETS["arithmetic"],
+        max_nodes=max_nodes,
+    )

@@ -1,0 +1,48 @@
+{
+  "schema": "symlab.index/v1",
+  "schema_version": "1.0.0",
+  "engine_version": "0.01.000",
+  "generated_on": "2026-07-22",
+  "n_cases": 1,
+  "coverage": {
+    "n_cases": 25,
+    "n_categories": 6,
+    "categories": {
+      "Biology and ecology": 3,
+      "Environment and energy": 2,
+      "Industrial process": 6,
+      "Mining and metallurgy": 5,
+      "Physics ground truth": 3,
+      "Synthetic generators": 6
+    },
+    "ground_truth_known": 20,
+    "real": 7,
+    "synthetic": 18,
+    "total_variants": 193,
+    "min_variants": 4,
+    "max_variants": 8
+  },
+  "cases": [
+    {
+      "case_id": "ore-mineralogy-closure",
+      "category": "M",
+      "manifest_path": "manifests/ore-mineralogy-closure.json",
+      "artifact_path": "ore-mineralogy-closure/run.json",
+      "bytes": 144841,
+      "n_variants": 3,
+      "summary": {
+        "n_variants": 3,
+        "accuracy_solutions": 0,
+        "accuracy_solution_rate": 0.0,
+        "exact_recoveries": 0,
+        "exact_recovery_rate": null,
+        "mean_structural_distance": null,
+        "symbolic_test_failure_rate": null,
+        "test_disagreement_count": 0,
+        "total_seconds": 0.59,
+        "total_evaluations": 1500,
+        "variants_with_irrelevant_features": 0
+      }
+    }
+  ]
+}
