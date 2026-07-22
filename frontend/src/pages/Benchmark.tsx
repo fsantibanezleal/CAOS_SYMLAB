@@ -45,10 +45,32 @@ export default function Benchmark() {
   const totals = useMemo(() => {
     if (rows.length === 0) return null;
     const withR2 = rows.filter((r) => r.score.best_test_r2 !== null);
+
+    // Recovery is counted over the configurations where it is CHECKABLE, never over all of them.
+    // Dividing recoveries by the full row count would silently include problems that have no
+    // published law to recover, which is the exact arithmetic this page exists to refuse.
+    const checkable = rows.filter((r) => {
+      const eq = r.score.equivalence;
+      return eq !== null && (eq.symbolic !== null || eq.numerical !== null);
+    });
+    const recovered = checkable.filter((r) => {
+      const eq = r.score.equivalence!;
+      return eq.symbolic !== null ? eq.symbolic : eq.numerical;
+    });
+    // Accuracy WITHOUT recovery, on the same configurations: the gap, as a count.
+    const fitButNotFound = checkable.filter((r) => {
+      const eq = r.score.equivalence!;
+      const found = eq.symbolic !== null ? eq.symbolic : eq.numerical;
+      return r.score.accuracy_solution && !found;
+    });
+
     return {
       variants: rows.length,
       cases: runs.length,
       accuracySolutions: rows.filter((r) => r.score.accuracy_solution).length,
+      checkable: checkable.length,
+      recovered: recovered.length,
+      fitButNotFound: fitButNotFound.length,
       seconds: rows.reduce((sum, r) => sum + r.score.seconds, 0),
       evaluations: rows.reduce((sum, r) => sum + r.score.evaluations, 0),
       medianR2:
@@ -150,6 +172,24 @@ export default function Benchmark() {
               <strong>
                 {totals.accuracySolutions} / {totals.variants}
               </strong>
+            </li>
+            <li>
+              {es ? 'recuperaciones exactas' : 'exact recoveries'}:{' '}
+              <strong>
+                {totals.recovered} / {totals.checkable}
+              </strong>{' '}
+              {es
+                ? `(sobre las ${totals.checkable} configuraciones donde la recuperacion ES comprobable, no sobre las ${totals.variants})`
+                : `(over the ${totals.checkable} configurations where recovery IS checkable, not over all ${totals.variants})`}
+            </li>
+            <li>
+              <strong>
+                {es ? 'ajustaron bien y NO encontraron la ley' : 'fitted well and did NOT find the law'}
+              </strong>
+              : <strong>{totals.fitButNotFound}</strong>{' '}
+              {es
+                ? 'configuraciones superaron el umbral de exactitud y devolvieron la estructura equivocada. Esa cuenta es la medicion que justifica este laboratorio.'
+                : 'configurations cleared the accuracy threshold and returned the wrong structure. That count is the measurement this lab exists to make.'}
             </li>
             <li>
               {es ? 'R2 mediano en prueba' : 'median test R2'}:{' '}
