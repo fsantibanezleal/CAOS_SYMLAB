@@ -123,6 +123,88 @@ than a scorer that could not decide, which is exactly why that rate is published
 - The case index counted "Ten cases carry a `truth_node`" in prose. It was 16 by then. Those counts
   are generated from the registry and gated.
 
+### Fixed, after auditing every claim against the code that makes it
+
+Four audits read the documentation, the docstrings and the site copy against the engine rather than
+against each other. Everything below ran green before it was found, which is the point: none of it
+was a crash.
+
+**Six defects in the engine and the export, all of which changed what shipped.**
+
+- **The ladder was not a ladder.** `r6-age-fitness-islands` omitted `multi_objective` while r5
+  carried it and r7 turned it back on, so r6 added age and islands AND silently dropped complexity
+  as an objective, falling from three-way NSGA-II survival to the two-way age-fitness one. The rung
+  is labelled "age becomes an objective" and r4 is where the output is said to become a front. The
+  Experiments page attributed the whole measured delta to islands.
+- **Age-fitness inverted its own mechanism.** A child inherited `1 + min(parent ages)` and no age-0
+  individual was ever injected. Genotypic age counts generations since the OLDEST ancestor, so the
+  minimum lets an entrenched lineage reset its age by crossing with anything younger, which is the
+  takeover the method exists to prevent, and with no injection the youngest age only climbs. Now
+  `max`, plus one age-0 individual per island per generation, replacing a child so the population
+  size and the evaluations per generation are unchanged.
+- **The export could drop the member the artifact was about.** The front was capped at twelve and
+  the selected index clamped with `min(index, len - 1)`, so where selection landed past the cap the
+  published equation, tree and validation arrays described the last exported member while the score
+  described the model selection actually chose. Ten variants across the corpus were in that state,
+  one selecting index 18 of a front of 19.
+- **The sparse arm measured complexity on something other than what it published**, a hand-rolled
+  term tally rather than the node count the exporter writes. They disagreed on 25 of 39 artifacts,
+  so the two families' fronts were not on the same axis.
+- **`r8-unit-typed` could run entirely untyped without saying so**, either because the case declares
+  no dimensions or because no expression over its inputs reaches the target dimension. The fallback
+  carried a comment claiming it "marked the run"; nothing marked it. Recorded now as
+  `unit_typed_status`, exported beside the request.
+- **Three measurements were computed and discarded.** `tune_population` dropped the identifiability
+  verdict that Levenberg-Marquardt computes per candidate, so a front whose constants are not
+  jointly recoverable looked identical to one whose are. The tuning schedule and the lexicase
+  down-sampling rate were absent from the artifact, against the engine's own docstring.
+
+**The data itself.** Every `strogatz_*` file in the PMLB collection is headed `target, x, y`, with
+the derivative FIRST, and the loader took the last column by the usual PMLB convention. The pipeline
+was fitting `y` from `[dx/dt, x]`: predicting a state variable from the derivative, the inverse of
+the question those cases claim to ask. Checked against the published right-hand side for `bacres1`,
+the first column reproduces it to 4.9e-14 and the last column misses by 55.2. The Feynman files in
+the same collection really do put the target last, so the convention was real, just not universal.
+
+**Twelve megabytes of derivable data in every artifact.** The per-variant validation block carried
+the residual against each input as `{x, residual}`, where `residual` was a byte-for-byte copy of
+`y_true - y_pred` from the parity block beside it, repeated once per input, and `x` was a data
+column repeated once per rung. On the flotation case that was 12.1 MB of a 12.6 MB file. The columns
+now ship once per case and the browser subtracts.
+
+**Claims that pointed at nothing.** Five of the seven generators declaring a `real_data_twin` named
+a case id that exists in no registry and no source table. The Lotka-Volterra caveats promised that
+the predator equation and the conserved quantity "ship as their own variants"; neither generator has
+ever been written. `io/sources.py` recorded Feynman III.15.14 as a formula that is off by a relative
+1.0 against the rows it ships with. `deploy/pages.md` described a workflow step that has never run.
+`deploy/README.md` listed two files that have never existed. The App computed a "pending cases"
+count by subtracting registry entries from expanded artifacts, giving -13.
+
+**A venv nobody had.** `setup.{sh,ps1}` created `.venv-pipeline` for a "heavy offline lane" and
+`.venv` for a "runtime/live-thin lane". Only `.venv` was ever created, so every guide telling a
+reader to run `.venv-pipeline/bin/python` gave an instruction that could not work, and
+`smoke.{sh,ps1}` pointed at that missing interpreter too. There is no heavy lane, because the engine
+is hand-written numpy so the same modules run in the browser, and no thin runtime lane to install,
+because the live lane runs in the reader's browser through Pyodide.
+
+**Eight dead modules**, each with a docstring asserting a role it did not have, including
+`core/rng.py` ("the single RNG factory ... always thread one made here", threaded by nothing) and
+`core/gate.py`, whose classifier declared that its verdict "goes into the manifest, and CI fails on
+mislabeling" while having zero callers, `build_manifest` hardcoding `"lane": "precompute"`, and the
+CI check comparing a key that was never written. The gate is rewritten around what actually decides
+the lane here (whether the browser can regenerate the case's data) and wired; the rest are gone,
+along with four tracked empty directories shadowing the real package layout.
+
+**The harnesses were not in the repository they verify.** The CHANGELOG listed
+`tools/visual-verify/symlab-workbench.mjs` under guards, beside `tests/*.py` paths that really are
+here; it was not, nor were the two other visual harnesses nor the live-parity harness. Every claim
+of the form "this is checked rather than asserted" pointed at something a reader could not run. All
+four are in `tools/` now, with a README saying what each asserts.
+
+**The App, screenshot-verified rather than inferred.** The sidebar readout is the last block of a
+scrolling column, so at 1600x1000 it rendered "RUNGS" and "BEST R2" as headings with their values
+cut off, which reads as missing data. It sticks to the bottom of its own scroll container now.
+
 ### Guards added
 
 Each of these exists because the corresponding defect survived a green build:
