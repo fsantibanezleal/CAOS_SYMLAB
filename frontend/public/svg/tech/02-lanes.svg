@@ -1,0 +1,70 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 900 470" width="900" class="arch-svg" role="img" aria-label="The three lanes: offline precompute, browser live search, and deterministic replay">
+  <style>
+    .arch-svg text { font-family: var(--font-sans, Inter, "Segoe UI", system-ui, sans-serif); }
+    .arch-svg .mono { font-family: var(--font-mono, ui-monospace, Consolas, monospace); font-size: 10px; }
+    .arch-svg .bx { fill: var(--color-surface-2); stroke: var(--color-border); stroke-width: 1.2; }
+    .arch-svg .bx-hi { stroke: var(--color-accent); stroke-width: 1.8; }
+    .arch-svg .bx-warn { stroke: var(--color-warn, #c2415f); stroke-width: 1.6; stroke-dasharray: 5 3; }
+    .arch-svg .ttl { fill: var(--color-fg); font-size: 13px; font-weight: 700; }
+    .arch-svg .sub { fill: var(--color-fg-subtle); font-size: 10px; }
+    .arch-svg .hd { fill: var(--color-fg); font-size: 15px; font-weight: 700; }
+    .arch-svg .lane { fill: var(--color-fg-subtle); font-size: 11px; font-weight: 700; letter-spacing: 0.08em; }
+    .arch-svg .ln { stroke: var(--color-border); stroke-width: 1.4; fill: none; }
+    .arch-svg .ln-hi { stroke: var(--color-accent); stroke-width: 1.8; fill: none; }
+    .arch-svg .dot { fill: var(--color-accent); }
+  </style>
+
+  <text class="hd" x="24" y="28">Three lanes, one engine</text>
+  <text class="sub" x="24" y="48">The browser runs the SAME code the offline bake runs. A second implementation would be two engines to keep in agreement forever.</text>
+
+  <text class="lane" x="24" y="86">OFFLINE</text>
+  <rect class="bx" x="24" y="96" width="150" height="80" rx="8"/>
+  <text class="ttl" x="38" y="118">Fetch and pin</text>
+  <text class="sub" x="38" y="136">SHA-256 per file,</text>
+  <text class="sub" x="38" y="150">licence and provenance</text>
+  <text class="sub" x="38" y="164">sidecar, never committed</text>
+
+  <path class="ln" d="M174 136 H206"/><polygon class="dot" points="206,132 216,136 206,140"/>
+  <rect class="bx" x="220" y="96" width="164" height="80" rx="8"/>
+  <text class="ttl" x="234" y="118">Ingestion contract</text>
+  <text class="sub" x="234" y="136">schema, units, ranges,</text>
+  <text class="sub" x="234" y="150">explicit outlier policy,</text>
+  <text class="sub" x="234" y="164">three splits including extrapolation</text>
+
+  <path class="ln" d="M384 136 H416"/><polygon class="dot" points="416,132 426,136 416,140"/>
+  <rect class="bx bx-hi" x="430" y="96" width="196" height="80" rx="8"/>
+  <text class="ttl" x="444" y="118">The search ladder</text>
+  <text class="sub" x="444" y="136">one rung per configuration,</text>
+  <text class="sub" x="444" y="150">each differing from its neighbour</text>
+  <text class="sub" x="444" y="164">by exactly ONE mechanism</text>
+
+  <path class="ln" d="M626 136 H658"/><polygon class="dot" points="658,132 668,136 658,140"/>
+  <rect class="bx" x="672" y="96" width="204" height="80" rx="8"/>
+  <text class="ttl" x="686" y="118">Evaluate and export</text>
+  <text class="sub" x="686" y="136">triple-equivalence test,</text>
+  <text class="sub" x="686" y="150">description-length selection,</text>
+  <text class="mono" x="686" y="166">schema_version 1.0.0</text>
+
+  <path class="ln-hi" d="M774 176 V214"/><polygon class="dot" points="770,214 774,224 778,214"/>
+
+  <text class="lane" x="24" y="248">COMMITTED</text>
+  <rect class="bx bx-hi" x="24" y="258" width="852" height="58" rx="8"/>
+  <text class="ttl" x="40" y="280">Compact artifacts and manifests, versioned in the repository</text>
+  <text class="mono" x="40" y="300">data/derived/&lt;case&gt;/run.json  ·  manifests/&lt;case&gt;.json  ·  a run is a pure function of (case, config, seed, data)</text>
+
+  <text class="lane" x="24" y="352">WEB</text>
+  <rect class="bx" x="24" y="362" width="410" height="86" rx="8"/>
+  <text class="ttl" x="40" y="384">Replay, always the first paint</text>
+  <text class="sub" x="40" y="404">The app is a renderer. Nothing that Python could compute is</text>
+  <text class="sub" x="40" y="418">recomputed here: no simplification, no bootstrap, no partial</text>
+  <text class="sub" x="40" y="432">dependence. One place a number can be wrong.</text>
+
+  <rect class="bx bx-hi" x="452" y="362" width="424" height="86" rx="8"/>
+  <text class="ttl" x="468" y="384">Live search, only when the reader asks</text>
+  <text class="sub" x="468" y="404">The same package modules loaded under Pyodide, at a reduced</text>
+  <text class="sub" x="468" y="418">budget. Nothing autostarts: loading a Python runtime on page</text>
+  <text class="sub" x="468" y="432">view would spend a reader battery on an unrequested result.</text>
+
+  <path class="ln" d="M230 316 V356"/><polygon class="dot" points="226,356 230,366 234,356"/>
+  <path class="ln-hi" d="M664 316 V356"/><polygon class="dot" points="660,356 664,366 668,356"/>
+</svg>

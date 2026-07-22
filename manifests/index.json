@@ -1,0 +1,132 @@
+{
+  "schema": "symlab.index/v1",
+  "schema_version": "1.0.0",
+  "engine_version": "0.02.000",
+  "generated_on": "2026-07-22",
+  "n_cases": 5,
+  "coverage": {
+    "n_cases": 25,
+    "n_categories": 6,
+    "categories": {
+      "Biology and ecology": 3,
+      "Environment and energy": 2,
+      "Industrial process": 6,
+      "Mining and metallurgy": 5,
+      "Physics ground truth": 3,
+      "Synthetic generators": 6
+    },
+    "ground_truth_known": 20,
+    "real": 7,
+    "synthetic": 18,
+    "total_variants": 193,
+    "min_variants": 4,
+    "max_variants": 8
+  },
+  "cases": [
+    {
+      "case_id": "monod-saturation",
+      "category": "B",
+      "manifest_path": "manifests/monod-saturation.json",
+      "artifact_path": "monod-saturation/run.json",
+      "bytes": 511575,
+      "n_variants": 7,
+      "summary": {
+        "n_variants": 7,
+        "accuracy_solutions": 0,
+        "accuracy_solution_rate": 0.0,
+        "exact_recoveries": 0,
+        "exact_recovery_rate": null,
+        "mean_structural_distance": null,
+        "symbolic_test_failure_rate": null,
+        "test_disagreement_count": 0,
+        "total_seconds": 550.1,
+        "total_evaluations": 86640,
+        "variants_with_irrelevant_features": 0
+      }
+    },
+    {
+      "case_id": "wwtp-removal-identity",
+      "category": "I",
+      "manifest_path": "manifests/wwtp-removal-identity.json",
+      "artifact_path": "wwtp-removal-identity/run.json",
+      "bytes": 249133,
+      "n_variants": 5,
+      "summary": {
+        "n_variants": 5,
+        "accuracy_solutions": 4,
+        "accuracy_solution_rate": 0.8,
+        "exact_recoveries": 0,
+        "exact_recovery_rate": null,
+        "mean_structural_distance": null,
+        "symbolic_test_failure_rate": null,
+        "test_disagreement_count": 0,
+        "total_seconds": 146.24,
+        "total_evaluations": 25900,
+        "variants_with_irrelevant_features": 0
+      }
+    },
+    {
+      "case_id": "ore-mineralogy-closure",
+      "category": "M",
+      "manifest_path": "manifests/ore-mineralogy-closure.json",
+      "artifact_path": "ore-mineralogy-closure/run.json",
+      "bytes": 903770,
+      "n_variants": 4,
+      "summary": {
+        "n_variants": 4,
+        "accuracy_solutions": 0,
+        "accuracy_solution_rate": 0.0,
+        "exact_recoveries": 0,
+        "exact_recovery_rate": null,
+        "mean_structural_distance": null,
+        "symbolic_test_failure_rate": null,
+        "test_disagreement_count": 0,
+        "total_seconds": 3.64,
+        "total_evaluations": 16240,
+        "variants_with_irrelevant_features": 0
+      }
+    },
+    {
+      "case_id": "heat-exchanger-ntu",
+      "category": "S",
+      "manifest_path": "manifests/heat-exchanger-ntu.json",
+      "artifact_path": "heat-exchanger-ntu/run.json",
+      "bytes": 360596,
+      "n_variants": 7,
+      "summary": {
+        "n_variants": 7,
+        "accuracy_solutions": 0,
+        "accuracy_solution_rate": 0.0,
+        "exact_recoveries": 0,
+        "exact_recovery_rate": null,
+        "mean_structural_distance": null,
+        "symbolic_test_failure_rate": null,
+        "test_disagreement_count": 0,
+        "total_seconds": 773.3,
+        "total_evaluations": 86640,
+        "variants_with_irrelevant_features": 0
+      }
+    },
+    {
+      "case_id": "pump-affinity-power",
+      "category": "S",
+      "manifest_path": "manifests/pump-affinity-power.json",
+      "artifact_path": "pump-affinity-power/run.json",
+      "bytes": 321673,
+      "n_variants": 3,
+      "summary": {
+        "n_variants": 3,
+        "accuracy_solutions": 0,
+        "accuracy_solution_rate": 0.0,
+        "exact_recoveries": 0,
+        "exact_recovery_rate": null,
+        "mean_structural_distance": null,
+        "symbolic_test_failure_rate": null,
+        "test_disagreement_count": 0,
+        "total_seconds": 0.43,
+        "total_evaluations": 1500,
+        "variants_with_irrelevant_features": 0
+      }
+    }
+  ]
+}

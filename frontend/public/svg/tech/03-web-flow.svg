@@ -1,0 +1,78 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 900 440" width="900" class="arch-svg" role="img" aria-label="The web application flow, from the case index to the four sub-tabs">
+  <style>
+    .arch-svg text { font-family: var(--font-sans, Inter, "Segoe UI", system-ui, sans-serif); }
+    .arch-svg .mono { font-family: var(--font-mono, ui-monospace, Consolas, monospace); font-size: 10px; }
+    .arch-svg .bx { fill: var(--color-surface-2); stroke: var(--color-border); stroke-width: 1.2; }
+    .arch-svg .bx-hi { stroke: var(--color-accent); stroke-width: 1.8; }
+    .arch-svg .ttl { fill: var(--color-fg); font-size: 13px; font-weight: 700; }
+    .arch-svg .sub { fill: var(--color-fg-subtle); font-size: 10px; }
+    .arch-svg .hd { fill: var(--color-fg); font-size: 15px; font-weight: 700; }
+    .arch-svg .lane { fill: var(--color-fg-subtle); font-size: 11px; font-weight: 700; letter-spacing: 0.08em; }
+    .arch-svg .ln { stroke: var(--color-border); stroke-width: 1.4; fill: none; }
+    .arch-svg .dot { fill: var(--color-accent); }
+  </style>
+
+  <text class="hd" x="24" y="28">How the web application is put together</text>
+  <text class="sub" x="24" y="48">Every view is a pure function of one payload, which is why the schema was frozen before any interface existed.</text>
+
+  <rect class="bx" x="24" y="70" width="180" height="70" rx="8"/>
+  <text class="ttl" x="38" y="92">Case index</text>
+  <text class="mono" x="38" y="112">manifests/index.json</text>
+  <text class="sub" x="38" y="130">cache-busted by app version</text>
+
+  <path class="ln" d="M204 105 H240"/><polygon class="dot" points="240,101 250,105 240,109"/>
+  <rect class="bx" x="254" y="70" width="200" height="70" rx="8"/>
+  <text class="ttl" x="268" y="92">Schema gate</text>
+  <text class="sub" x="268" y="110">an unknown major version is</text>
+  <text class="sub" x="268" y="124">REFUSED visibly, never rendered</text>
+  <text class="sub" x="268" y="136">as an empty panel</text>
+
+  <path class="ln" d="M454 105 H490"/><polygon class="dot" points="490,101 500,105 490,109"/>
+  <rect class="bx bx-hi" x="504" y="70" width="372" height="70" rx="8"/>
+  <text class="ttl" x="518" y="92">Case payload</text>
+  <text class="mono" x="518" y="112">data/derived/&lt;case&gt;/run.json</text>
+  <text class="sub" x="518" y="130">dataset, variants, Pareto members, trees, history, validation</text>
+
+  <rect class="bx" x="24" y="168" width="240" height="72" rx="8"/>
+  <text class="ttl" x="38" y="190">Case selector</text>
+  <text class="sub" x="38" y="208">grouped by category, with the two</text>
+  <text class="sub" x="38" y="222">rates side by side in the sidebar</text>
+
+  <rect class="bx bx-hi" x="284" y="168" width="592" height="72" rx="8"/>
+  <text class="ttl" x="300" y="190">Variant bar: the ablation</text>
+  <text class="sub" x="300" y="208">Each chip differs from its neighbour by exactly one mechanism, so moving along the bar attributes a measured</text>
+  <text class="sub" x="300" y="222">difference to a named change rather than to a bundle of changes.</text>
+
+  <text class="lane" x="24" y="276">FOUR SUB-TABS</text>
+
+  <rect class="bx" x="24" y="288" width="204" height="120" rx="8"/>
+  <text class="ttl" x="38" y="310">Expression</text>
+  <text class="sub" x="38" y="330">the equation, the tree,</text>
+  <text class="sub" x="38" y="344">parity, extrapolation and</text>
+  <text class="sub" x="38" y="358">partial dependence</text>
+  <text class="sub" x="38" y="380">hovering a term highlights</text>
+  <text class="sub" x="38" y="394">the same subtree</text>
+
+  <rect class="bx bx-hi" x="240" y="288" width="204" height="120" rx="8"/>
+  <text class="ttl" x="254" y="310">Live</text>
+  <text class="sub" x="254" y="330">the same engine, in your</text>
+  <text class="sub" x="254" y="344">browser, at a reduced</text>
+  <text class="sub" x="254" y="358">budget, on request only</text>
+
+  <rect class="bx" x="456" y="288" width="204" height="120" rx="8"/>
+  <text class="ttl" x="470" y="310">Front and search</text>
+  <text class="sub" x="470" y="330">click a point on the front</text>
+  <text class="sub" x="470" y="344">and it loads everywhere;</text>
+  <text class="sub" x="470" y="358">convergence and diversity</text>
+  <text class="sub" x="470" y="380">plus the measured cost of</text>
+  <text class="sub" x="470" y="394">the rung</text>
+
+  <rect class="bx" x="672" y="288" width="204" height="120" rx="8"/>
+  <text class="ttl" x="686" y="310">Context</text>
+  <text class="sub" x="686" y="330">the problem, the variables</text>
+  <text class="sub" x="686" y="344">and their sampled ranges,</text>
+  <text class="sub" x="686" y="358">the formalisation, the scope,</text>
+  <text class="sub" x="686" y="372">what each variant shows,</text>
+  <text class="sub" x="686" y="386">how to read the views, and</text>
+  <text class="sub" x="686" y="400">the completeness certificate</text>
+</svg>

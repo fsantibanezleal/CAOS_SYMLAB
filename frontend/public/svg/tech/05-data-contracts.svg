@@ -1,0 +1,54 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 900 450" width="900" class="arch-svg" role="img" aria-label="The two data contracts: ingestion and artifact">
+  <style>
+    .arch-svg text { font-family: var(--font-sans, Inter, "Segoe UI", system-ui, sans-serif); }
+    .arch-svg .mono { font-family: var(--font-mono, ui-monospace, Consolas, monospace); font-size: 10px; }
+    .arch-svg .bx { fill: var(--color-surface-2); stroke: var(--color-border); stroke-width: 1.2; }
+    .arch-svg .bx-hi { stroke: var(--color-accent); stroke-width: 1.8; }
+    .arch-svg .bx-warn { stroke: var(--color-warn, #c2415f); stroke-width: 1.6; stroke-dasharray: 5 3; }
+    .arch-svg .ttl { fill: var(--color-fg); font-size: 13px; font-weight: 700; }
+    .arch-svg .sub { fill: var(--color-fg-subtle); font-size: 10px; }
+    .arch-svg .hd { fill: var(--color-fg); font-size: 15px; font-weight: 700; }
+    .arch-svg .lane { fill: var(--color-fg-subtle); font-size: 11px; font-weight: 700; letter-spacing: 0.08em; }
+    .arch-svg .ln-hi { stroke: var(--color-accent); stroke-width: 1.8; fill: none; }
+    .arch-svg .dot { fill: var(--color-accent); }
+  </style>
+
+  <text class="hd" x="24" y="28">The two data contracts</text>
+  <text class="sub" x="24" y="48">One at the way in, one at the way out. Both are enforced, and a violation fails loudly rather than propagating quietly.</text>
+
+  <text class="lane" x="24" y="82">CONTRACT 1, INGESTION</text>
+  <rect class="bx bx-hi" x="24" y="94" width="852" height="130" rx="8"/>
+  <text class="ttl" x="40" y="118">raw bytes to a validated table</text>
+  <text class="sub" x="40" y="138">Required schema, units, ranges, and an EXPLICIT outlier and missing-value policy. Bad data is rejected, never silently coerced.</text>
+  <text class="sub" x="40" y="154">Fatal violations raise. Warnings are recorded in the manifest, so a reader sees what the pipeline noticed and chose to allow.</text>
+
+  <rect class="bx bx-warn" x="40" y="166" width="404" height="46" rx="6"/>
+  <text class="sub" x="54" y="186">Generic target-broadcast detector: if the target takes far fewer</text>
+  <text class="sub" x="54" y="202">distinct values than there are rows, fitting at that resolution leaks it.</text>
+
+  <rect class="bx bx-warn" x="456" y="166" width="404" height="46" rx="6"/>
+  <text class="sub" x="470" y="186">Real defects carried verbatim: one source states no missing values</text>
+  <text class="sub" x="470" y="202">and ships 591; one recorded URL served an entirely different dataset.</text>
+
+  <path class="ln-hi" d="M450 224 V262"/><polygon class="dot" points="446,262 450,272 454,262"/>
+
+  <text class="lane" x="24" y="296">CONTRACT 2, ARTIFACT</text>
+  <rect class="bx bx-hi" x="24" y="308" width="852" height="130" rx="8"/>
+  <text class="ttl" x="40" y="332">pipeline to web, frozen at schema_version 1.0.0</text>
+  <text class="sub" x="40" y="350">A TypeScript type mirrors this schema, so a drift between what Python writes and what the app expects fails the BUILD.</text>
+
+  <rect class="bx" x="40" y="362" width="264" height="64" rx="6"/>
+  <text class="sub" x="54" y="382">Every float rounded before it ships.</text>
+  <text class="sub" x="54" y="400">Node ids are ONE integer space, shared by</text>
+  <text class="sub" x="54" y="416">the equation, the tree and the terms.</text>
+
+  <rect class="bx" x="318" y="362" width="264" height="64" rx="6"/>
+  <text class="sub" x="332" y="382">Colour index assigned in Python, so the</text>
+  <text class="sub" x="332" y="400">equation, tree and contribution palettes</text>
+  <text class="sub" x="332" y="416">cannot drift apart.</text>
+
+  <rect class="bx" x="596" y="362" width="264" height="64" rx="6"/>
+  <text class="sub" x="610" y="382">Every downsample discloses its original</text>
+  <text class="sub" x="610" y="400">count. Showing part of the data is fine;</text>
+  <text class="sub" x="610" y="416">not saying so is not.</text>
+</svg>

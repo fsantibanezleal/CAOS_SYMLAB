@@ -1,0 +1,83 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 900 470" width="900" class="arch-svg" role="img" aria-label="What SymLab is: data in, a Pareto front of candidate laws out">
+  <style>
+    .arch-svg text { font-family: var(--font-sans, Inter, "Segoe UI", system-ui, sans-serif); }
+    .arch-svg .mono { font-family: var(--font-mono, ui-monospace, Consolas, monospace); }
+    .arch-svg .bx { fill: var(--color-surface-2); stroke: var(--color-border); stroke-width: 1.2; }
+    .arch-svg .bx-hi { stroke: var(--color-accent); stroke-width: 1.8; }
+    .arch-svg .bx-warn { stroke: var(--color-warn, #c2415f); stroke-width: 1.6; stroke-dasharray: 5 3; }
+    .arch-svg .ttl { fill: var(--color-fg); font-size: 13px; font-weight: 700; }
+    .arch-svg .sub { fill: var(--color-fg-subtle); font-size: 10px; }
+    .arch-svg .hd { fill: var(--color-fg); font-size: 15px; font-weight: 700; }
+    .arch-svg .ln { stroke: var(--color-border); stroke-width: 1.4; fill: none; }
+    .arch-svg .ln-hi { stroke: var(--color-accent); stroke-width: 1.8; fill: none; }
+    .arch-svg .dot { fill: var(--color-accent); }
+    .arch-svg .dot-sel { fill: none; stroke: var(--color-accent); stroke-width: 2; }
+  </style>
+
+  <text class="hd" x="24" y="30">What SymLab is</text>
+  <text class="sub" x="24" y="50">Recovering an explicit closed-form expression from data, and reporting the whole trade-off rather than one winner.</text>
+
+  <rect class="bx" x="24" y="76" width="180" height="104" rx="8"/>
+  <text class="ttl" x="40" y="100">Data</text>
+  <text class="sub" x="40" y="120">real measured plant,</text>
+  <text class="sub" x="40" y="134">laboratory and physics data,</text>
+  <text class="sub" x="40" y="148">or a generator whose</text>
+  <text class="sub" x="40" y="162">governing law is known</text>
+
+  <path class="ln" d="M204 128 H262"/>
+  <polygon class="dot" points="262,124 272,128 262,132"/>
+
+  <rect class="bx bx-hi" x="276" y="60" width="214" height="136" rx="8"/>
+  <text class="ttl" x="292" y="84">The method ladder</text>
+  <text class="sub" x="292" y="104">tree genetic programming,</text>
+  <text class="sub" x="292" y="118">linear scaling, interval guards,</text>
+  <text class="sub" x="292" y="132">constant tuning, Pareto survival,</text>
+  <text class="sub" x="292" y="146">lexicase, islands, deduplication,</text>
+  <text class="sub" x="292" y="160">unit-typed generation,</text>
+  <text class="sub" x="292" y="174">bounded exhaustive search</text>
+
+  <path class="ln-hi" d="M490 128 H548"/>
+  <polygon class="dot" points="548,124 558,128 548,132"/>
+
+  <rect class="bx bx-hi" x="562" y="60" width="314" height="136" rx="8"/>
+  <text class="ttl" x="578" y="84">A Pareto front of candidate laws</text>
+  <text class="sub" x="578" y="102">not one equation: the whole accuracy-complexity trade-off</text>
+
+  <line class="ln" x1="596" y1="176" x2="596" y2="114"/>
+  <line class="ln" x1="596" y1="176" x2="856" y2="176"/>
+  <circle class="dot" cx="620" cy="166" r="4"/>
+  <circle class="dot" cx="664" cy="150" r="4"/>
+  <circle class="dot" cx="712" cy="136" r="4"/>
+  <circle class="dot" cx="770" cy="130" r="4"/>
+  <circle class="dot-sel" cx="712" cy="136" r="10"/>
+  <text class="sub" x="726" y="120">selected by description length,</text>
+  <text class="sub" x="726" y="132">not by best accuracy</text>
+
+  <text class="hd" x="24" y="234">Each candidate is shown three ways</text>
+
+  <rect class="bx" x="24" y="252" width="272" height="112" rx="8"/>
+  <text class="ttl" x="40" y="274">1. As mathematics</text>
+  <text class="mono sub" x="40" y="298">y = 2.5 x0 x1 + 0.3</text>
+  <text class="sub" x="40" y="320">rendered, addressable term by term,</text>
+  <text class="sub" x="40" y="334">with the rounding error it cost measured</text>
+  <text class="sub" x="40" y="348">and stated, never hidden</text>
+
+  <rect class="bx" x="312" y="252" width="272" height="112" rx="8"/>
+  <text class="ttl" x="328" y="274">2. As structure</text>
+  <circle class="dot" cx="448" cy="302" r="7"/>
+  <circle class="dot" cx="412" cy="332" r="5"/>
+  <circle class="dot" cx="484" cy="332" r="5"/>
+  <line class="ln" x1="448" y1="302" x2="412" y2="332"/>
+  <line class="ln" x1="448" y1="302" x2="484" y2="332"/>
+  <text class="sub" x="328" y="356">node radius encodes influence, defined once</text>
+
+  <rect class="bx" x="600" y="252" width="276" height="112" rx="8"/>
+  <text class="ttl" x="616" y="274">3. As the search that earned it</text>
+  <path class="ln-hi" d="M616 338 C 650 338, 660 306, 700 302 S 780 296, 862 294"/>
+  <text class="sub" x="616" y="356">convergence, diversity, and the measured cost</text>
+
+  <rect class="bx bx-warn" x="24" y="386" width="852" height="62" rx="8"/>
+  <text class="ttl" x="40" y="408">What it does NOT claim</text>
+  <text class="sub" x="40" y="428">A fit is not a discovery. Published benchmarks show a method scoring above 0.999 on the coefficient of determination while recovering the correct</text>
+  <text class="sub" x="40" y="441">structure zero percent of the time, so accuracy and recovery are reported here as two separate numbers and are never merged into one.</text>
+</svg>
