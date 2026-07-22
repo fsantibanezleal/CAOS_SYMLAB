@@ -21,7 +21,7 @@ from dataclasses import dataclass
 import numpy as np
 
 from ..model.intervals import Interval, from_data
-from ..model.units import DIMENSIONLESS, Dims, format_dims, is_dimensionless
+from ..model.units import Dims, format_dims, is_dimensionless
 from .preprocess import PreparedCase
 
 
