@@ -24,23 +24,23 @@
   },
   "cases": [
     {
-      "case_id": "ore-mineralogy-closure",
-      "category": "M",
-      "manifest_path": "manifests/ore-mineralogy-closure.json",
-      "artifact_path": "ore-mineralogy-closure/run.json",
-      "bytes": 144841,
-      "n_variants": 3,
+      "case_id": "wwtp-removal-identity",
+      "category": "I",
+      "manifest_path": "manifests/wwtp-removal-identity.json",
+      "artifact_path": "wwtp-removal-identity/run.json",
+      "bytes": 249133,
+      "n_variants": 5,
       "summary": {
-        "n_variants": 3,
-        "accuracy_solutions": 0,
-        "accuracy_solution_rate": 0.0,
+        "n_variants": 5,
+        "accuracy_solutions": 4,
+        "accuracy_solution_rate": 0.8,
         "exact_recoveries": 0,
         "exact_recovery_rate": null,
         "mean_structural_distance": null,
         "symbolic_test_failure_rate": null,
         "test_disagreement_count": 0,
-        "total_seconds": 0.59,
-        "total_evaluations": 1500,
+        "total_seconds": 146.24,
+        "total_evaluations": 25900,
         "variants_with_irrelevant_features": 0
       }
     }

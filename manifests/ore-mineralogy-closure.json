@@ -11,7 +11,7 @@
     "path": "ore-mineralogy-closure/run.json",
     "format": "json",
     "schema_version": "1.0.0",
-    "bytes": 144841
+    "bytes": 903770
   },
   "lane": "precompute",
   "data": {
@@ -24,43 +24,45 @@
       "Aggregated to the hourly grid before any fitting. The concentrate assays are hourly laboratory measurements repeated across every 20-second process row; fitting at row level would leak the target about 13.5 times over. Row-level access is not offered by this loader.",
       "Comma decimal separator handled explicitly; 0 malformed rows skipped.",
       "Both concentrate assay columns excluded from the inputs: predicting one from the other is reading the answer off the same laboratory measurement, not soft sensing.",
-      "Deterministically subsampled to 600 of the available rows (seed 0) to keep the search budget on the structure rather than on redundant rows."
+      "Deterministically subsampled to 4000 of the available rows (seed 0) to keep the search budget on the structure rather than on redundant rows."
     ]
   },
   "contract": {
-    "n_rows": 600,
+    "n_rows": 4000,
     "n_inputs": 1,
     "input_keys": [
       "%_Silica_Feed"
     ],
     "target_key": "%_Iron_Feed",
-    "distinct_target_values": 201,
-    "target_repeat_ratio": 2.985,
+    "distinct_target_values": 278,
+    "target_repeat_ratio": 14.388,
     "constant_inputs": [],
-    "warnings": [],
+    "warnings": [
+      "the target takes only 278 distinct values across 4000 rows (14.4 repeats each). If those repeats come from a coarser measurement grid, fitting at this resolution leaks the target."
+    ],
     "defects_applied": [
       "Aggregated to the hourly grid before any fitting. The concentrate assays are hourly laboratory measurements repeated across every 20-second process row; fitting at row level would leak the target about 13.5 times over. Row-level access is not offered by this loader.",
       "Comma decimal separator handled explicitly; 0 malformed rows skipped.",
       "Both concentrate assay columns excluded from the inputs: predicting one from the other is reading the answer off the same laboratory measurement, not soft sensing.",
-      "Deterministically subsampled to 600 of the available rows (seed 0) to keep the search budget on the structure rather than on redundant rows."
+      "Deterministically subsampled to 4000 of the available rows (seed 0) to keep the search budget on the structure rather than on redundant rows."
     ],
     "licence": "CC0 1.0 Public Domain (OpenML dataset 43311)",
     "redistribution": "mirror",
     "citation": "Quality Prediction in a Mining Process, OpenML dataset 43311, CC0 Public Domain. Real froth flotation plant, 20-second process readings with hourly laboratory assays.",
-    "n_train": 383,
-    "n_test": 127,
-    "n_extrapolation": 90
+    "n_train": 2550,
+    "n_test": 850,
+    "n_extrapolation": 600
   },
   "units_declared": 0,
-  "split_note": "extrapolation split holds out the lowest and highest 45 rows of '%_Silica_Feed', so the training region is an interior box and the extrapolation rows lie outside the support the search ever saw",
+  "split_note": "extrapolation split holds out the lowest and highest 300 rows of '%_Silica_Feed', so the training region is an interior box and the extrapolation rows lie outside the support the search ever saw",
   "variants": [
     {
       "id": "r1-koza-baseline",
-      "seconds": 0.144,
-      "evaluations": 480,
-      "front_size": 4,
-      "selected_complexity": 9,
-      "test_r2": -23.3683934,
+      "seconds": 0.86,
+      "evaluations": 4000,
+      "front_size": 7,
+      "selected_complexity": 8,
+      "test_r2": 0.9078113,
       "accuracy_solution": 0,
       "exact_recovery": null,
       "symbolic_test_decided": null,
@@ -68,11 +70,11 @@
     },
     {
       "id": "r2-linear-scaling",
-      "seconds": 0.188,
-      "evaluations": 480,
-      "front_size": 7,
-      "selected_complexity": 6,
-      "test_r2": 0.94719217,
+      "seconds": 1.089,
+      "evaluations": 4000,
+      "front_size": 11,
+      "selected_complexity": 17,
+      "test_r2": 0.96755798,
       "accuracy_solution": 0,
       "exact_recovery": null,
       "symbolic_test_decided": null,
@@ -80,11 +82,23 @@
     },
     {
       "id": "r3-constant-tuning",
-      "seconds": 0.255,
-      "evaluations": 540,
-      "front_size": 4,
+      "seconds": 0.956,
+      "evaluations": 4120,
+      "front_size": 15,
+      "selected_complexity": 22,
+      "test_r2": 0.96082075,
+      "accuracy_solution": 0,
+      "exact_recovery": null,
+      "symbolic_test_decided": null,
+      "irrelevant_features": 0
+    },
+    {
+      "id": "r4-multi-objective",
+      "seconds": 0.731,
+      "evaluations": 4120,
+      "front_size": 3,
       "selected_complexity": 6,
-      "test_r2": 0.94719217,
+      "test_r2": 0.9593092,
       "accuracy_solution": 0,
       "exact_recovery": null,
       "symbolic_test_decided": null,
@@ -92,7 +106,7 @@
     }
   ],
   "summary": {
-    "n_variants": 3,
+    "n_variants": 4,
     "accuracy_solutions": 0,
     "accuracy_solution_rate": 0.0,
     "exact_recoveries": 0,
@@ -100,8 +114,8 @@
     "mean_structural_distance": null,
     "symbolic_test_failure_rate": null,
     "test_disagreement_count": 0,
-    "total_seconds": 0.59,
-    "total_evaluations": 1500,
+    "total_seconds": 3.64,
+    "total_evaluations": 16240,
     "variants_with_irrelevant_features": 0
   }
 }

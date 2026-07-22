@@ -36,6 +36,20 @@ from .infer import VariantInference
 from .preprocess import PreparedCase
 from .train import TrainedVariant
 
+# The equivalence protocol itself lives in `sreval`, an MIT package extracted from this lab. It is
+# imported rather than duplicated: a second copy of a scoring rule is a second place for it to drift,
+# and the whole argument of that package is that the scorer must be auditable.
+try:  # pragma: no cover - exercised by the pipeline, not by the unit tests
+    from sreval import metrics as sreval_metrics
+    from sreval.equivalence import structural_distance as sreval_structural_distance
+
+    HAS_SREVAL = True
+except ImportError:  # the browser lane never installs it, and never needs it
+    sreval_metrics = None
+    sreval_structural_distance = None
+    HAS_SREVAL = False
+
+
 #: Points sampled for the numerical equivalence test.
 NUMERICAL_PROBE_POINTS = 512
 
