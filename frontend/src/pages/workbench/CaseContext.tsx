@@ -80,11 +80,23 @@ export function CaseContext({ run, lang }: { run: RunPayload; lang: 'en' | 'es' 
       )}
 
       <h3>{es ? 'Alcance y supuestos' : 'Scope and assumptions'}</h3>
-      <p>{notes.split_note}</p>
-      <p>{notes.features_note}</p>
+      {/* The split note, the feature note and the caveats are provenance RECORDS written by the
+          pipeline, not interface copy. They are kept in English verbatim so what the app shows and
+          what the artifact stores are the same string: a translated copy could drift from the
+          record it claims to quote. On the Spanish page that is stated rather than left looking
+          like a gap in the translation. */}
+      {es && (
+        <p className="sym-verbatim-note">
+          Los textos de esta seccion se muestran en ingles tal como los escribio la tuberia. Son el
+          registro de procedencia, no texto de interfaz: una copia traducida podria separarse del
+          registro que dice citar.
+        </p>
+      )}
+      <p lang="en">{notes.split_note}</p>
+      <p lang="en">{notes.features_note}</p>
       {notes.caveats.length > 0 && (
         <Callout variant="honest" title={es ? 'Lo que este caso NO demuestra' : 'What this case does NOT show'}>
-          <ul>
+          <ul lang="en">
             {notes.caveats.map((caveat, index) => (
               <li key={index}>{caveat}</li>
             ))}

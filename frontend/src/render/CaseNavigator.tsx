@@ -56,16 +56,22 @@ export function CaseNavigator({
 
   const inLane = useMemo(() => entries.filter((e) => laneOf(e) === source), [entries, source]);
 
-  /** Category order is first-seen, matching the registry, so it is stable between deploys. */
+  /** Category order is first-seen, matching the registry, so it is stable between deploys. The
+   *  Spanish name comes from the index rather than from a lookup table here: the taxonomy belongs
+   *  to the registry, and a second copy in the frontend would drift the first time one is added. */
   const categories = useMemo(() => {
     const seen = new Map<string, { code: string; name: string; n: number }>();
     inLane.forEach((e) => {
       const existing = seen.get(e.category);
-      if (existing) existing.n += 1;
-      else seen.set(e.category, { code: e.category, name: e.category_name ?? e.category, n: 1 });
+      if (existing) {
+        existing.n += 1;
+      } else {
+        const name = (es ? e.category_name_es : e.category_name) ?? e.category_name ?? e.category;
+        seen.set(e.category, { code: e.category, name, n: 1 });
+      }
     });
     return [...seen.values()];
-  }, [inLane]);
+  }, [inLane, es]);
 
   const selected = entries.find((e) => e.case_id === selectedId) ?? null;
   const activeCategory =

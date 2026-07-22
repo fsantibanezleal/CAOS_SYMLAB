@@ -1,0 +1,119 @@
+# Framework card, sreval
+
+**Status in this repo: USED.** It is the only symbolic-regression package this repo depends on, and it
+is imported by the evaluation stage.
+
+## What it is, and the one thing it does better
+
+`sreval` is an evaluation harness for symbolic regression: given a candidate expression and a known
+truth, it decides whether the candidate is the same expression, and it reports accuracy and recovery
+as two separate numbers that it refuses to merge.
+
+The one thing it does better than the alternatives is that it publishes the failure rate of its own
+symbolic test as a first-class output. Every published SR benchmark runs a sympy simplification to
+decide equivalence, and that simplification times out or throws on a non-trivial fraction of real
+cases. SRBench's own postprocessing scores those cases as method failures (see
+[03_srbench.md](03_srbench.md)), which charges the search for a defect in the scorer. `sreval` runs
+three independent tests instead of one, reports them separately, reports whether they agreed, and
+reports how often the symbolic test could not decide.
+
+| Test | What it is good for | How it fails |
+|---|---|---|
+| Symbolic (sympy) | Exact when it terminates | Times out, throws, or fails to reduce a genuinely zero difference |
+| Numerical probing | Cheap and robust to the simplifier's limits | Cannot separate "equivalent everywhere" from "agrees on the sampled box", which is exactly what breaks under extrapolation |
+| Structural edit distance | The only graded verdict, so "wrong by one term" is distinguishable from "wrong entirely" | Sensitive to algebraically equivalent rewrites a reader would call the same answer |
+
+## Licence, and whether this MIT repo may use it
+
+MIT (`LICENSE`, copyright 2026 Felipe Santibanez-Leal), declared as `license = { text = "MIT" }` in
+its `pyproject.toml`. Same licence as this repo, so it may be depended on, vendored or forked without
+restriction.
+
+## Install reality
+
+Pure Python. `dependencies = ["numpy>=1.24"]`, `requires-python = ">=3.10"`, with a `symbolic` extra
+that adds `sympy>=1.12`. No compiler, no Julia, no GPU.
+
+Source repository: `github.com/fsantibanezleal/CAOS_SREVAL`. Its CHANGELOG records release 0.01.000
+on 2026-07-22 and states that publishing to PyPI runs through OIDC trusted publishing with no stored
+token.
+
+This repo currently pins the git ref rather than a released version, in
+[`requirements-precompute.txt`](../../requirements-precompute.txt):
+
+```
+sreval[symbolic] @ git+https://github.com/fsantibanezleal/CAOS_SREVAL@main
+sympy>=1.12             # required by sreval's symbolic equivalence test
+```
+
+The pin carries a comment saying it swaps to a version pin once the first PyPI release lands. Until
+that swap happens, a build of this repo is not reproducible from a version number alone, which is a
+known and stated gap rather than an accident.
+
+## Usage
+
+```python
+import numpy as np
+from sreval import check, summarise
+
+verdict = check(
+    candidate_infix="x*(a + b)",
+    truth_infix="x*a + x*b",
+    variables=["x", "a", "b"],
+    candidate_fn=lambda X: X[:, 0] * (X[:, 1] + X[:, 2]),
+    truth_fn=lambda X: X[:, 0] * X[:, 1] + X[:, 0] * X[:, 2],
+    box=[(-3.0, 3.0), (-3.0, 3.0), (-3.0, 3.0)],
+    candidate_tokens=["mul", "v0", "add", "v1", "v2"],
+    truth_tokens=["add", "mul", "v0", "v1", "mul", "v0", "v2"],
+)
+
+verdict.recovered            # True: an algebraic rewrite of the same expression
+verdict.agreed               # True: the symbolic and numerical tests concur
+verdict.structural.distance  # graded and non-zero: the two are written differently
+
+report = summarise([verdict])
+report.symbolic_failure_rate # the rate the field currently absorbs into method scores
+```
+
+## Applying it here
+
+Stage 5 of the pipeline, [`data-pipeline/symlab/stages/evaluate.py`](../../data-pipeline/symlab/stages/evaluate.py),
+imports it:
+
+```python
+from sreval import metrics as sreval_metrics
+from sreval.equivalence import structural_distance as sreval_structural_distance
+```
+
+The import sits inside a `try` block that sets `HAS_SREVAL`, because the live (Pyodide) lane never
+installs it and never needs it: the browser replays or reruns the search, and equivalence scoring is
+an offline concern. The stage carries its own numerical probe constants
+(`NUMERICAL_PROBE_POINTS = 512`, `NUMERICAL_TOLERANCE = 1e-6`, `ACCURACY_R2_THRESHOLD = 0.999`) and
+delegates the protocol itself so that the scoring rule exists in exactly one auditable place.
+
+The package was extracted from this lab rather than written for it, for a licence reason as much as a
+design one: the reference implementation of this protocol is SRBench's `symbolic_utils.py`, which is
+GPL-3.0 and must not be vendored into an MIT product. Reimplementing from the published specification
+is the route the research recorded, and `sreval` is that reimplementation.
+
+## Caveats
+
+- The structural distance is a sequence edit distance over the pre-order traversal, not a full tree
+  edit distance. It is a graded signal, not a metric with the properties of Zhang-Shasha.
+- `sreval` does not perform symbolic regression, and it does not decide whether a discovered equation
+  is true. Fitting is not discovering, and no equivalence test changes that.
+- The symbolic test needs the `symbolic` extra. Installed without it, the symbolic verdict is always
+  "could not decide", which will inflate the reported symbolic failure rate for a reason that has
+  nothing to do with the expressions.
+
+## Citations
+
+The protocol it implements is transcribed from the persisted benchmark research, primarily:
+
+- La Cava, W., Orzechowski, P., Burlacu, B., de França, F. O., Virgolin, M., Jin, Y., Kommenda, M. and
+  Moore, J. H. (2021). Contemporary Symbolic Regression Methods and their Relative Performance.
+  NeurIPS 2021 Datasets and Benchmarks, arXiv:2107.14351. Source of the three-boolean equivalence
+  rule and of `accuracy_solution = (R2_test > 0.999)`.
+- Matsubara, Y., Chiba, N., Igarashi, R. and Ushiku, Y. Rethinking Symbolic Regression Datasets and
+  Benchmarks for Scientific Discovery. arXiv:2206.10540. Source of the normalised tree edit distance
+  as the graded alternative to a binary verdict.

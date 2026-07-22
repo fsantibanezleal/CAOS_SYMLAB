@@ -335,6 +335,9 @@ export interface IndexEntry {
   category: string;
   /** The human category name. The sidebar must never render the raw single-letter code. */
   category_name: string;
+  /** The Spanish category name. The taxonomy is a property of the registry, so both languages are
+   *  produced there rather than translated in the frontend, where a second copy would drift. */
+  category_name_es?: string;
   name_en: string;
   name_es: string;
   ground_truth_known: boolean;

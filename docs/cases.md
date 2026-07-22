@@ -1,60 +1,165 @@
 # Cases
 
-The case taxonomy and the coverage matrix. A case is one dataset plus the set of search
-configurations run against it.
+A case is one dataset plus the set of search configurations run against it. This page carries the
+category taxonomy and the coverage matrix; [`cases/`](cases/) carries one page per case, twenty-five
+of them, grouped by category and numbered so the directory reads in the order the taxonomy does.
+
+The registry that this page describes is
+[`data-pipeline/symlab/cases/registry.py`](../data-pipeline/symlab/cases/registry.py). Where a number
+here and a number there disagree, the code is right and this page is stale.
 
 ## Categories
 
-| Code | Category | What it is for |
+The single-letter code is the internal key used by the registry grouping. It never reaches the
+screen; the human name does.
+
+| Code | Category | What it is for | Cases |
+|---|---|---|---|
+| P | Physics ground truth | The law is published, so recovery is verifiable to the digit | 3 |
+| I | Industrial process | Real plant and equipment data, real noise | 6 |
+| M | Mining and metallurgy | The domain the research found to be the field's clearest gap | 5 |
+| B | Biology and ecology | Published models with fitted parameters to compare against | 3 |
+| E | Environment and energy | Physical bounds a discovered form can visibly violate | 2 |
+| S | Synthetic generators | First-principles, exactly scoreable, four with a real twin | 6 |
+
+Category is a property of the CASE, not of the generator behind it. Several first-principles
+generators are filed under the domain they belong to rather than under S: the Monod hyperbola is a
+biology case, the Bond law is a mining case, the wind power curve is an energy case. S holds the
+cross-domain generators that do not belong to any single track.
+
+## The four things every case declares
+
+1. **Whether its ground truth is KNOWN.** Only cases with a known truth contribute to a solution
+   rate. Twenty of the twenty-five declare a known truth; five do not, and those five contribute to
+   the error metrics only.
+2. **Whether that truth is MACHINE-COMPARABLE.** Knowing the law and being able to score an exact
+   recovery against it automatically are different things. Ten cases carry a `truth_node`, an
+   expression tree the equivalence test can compare a candidate against. The rest carry the law as
+   rendered mathematics for a reader, and the app says "not checkable" rather than reporting zero
+   recovery. Reporting zero would be false: zero means the search failed, not-checkable means the
+   scorer was never given a comparable object.
+3. **Its recovery REGIME**, where a truth exists. `structure` means the physical parameters were
+   handed to the search as input columns, so only the FORM was unknown; this is the convention the
+   published physics benchmarks use. `structure+constants` means the parameters were baked into the
+   generator, so the NUMBERS had to be recovered as well. That is a materially harder task and the
+   two are never averaged together. Cases loaded from a real file record the regime as `unknown`,
+   because nobody handed the search a parameterisation to recover.
+4. **Its honest variant count.** Where a case genuinely admits no meaningful parametric family it
+   ships fewer chips and says so, rather than being padded with fabricated regimes to hit a number.
+   The registry's own count today: 193 variants across 25 cases, minimum 4, maximum 8.
+
+## Coverage matrix
+
+Real or synthetic, published law, regime, source and licence for every case. "Machine-comparable"
+is the `truth_node` column of point 2 above.
+
+| # | Case | Cat | Real or synthetic | Published law | Machine-comparable | Regime | Source | Licence |
+|---|---|---|---|---|---|---|---|---|
+| [01](cases/01_feynman-suite.md) | Feynman equations | P | synthetic | yes, 18 published laws | no | unknown | PMLB `feynman_*` | MIT |
+| [02](cases/02_strogatz-dynamics.md) | Strogatz systems | P | synthetic | yes, 14 ODE right-hand sides | no | unknown | PMLB `strogatz_*` | MIT |
+| [03](cases/03_nikuradse-friction.md) | Nikuradse friction | P | real | no closed form fits these points | no | unknown | PMLB `nikuradse_1` | MIT |
+| [04](cases/04_ccpp-derating.md) | Combined cycle derating | I | real | no, physical anchor only | no | unknown | UCI 294 | CC BY 4.0 |
+| [05](cases/05_concrete-abrams.md) | Concrete strength | I | real | Abrams, empirical, not exact here | no | unknown | UCI 165 | CC BY 4.0 |
+| [06](cases/06_wwtp-removal-identity.md) | Removal identity | I | real | yes, exact by column definition | no | unknown | UCI 106 | CC BY 4.0 |
+| [07](cases/07_gasturbine-nox.md) | Gas turbine NOx | I | real | no, Zeldovich family only | no | unknown | UCI 551 | CC BY 4.0 |
+| [08](cases/08_antoine-vapour-pressure.md) | Antoine vapour pressure | I | synthetic | yes | no | structure+constants | generator | MIT |
+| [09](cases/09_cstr-conversion.md) | CSTR conversion | I | synthetic | yes | no | structure+constants | generator | MIT |
+| [10](cases/10_flotation-silica.md) | Flotation soft sensor | M | real | no | no | unknown | OpenML 43311 | CC0 1.0 |
+| [11](cases/11_ore-mineralogy-closure.md) | Ore mineralogy closure | M | real | yes, stoichiometric reference line | no | unknown | OpenML 43311 | CC0 1.0 |
+| [12](cases/12_comminution-bond.md) | Comminution energy | M | synthetic | yes, three rival laws | yes | structure | generator | MIT |
+| [13](cases/13_flotation-kinetics.md) | Flotation kinetics | M | synthetic | yes | yes | structure | generator | MIT |
+| [14](cases/14_two-product-recovery.md) | Two-product balance | M | synthetic | yes | yes | structure | generator | MIT |
+| [15](cases/15_monod-saturation.md) | Michaelis-Menten, Monod | B | synthetic | yes | yes | structure | generator | MIT |
+| [16](cases/16_theta-logistic-growth.md) | Theta-logistic growth | B | synthetic | yes | no | structure | generator | MIT |
+| [17](cases/17_lotka-volterra-rhs.md) | Lotka-Volterra prey RHS | B | synthetic | yes | yes | structure+constants | generator | MIT |
+| [18](cases/18_asm1-aerobic-growth.md) | ASM1 aerobic growth | E | synthetic | yes | yes | structure+constants | generator | MIT |
+| [19](cases/19_wind-power-curve.md) | Wind power curve | E | synthetic | yes, piecewise | no | structure+constants | generator | MIT |
+| [20](cases/20_friction-factor.md) | Pipe friction factor | S | synthetic | yes | no | structure+constants | generator | MIT |
+| [21](cases/21_heat-exchanger-ntu.md) | Effectiveness-NTU | S | synthetic | yes | yes | structure+constants | generator | MIT |
+| [22](cases/22_nusselt-gnielinski.md) | Gnielinski Nusselt | S | synthetic | yes, deliberately unfittable | no | structure+constants | generator | MIT |
+| [23](cases/23_pump-affinity-power.md) | Pump affinity power | S | synthetic | yes | yes | structure | generator | MIT |
+| [24](cases/24_stokes-settling.md) | Stokes settling | S | synthetic | yes | yes | structure+constants | generator | MIT |
+| [25](cases/25_arrhenius-rate.md) | Arrhenius rate | S | synthetic | yes | yes | structure | generator | MIT |
+
+Totals computed by `coverage_summary()` rather than typed here: 25 cases, 6 categories, 20 with a
+known ground truth, 7 real, 18 synthetic.
+
+## Redistribution, which is a separate question from licence
+
+A dataset can be freely downloadable and still not be ours to re-host, so the source registry
+records the licence and the redistribution verdict as two independent fields
+([`io/sources.py`](../data-pipeline/symlab/io/sources.py)).
+
+| Verdict | Meaning | Which sources |
 |---|---|---|
-| P | Physics ground truth | The law is published, so recovery is verifiable to the digit |
-| I | Industrial process | Real plant and equipment data, real noise |
-| M | Mining and metallurgy | The domain the research found to be the field's clearest gap |
-| B | Biology and ecology | Published models with fitted parameters to compare against |
-| E | Environment and energy | Physical bounds a discovered form can visibly violate |
-| S | Synthetic generators | First-principles, exactly scoreable, four with a real twin |
+| `mirror` | Permissive: a compact sample may be committed with attribution | PMLB (MIT), the four UCI sets (CC BY 4.0), OpenML 43311 (CC0), every in-repo generator (MIT) |
+| `derived` | Only derived metrics and artifacts may be published | GeoMet (CC BY 4.0), the geometallurgy companion table |
+| `link-only` | Never re-hosted in any form; fetch script plus citation | reserved for sources that state no licence |
 
-The single-letter code is an internal key. It never reaches the screen; the human name does.
-
-## Two rules the registry enforces
-
-1. **A case declares whether its ground truth is KNOWN.** Only cases with a known truth contribute to
-   a recovery rate. Mixing the two would let the lab quote a recovery percentage that silently
-   includes problems where recovery cannot be checked.
-2. **A case declares its honest variant count.** Where a case genuinely admits no meaningful
-   parametric family, it ships one deeply documented variant and says so, rather than being padded
-   with fabricated regimes to hit a number.
+Raw data never enters git. It lands in the vault at `E:/_Datos/symlab/raw`; only compact derived
+artifacts under `data/derived/` and the manifests under `manifests/` are committed.
 
 ## Documented traps carried, not hidden
 
-Three datasets in this set have a defect that would silently corrupt a result, and each is carried
-verbatim into the manifest rather than quietly fixed:
+Every defect below is recorded verbatim on the source or the loader and is copied into the case
+manifest at ingestion time, so a reader of a number can see what was done to the rows behind it.
 
-- **The flotation set broadcasts its target.** Concentrate assays are HOURLY laboratory measurements
-  repeated across 20-second rows, about 13.5 times each. The loader aggregates to the hourly grid and
-  offers no row-level access at all, so the leak is structurally unavailable rather than merely
-  discouraged. It also excludes both concentrate assays from the inputs: predicting silica from iron
-  is reading the answer off the other half of the same laboratory measurement.
-- **A wastewater landing page understates its missing values.** It states there are none; the file
-  contains 591. Rows carrying them are dropped, not imputed, because imputing into an exact identity
-  would manufacture the relationship the case exists to recover.
-- **An astronomy archive derives one of its columns from the law under test**, which makes a naive run
-  circular. That case was excluded entirely rather than shipped with a caveat.
+- **The flotation set broadcasts its target.** The concentrate assays are HOURLY laboratory
+  measurements repeated across every 20-second process row, about 13.5 repeats per distinct value.
+  `load_flotation` aggregates to the hourly grid and offers no row-level access at all, so the leak
+  is structurally unavailable rather than merely discouraged. It also excludes both concentrate
+  assays from the inputs. Cases 10 and 11.
+- **The flotation source URL was wrong.** The research dossier recorded OpenML file id 22102255,
+  which serves an unrelated Counter-Strike dataset with HTTP 200 and a plausible size. The correct
+  id for dataset 43311 is 22102136, resolved through the OpenML API. The loader asserts the
+  flotation attribute names before accepting the file, because a status code cannot catch this.
+- **A UCI landing page understates its missing values.** The water-treatment page states there are
+  none; the shipped file contains 591 occurrences of `?`. Rows carrying any are dropped, not
+  imputed, because imputing into an exact identity would manufacture the relationship the case
+  exists to recover. Case 06.
+- **The CCPP archive ships five shuffled folds of the same records.** Only the first is read.
+  Concatenating them would duplicate every row five times and destroy any held-out split. Case 04.
+- **PMLB files are Git LFS backed.** The ordinary `raw.githubusercontent` URL returns a 132-byte LFS
+  pointer with HTTP 200. The media route returns the real gzip, and `scripts/fetch_data.py` detects
+  the pointer signature and fails loudly. Cases 01, 02, 03.
+- **Two canonical hosts in this field are already dead.** The AI Feynman landing page at
+  `space.mit.edu` returns HTTP 404, and the Princeton host for the Nikuradse measurements returns
+  HTTP 404. PMLB carries both collections under MIT, which for Nikuradse is strictly better than the
+  original: the original stated no licence at all.
+- **An astronomy archive derives one of its columns from the law under test**, which makes a naive
+  run circular. That case was excluded from the set entirely rather than shipped with a caveat.
 
 ## The calibration twins
 
-Four synthetic generators have a real-data twin in the case list. That is the strongest arrangement
-available: calibrate the engine where the answer is known, then take it where it is not.
+Four synthetic generators have a real-data twin in the case list. That pairing is what lets the
+engine be calibrated where the answer is known and then taken where it is not.
 
-| Generator | Real twin |
-|---|---|
-| pipe friction factor | Nikuradse, 362 measured points, where the transitional hump is genuinely not reproduced by the accepted correlation |
-| flotation kinetics | the plant soft-sensor case |
-| comminution energy | the geometallurgy comminution table |
-| Monod saturation | the penicillin fermentation case |
+| Generator case | Real twin | Why the pair is worth having |
+|---|---|---|
+| [20 pipe friction factor](cases/20_friction-factor.md) | [03 Nikuradse](cases/03_nikuradse-friction.md) | The transitional hump in the 362 measured points is genuinely not reproduced by the Colebrook correlation engineering practice still uses |
+| [13 flotation kinetics](cases/13_flotation-kinetics.md) | [10 flotation soft sensor](cases/10_flotation-silica.md) | Batch first-order kinetics against a real concentrator with a one-hour laboratory delay |
+| [12 comminution energy](cases/12_comminution-bond.md) | GeoMet comminution table (CC BY 4.0, derived-only) | The Bond combination of `1/sqrt(P80)` and `1/sqrt(F80)` against a real geometallurgical table |
+| [15 Monod saturation](cases/15_monod-saturation.md) | penicillin fermentation (not yet shipped as a case) | The same algebraic form is enzyme kinetics and fermentation growth |
+
+Two of these twins are named in the generator objects but are not yet in the registry as cases: the
+GeoMet comminution table needs its companion paper read to pin the semantics of the `th1`, `th2`,
+`th3`, `M`, `A`, `fr` and `xr` columns, and the penicillin case is not built. Both are recorded here
+as pending rather than described as shipped.
 
 ## Contamination, declared
 
-The published physics set has been public since 2019 and is inside the pretraining corpus of every
-large language model, and arguably inside the synthetic distributions of every pretrained symbolic
-regression transformer. Any pretrained method evaluated on it carries that warning in its results.
+The published physics set has been public since 2019, is inside the pretraining corpus of every
+large language model, and is arguably inside the synthetic distributions of every pretrained
+symbolic-regression transformer. Any pretrained method evaluated on cases 01 and 02 carries that
+warning in its results. The sampling ranges of that set are also uniform rather than physically
+realistic, which is the specific defect the SRSD companion collection exists to correct.
+
+## References
+
+- Romano, J. D. et al. (2021). PMLB v1.0: an open-source dataset collection for benchmarking machine
+  learning methods. arXiv:2012.00058.
+- La Cava, W., Orzechowski, P., Burlacu, B., de Franca, F. O., Virgolin, M., Jin, Y., Kommenda, M.
+  and Moore, J. H. (2021). Contemporary symbolic regression methods and their relative performance.
+  NeurIPS 2021 Datasets and Benchmarks Track. arXiv:2107.14351.
+- Udrescu, S.-M. and Tegmark, M. (2020). AI Feynman: a physics-inspired method for symbolic
+  regression. Science Advances 6(16), eaay2631, doi:10.1126/sciadv.aay2631.

@@ -682,3 +682,16 @@
   padding-top: 0;
   border-top: none;
 }
+
+/* A note marking pipeline-written provenance records that stay in English on the Spanish page.
+   They are the record, not interface copy, and a translated copy could drift from what it quotes. */
+.sym-verbatim-note {
+  margin: 0 0 0.7rem;
+  padding: 0.45rem 0.7rem;
+  border-left: 3px solid var(--color-border);
+  border-radius: 0 6px 6px 0;
+  background: color-mix(in srgb, var(--color-fg) 4%, transparent);
+  font-size: 0.79rem;
+  line-height: 1.5;
+  color: var(--color-fg-subtle);
+}

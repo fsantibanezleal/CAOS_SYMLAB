@@ -200,6 +200,7 @@ def build_run(
             "case_id": case.id,
             "category": case.category,
             "category_name": case.category_name,
+            "category_name_es": case.category_name_es,
             "name_en": case.name_en,
             "name_es": case.name_es,
             "summary_en": case.summary_en,

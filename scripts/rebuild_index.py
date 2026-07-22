@@ -15,7 +15,12 @@ from pathlib import Path
 ROOT = Path(__file__).resolve().parents[1]
 sys.path.insert(0, str(ROOT / "data-pipeline"))
 
-from symlab.cases.registry import CATEGORIES, coverage_summary, get_case  # noqa: E402
+from symlab.cases.registry import (  # noqa: E402
+    CATEGORIES,
+    CATEGORIES_ES,
+    coverage_summary,
+    get_case,
+)
 from symlab.stages.export import build_index  # noqa: E402
 
 MANIFESTS = ROOT / "manifests"
@@ -53,6 +58,7 @@ def main() -> int:
             "case_id": manifest["case_id"],
             "category": manifest["category"],
             "category_name": CATEGORIES.get(manifest["category"], manifest["category"]),
+            "category_name_es": CATEGORIES_ES.get(manifest["category"], manifest["category"]),
             "name_en": name_en,
             "name_es": name_es,
             "ground_truth_known": ground_truth_known,

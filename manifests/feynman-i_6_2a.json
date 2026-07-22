@@ -11,7 +11,7 @@
     "path": "feynman-i_6_2a/run.json",
     "format": "json",
     "schema_version": "1.0.0",
-    "bytes": 1841186
+    "bytes": 1841313
   },
   "lane": "precompute",
   "data": {
@@ -21,7 +21,7 @@
     "redistribution": "mirror",
     "real_or_synthetic": "real",
     "defects_applied": [
-      "Deterministically subsampled to 4000 of 4000 rows (seed 0). The source ships 100,000 rows of a smooth low-dimensional law; the extra rows carry no additional information about its structure and would spend the whole search budget on redundancy."
+      "Deterministically subsampled to 4000 of 100000 rows (seed 0). The source ships 100,000 rows of a smooth low-dimensional law; the extra rows carry no additional information about its structure and would spend the whole search budget on redundancy."
     ]
   },
   "contract": {
@@ -36,7 +36,7 @@
     "constant_inputs": [],
     "warnings": [],
     "defects_applied": [
-      "Deterministically subsampled to 4000 of 4000 rows (seed 0). The source ships 100,000 rows of a smooth low-dimensional law; the extra rows carry no additional information about its structure and would spend the whole search budget on redundancy."
+      "Deterministically subsampled to 4000 of 100000 rows (seed 0). The source ships 100,000 rows of a smooth low-dimensional law; the extra rows carry no additional information about its structure and would spend the whole search budget on redundancy."
     ],
     "licence": "MIT (EpistasisLab/pmlb)",
     "redistribution": "mirror",
@@ -50,7 +50,7 @@
   "variants": [
     {
       "id": "r1-koza-baseline",
-      "seconds": 6.447,
+      "seconds": 5.339,
       "evaluations": 9000,
       "front_size": 14,
       "selected_complexity": 30,
@@ -62,7 +62,7 @@
     },
     {
       "id": "r2-linear-scaling",
-      "seconds": 7.261,
+      "seconds": 3.274,
       "evaluations": 9000,
       "front_size": 10,
       "selected_complexity": 23,
@@ -74,7 +74,7 @@
     },
     {
       "id": "r3-constant-tuning",
-      "seconds": 6.994,
+      "seconds": 3.012,
       "evaluations": 9180,
       "front_size": 6,
       "selected_complexity": 14,
@@ -86,7 +86,7 @@
     },
     {
       "id": "r4-multi-objective",
-      "seconds": 7.684,
+      "seconds": 4.452,
       "evaluations": 9180,
       "front_size": 3,
       "selected_complexity": 10,
@@ -98,7 +98,7 @@
     },
     {
       "id": "r5-epsilon-lexicase",
-      "seconds": 71.804,
+      "seconds": 43.349,
       "evaluations": 9180,
       "front_size": 3,
       "selected_complexity": 7,
@@ -110,7 +110,7 @@
     },
     {
       "id": "r6-age-fitness-islands",
-      "seconds": 81.253,
+      "seconds": 67.629,
       "evaluations": 9720,
       "front_size": 3,
       "selected_complexity": 15,
@@ -122,7 +122,7 @@
     },
     {
       "id": "r7-deduplication",
-      "seconds": 593.305,
+      "seconds": 457.25,
       "evaluations": 9720,
       "front_size": 3,
       "selected_complexity": 15,
@@ -134,7 +134,7 @@
     },
     {
       "id": "parsimony-arm",
-      "seconds": 2.46,
+      "seconds": 2.385,
       "evaluations": 9180,
       "front_size": 3,
       "selected_complexity": 7,
@@ -154,7 +154,7 @@
     "mean_structural_distance": null,
     "symbolic_test_failure_rate": null,
     "test_disagreement_count": 0,
-    "total_seconds": 777.21,
+    "total_seconds": 586.69,
     "total_evaluations": 74160,
     "variants_with_irrelevant_features": 0
   }

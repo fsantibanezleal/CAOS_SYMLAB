@@ -30,7 +30,9 @@ from dataclasses import dataclass, replace
 from ..search.engine import LADDER, SearchConfig
 from .generators import GENERATORS, Generator
 
-#: Category codes and their human names.
+#: Category codes and their human names. The app is bilingual, so both languages live here rather
+#: than being translated in the frontend: the taxonomy is a property of the registry, and a second
+#: copy in TypeScript would drift the first time a category is added.
 CATEGORIES: dict[str, str] = {
     "P": "Physics ground truth",
     "I": "Industrial process",
@@ -38,6 +40,15 @@ CATEGORIES: dict[str, str] = {
     "B": "Biology and ecology",
     "E": "Environment and energy",
     "S": "Synthetic generators",
+}
+
+CATEGORIES_ES: dict[str, str] = {
+    "P": "Fisica con ley conocida",
+    "I": "Proceso industrial",
+    "M": "Mineria y metalurgia",
+    "B": "Biologia y ecologia",
+    "E": "Medio ambiente y energia",
+    "S": "Generadores sinteticos",
 }
 
 
@@ -77,6 +88,10 @@ class Case:
     @property
     def category_name(self) -> str:
         return CATEGORIES[self.category]
+
+    @property
+    def category_name_es(self) -> str:
+        return CATEGORIES_ES[self.category]
 
     @property
     def is_generator(self) -> bool:
