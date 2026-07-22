@@ -1,21 +1,20 @@
 /**
  * The App: the workbench, one case at a time.
  *
- * Structure comes from the shared shell, not from this file. `CaseSelector` is the standard case
- * control for this family of apps: it groups by category with real labels, ships the first-level
- * SOURCE control that separates synthetic cases from real measured ones, deep-links the selection
- * into `?case=`, and puts the validation anchor in each chip tooltip. An earlier version of this
- * page hand-rolled a sidebar list instead, which is the exact thing the shared shell exists to
- * prevent: it rendered raw category codes, scattered the controls away from the content, and
- * starved the visualisations of width.
+ * The two-zone shape is the house standard and is not re-derived here: a CONTROL SIDEBAR carrying
+ * every selector, the global configuration and a live readout, and a MAIN AREA that carries only the
+ * tabs and their views. Selection and configuration never sit in the content area, and the content
+ * area never has to give up width to a list.
  *
- * The page reads top to bottom as CHOOSE, then SEE, then EXPLORE, at the full page width:
+ * The sidebar, top to bottom:
+ *   1. Data source and case, through the shared shell `CaseSelector` (grouped by category, with the
+ *      synthetic-versus-measured lane control and `?case=` deep linking).
+ *   2. Search configuration: the ablation. Each entry differs from its neighbour by exactly ONE
+ *      mechanism, so moving down the list attributes a measured difference to a named change.
+ *   3. View controls: the global rendering knobs for the panes on the right.
+ *   4. The live readout, refreshed by every selection above it.
  *
- * 1. `CaseSelector`: source lane, then the case, grouped by category.
- * 2. The case head and a compact strip of what that case is, with the two rates side by side.
- * 3. The variant bar: the ablation. Each chip differs from its neighbour by exactly ONE mechanism,
- *    so moving along it attributes a measured difference to a named change rather than to a bundle.
- * 4. Four sub-tabs: the Expression, the Live browser search, the Front and search, and the Context.
+ * The main area is the four sub-tabs and nothing else.
  */
 import { Callout, CaseSelector, SubTabs, type CaseDef, type CaseKind } from '@fasl-work/caos-app-shell';
 import { useEffect, useMemo, useState } from 'react';
@@ -51,10 +50,9 @@ export default function AppPage() {
     loadIndex()
       .then((loaded) => {
         setIndex(loaded);
-        // Open on a REAL measured case when one is published. That is the harder and more honest
-        // starting point than a generator whose answer is known in advance.
-        const real = loaded.cases.find((c) => c.real_or_synthetic === 'real');
-        const first = real ?? loaded.cases[0];
+        // Open on a REAL measured case when one is published: a harder and more honest starting
+        // point than a generator whose answer is known in advance.
+        const first = loaded.cases.find((c) => c.real_or_synthetic === 'real') ?? loaded.cases[0];
         if (first) {
           setCaseId(first.case_id);
           setSource(first.real_or_synthetic === 'real' ? 'real' : 'synthetic');
@@ -87,9 +85,9 @@ export default function AppPage() {
           ? 'la ley verdadera se conoce, asi que la recuperacion es comprobable'
           : 'the true law is known, so recovery is checkable'
         : es
-          ? 'sin forma cerrada publicada: solo contribuye a las metricas de error'
+          ? 'sin forma cerrada publicada: contribuye solo a las metricas de error'
           : 'no published closed form: contributes to error metrics only',
-      expectedBand: `${entry.n_variants} ${es ? 'configuraciones de busqueda' : 'search configurations'}`,
+      expectedBand: `${entry.n_variants} ${es ? 'configuraciones' : 'configurations'}`,
     }));
   }, [index, es]);
 
@@ -98,8 +96,8 @@ export default function AppPage() {
     return run.notes.variants[Math.min(variantIndex, run.notes.variants.length - 1)];
   }, [run, variantIndex]);
 
-  /** The best held-out R2 across the configurations, so the strip states real model quality next to
-   *  the threshold COUNTS. Without it, a reader sees a count of zero and reads it as zero accuracy. */
+  /** Best held-out R2 across the configurations, so the readout states real model quality next to
+   *  the threshold COUNTS. Without it, a count of zero reads as zero accuracy. */
   const bestTestR2 = useMemo(() => {
     if (!run) return null;
     const values = run.notes.variants
@@ -149,35 +147,6 @@ export default function AppPage() {
       content:
         member && variant && run ? (
           <div className="sym-field">
-            <div className="sym-field-controls">
-              <button
-                type="button"
-                className={`chip${longForm ? ' on' : ''}`}
-                onClick={() => setLongForm((v) => !v)}
-              >
-                {es ? 'forma larga' : 'long form'}
-              </button>
-              <button
-                type="button"
-                className={`chip${showRaw ? ' on' : ''}`}
-                onClick={() => setShowRaw((v) => !v)}
-              >
-                {es ? 'salida cruda del motor' : 'raw engine output'}
-              </button>
-              <label className="sym-slider">
-                {es ? 'colapsar bajo influencia' : 'collapse below influence'}
-                <input
-                  type="range"
-                  min={0}
-                  max={0.3}
-                  step={0.01}
-                  value={collapse}
-                  onChange={(event) => setCollapse(Number(event.target.value))}
-                />
-                <output>{collapse.toFixed(2)}</output>
-              </label>
-            </div>
-
             <EquationView
               member={member}
               targetSymbol={run.dataset.target.display}
@@ -251,125 +220,156 @@ export default function AppPage() {
   const pending = index.coverage.n_cases - index.cases.length;
 
   return (
-    <div className="page-body symlab-page">
-      <CaseSelector
-        cases={cases}
-        selectedId={caseId}
-        onSelect={setCaseId}
-        source={source}
-        onSourceChange={setSource}
-        deepLink
-        lang={lang}
-        ariaLabel={es ? 'Seleccion de caso' : 'Case selection'}
-        text={{
-          source: es ? 'Origen de los datos' : 'Data source',
-          synthetic: es ? 'Generador (verdad conocida)' : 'Generator (truth known)',
-          real: es ? 'Datos medidos' : 'Measured data',
-          lockedNote: es
-            ? 'Los casos medidos vienen de un instrumento o de una planta real: no hay parametros que ajustar, solo lo que se registro.'
-            : 'Measured cases come from a real instrument or plant: there are no knobs to turn, only what was recorded.',
-        }}
-      />
+    <div className="page-body symlab-layout">
+      {/* ---------------------------------------------------------------- CONTROL SIDEBAR */}
+      <aside className="symlab-side">
+        <CaseSelector
+          cases={cases}
+          selectedId={caseId}
+          onSelect={setCaseId}
+          source={source}
+          onSourceChange={setSource}
+          deepLink
+          lang={lang}
+          ariaLabel={es ? 'Seleccion de caso' : 'Case selection'}
+          text={{
+            source: es ? 'Origen de los datos' : 'Data source',
+            synthetic: es ? 'Generador' : 'Generator',
+            real: es ? 'Datos medidos' : 'Measured data',
+            lockedNote: es
+              ? 'Los casos medidos vienen de una planta o instrumento real: no hay parametros que ajustar, solo lo que se registro.'
+              : 'Measured cases come from a real plant or instrument: there are no knobs to turn, only what was recorded.',
+          }}
+        />
 
-      {!run ? (
-        <p className="sym-loading">{es ? 'Cargando el caso...' : 'Loading the case...'}</p>
-      ) : (
-        <>
-          <div className="page-head">
-            <h1>{es ? run.notes.name_es : run.notes.name_en}</h1>
-            <p className="lede">{es ? run.notes.summary_es : run.notes.summary_en}</p>
-          </div>
-
-          <div className="sym-kpis">
-            <div>
-              <span>{es ? 'filas' : 'rows'}</span>
-              <strong>{run.dataset.n_rows.toLocaleString()}</strong>
-            </div>
-            <div>
-              <span>{es ? 'entradas' : 'inputs'}</span>
-              <strong>{run.dataset.n_inputs}</strong>
-            </div>
-            <div>
-              <span>{es ? 'configuraciones' : 'configurations'}</span>
-              <strong>{run.notes.variants.length}</strong>
-            </div>
-            <div>
-              <span>{es ? 'mejor R2 en prueba' : 'best test R2'}</span>
-              <strong>{bestTestR2 === null ? '-' : bestTestR2.toFixed(4)}</strong>
-            </div>
-            {/* Named for what it MEASURES, not for what it sounds like. "accuracy rate" read as
-                "how accurate is the model", which is a different question and made a reader
-                misinterpret a correct number. It is a COUNT of configurations clearing a threshold. */}
-            <div className="sym-kpi-pair">
-              <span>
-                {es ? 'configs sobre R2 > 0,999' : 'configs above R2 > 0.999'}
-              </span>
-              <strong>
-                {run.notes.summary.accuracy_solutions} / {run.notes.summary.n_variants}
-              </strong>
-            </div>
-            <div className="sym-kpi-pair">
-              <span>{es ? 'estructura recuperada' : 'structure recovered'}</span>
-              <strong>
-                {run.notes.summary.exact_recovery_rate === null
-                  ? es ? 'no comprobable' : 'not checkable'
-                  : `${run.notes.summary.exact_recoveries} / ${run.notes.summary.n_variants}`}
-              </strong>
-            </div>
-          </div>
-          <p className="sym-gap-note">
-            {run.notes.ground_truth_known
-              ? es
-                ? 'Las dos ultimas cuentan configuraciones, no exactitud. La primera cuenta cuantas superan el umbral de solucion por exactitud; la segunda, cuantas recuperaron realmente la expresion correcta. La brecha entre ambas es la medicion mas importante de este laboratorio: ajustar bien no es haber encontrado la ley.'
-                : 'The last two count configurations, not accuracy. The first counts how many clear the accuracy-solution threshold; the second, how many actually recovered the correct expression. The gap between them is this lab’s most important measurement: fitting well is not the same as having found the law.'
-              : es
-                ? 'Este caso no tiene una forma cerrada publicada contra la cual comparar, asi que la recuperacion NO se puede comprobar aqui y no se reporta como cero. Contribuye a las metricas de error unicamente. Los casos con verdad conocida son los que sostienen la tasa de recuperacion.'
-                : 'This case has no published closed form to compare against, so recovery is NOT checkable here and is not reported as zero. It contributes to the error metrics only. The cases with a known truth are the ones that carry the recovery rate.'}
-          </p>
-
-          <div className="variant-bar">
-            <span className="variant-bar-label">
-              {es ? 'configuracion de busqueda' : 'search configuration'} ({run.notes.variants.length})
-              {' · '}
-              {es ? 'reproducido' : 'replayed'}
-            </span>
-            <div className="variant-chips">
-              {run.notes.variants.map((v, i) => (
-                <button
-                  key={v.id}
-                  type="button"
-                  className={`variant-chip${i === variantIndex ? ' active' : ''}`}
-                  onClick={() => {
-                    setVariantIndex(i);
-                    setMemberIndex(null);
-                  }}
-                >
-                  {es ? v.label_es : v.label_en}
-                </button>
-              ))}
-            </div>
-            {variant && <p className="variant-note">{es ? variant.note_es : variant.note_en}</p>}
-          </div>
-
-          <SubTabs tabs={subTabs} ariaLabel={es ? 'Vistas del caso' : 'Case views'} />
-        </>
-      )}
-
-      {/* The count describes what is SHOWN against what exists. An earlier version quoted the
-          registry total next to a much shorter list, which read as a straightforward lie. */}
-      <p className="sym-catalogue-note">
-        {es
-          ? `${index.cases.length} casos publicados, ${index.cases.filter((c) => c.real_or_synthetic === 'real').length} sobre datos reales medidos.`
-          : `${index.cases.length} published cases, ${index.cases.filter((c) => c.real_or_synthetic === 'real').length} on real measured data.`}
-        {pending > 0 && (
+        {run && (
           <>
-            {' '}
-            {es
-              ? `El registro define ${index.coverage.n_cases}; los ${pending} restantes se hornean sin conexion y aparecen al terminar.`
-              : `The registry defines ${index.coverage.n_cases}; the remaining ${pending} bake offline and appear as they finish.`}
+            <section className="sym-control">
+              <h3>{es ? 'Configuracion de busqueda' : 'Search configuration'}</h3>
+              <p className="sym-control-note">
+                {es
+                  ? 'Cada entrada anade UN mecanismo a la anterior, asi que la diferencia medida es atribuible.'
+                  : 'Each entry adds ONE mechanism to the one above it, so a measured difference is attributable.'}
+              </p>
+              <ul className="sym-variant-list">
+                {run.notes.variants.map((v, i) => (
+                  <li key={v.id}>
+                    <button
+                      type="button"
+                      className={`sym-variant-button${i === variantIndex ? ' on' : ''}`}
+                      onClick={() => {
+                        setVariantIndex(i);
+                        setMemberIndex(null);
+                      }}
+                    >
+                      {es ? v.label_es : v.label_en}
+                    </button>
+                  </li>
+                ))}
+              </ul>
+              {variant && (
+                <p className="sym-control-note">{es ? variant.note_es : variant.note_en}</p>
+              )}
+            </section>
+
+            <section className="sym-control">
+              <h3>{es ? 'Vista' : 'View'}</h3>
+              <div className="sym-control-chips">
+                <button
+                  type="button"
+                  className={`chip${longForm ? ' on' : ''}`}
+                  onClick={() => setLongForm((v) => !v)}
+                >
+                  {es ? 'forma larga' : 'long form'}
+                </button>
+                <button
+                  type="button"
+                  className={`chip${showRaw ? ' on' : ''}`}
+                  onClick={() => setShowRaw((v) => !v)}
+                >
+                  {es ? 'salida cruda' : 'raw output'}
+                </button>
+              </div>
+              <label className="sym-slider-block">
+                <span>{es ? 'colapsar bajo influencia' : 'collapse below influence'}</span>
+                <input
+                  type="range"
+                  min={0}
+                  max={0.3}
+                  step={0.01}
+                  value={collapse}
+                  onChange={(event) => setCollapse(Number(event.target.value))}
+                />
+                <output>{collapse.toFixed(2)}</output>
+              </label>
+            </section>
+
+            <section className="sym-control sym-readout">
+              <h3>{es ? 'Lectura' : 'Readout'}</h3>
+              <dl>
+                <dt>{es ? 'filas' : 'rows'}</dt>
+                <dd>{run.dataset.n_rows.toLocaleString()}</dd>
+                <dt>{es ? 'entradas' : 'inputs'}</dt>
+                <dd>{run.dataset.n_inputs}</dd>
+                <dt>{es ? 'configuraciones' : 'configurations'}</dt>
+                <dd>{run.notes.variants.length}</dd>
+                <dt>{es ? 'mejor R2 prueba' : 'best test R2'}</dt>
+                <dd>{bestTestR2 === null ? '-' : bestTestR2.toFixed(4)}</dd>
+              </dl>
+              <dl className="sym-readout-rates">
+                <dt>{es ? 'sobre R2 > 0,999' : 'above R2 > 0.999'}</dt>
+                <dd>
+                  {run.notes.summary.accuracy_solutions} / {run.notes.summary.n_variants}
+                </dd>
+                <dt>{es ? 'estructura recuperada' : 'structure recovered'}</dt>
+                <dd>
+                  {run.notes.summary.exact_recovery_rate === null
+                    ? es ? 'no comprobable' : 'not checkable'
+                    : `${run.notes.summary.exact_recoveries} / ${run.notes.summary.n_variants}`}
+                </dd>
+              </dl>
+              <p className="sym-control-note">
+                {run.notes.ground_truth_known
+                  ? es
+                    ? 'Las dos ultimas cuentan configuraciones, no exactitud. La brecha entre ellas es la medicion mas importante de este laboratorio: ajustar bien no es haber encontrado la ley.'
+                    : 'The last two count configurations, not accuracy. The gap between them is this lab’s most important measurement: fitting well is not the same as having found the law.'
+                  : es
+                    ? 'Este caso no tiene forma cerrada publicada, asi que la recuperacion NO es comprobable y no se reporta como cero.'
+                    : 'This case has no published closed form, so recovery is NOT checkable and is not reported as zero.'}
+              </p>
+            </section>
           </>
         )}
-      </p>
+
+        <p className="sym-catalogue-note">
+          {es
+            ? `${index.cases.length} casos publicados, ${index.cases.filter((c) => c.real_or_synthetic === 'real').length} sobre datos reales medidos.`
+            : `${index.cases.length} published cases, ${index.cases.filter((c) => c.real_or_synthetic === 'real').length} on real measured data.`}
+          {pending > 0 && (
+            <>
+              {' '}
+              {es
+                ? `El registro define ${index.coverage.n_cases}; los ${pending} restantes se hornean sin conexion.`
+                : `The registry defines ${index.coverage.n_cases}; the remaining ${pending} bake offline.`}
+            </>
+          )}
+        </p>
+      </aside>
+
+      {/* ---------------------------------------------------------------- CONTENT ONLY */}
+      <main className="symlab-main">
+        {!run ? (
+          <p className="sym-loading">{es ? 'Cargando el caso...' : 'Loading the case...'}</p>
+        ) : (
+          <>
+            <div className="page-head">
+              <h1>{es ? run.notes.name_es : run.notes.name_en}</h1>
+              <p className="lede">{es ? run.notes.summary_es : run.notes.summary_en}</p>
+            </div>
+            <SubTabs tabs={subTabs} ariaLabel={es ? 'Vistas del caso' : 'Case views'} />
+          </>
+        )}
+      </main>
     </div>
   );
 }
