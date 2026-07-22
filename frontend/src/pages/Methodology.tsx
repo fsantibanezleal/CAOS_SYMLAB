@@ -270,6 +270,60 @@ export default function Methodology() {
         </section>
       ),
     },
+    {
+      id: 'sparse',
+      label: es ? 'La familia no evolutiva' : 'The non-evolutionary family',
+      content: (
+        <section>
+          <h3>
+            {es
+              ? 'Una biblioteca fija y un barrido de dispersion, sin evolucion alguna'
+              : 'A fixed library and a sparsity sweep, with no evolution at all'}
+          </h3>
+          <p>
+            {es
+              ? 'Todas las pestanas anteriores describen un mecanismo DENTRO de una busqueda por programacion genetica. Esta no. Una escalera hecha solo de escalones de GP es una ablacion excelente de GP y un mal panorama de la regresion simbolica, porque la alternativa practica mas fuerte a evolucionar expresiones es no evolucionar nada: se construye una biblioteca de terminos no lineales una vez y se elige un subconjunto disperso por minimos cuadrados.'
+              : 'Every tab before this one describes a mechanism INSIDE a genetic-programming search. This one does not. A ladder made only of GP rungs is an excellent ablation of GP and a poor survey of symbolic regression, because the strongest practical alternative to evolving expressions is to evolve nothing: build a library of nonlinear terms once, then select a sparse subset of them by least squares.'}
+            {' '}
+            <Cite id="mcconaghy2011" paren /> <Cite id="brunton2016" paren />
+          </p>
+          <Equation
+            tex={String.raw`y \approx \sum_{k \in S} c_k\, \phi_k(\mathbf{x})`}
+            caption={
+              es
+                ? 'La biblioteca es el conjunto de terminos candidatos; S es el soporte seleccionado. La seleccion es minimos cuadrados con umbral secuencial: ajustar, borrar todo coeficiente bajo el umbral, reajustar sobre lo que sobrevive, repetir. Barrer el umbral barre el frente.'
+                : 'The library is the set of candidate terms; S is the selected support. Selection is sequentially thresholded least squares: fit, delete every coefficient below a threshold, refit on what survives, repeat. Sweeping the threshold sweeps the front.'
+            }
+          />
+          <p>
+            {es
+              ? 'Es determinista: sin semilla, sin poblacion, sin varianza entre corridas. Produce el frente por construccion en vez de buscarlo, y devuelve en milisegundos frente a decenas de segundos de los escalones de GP. Cualquier afirmacion de que un escalon de GP "encontro" algo tiene que superar esto primero.'
+              : 'It is deterministic: no seed, no population, no run-to-run variance. It produces the front by construction rather than searching for it, and returns in milliseconds against tens of seconds for the GP rungs. Any claim that a GP rung "found" something has to beat this first.'}
+          </p>
+          <Callout
+            variant="honest"
+            title={es ? 'Lo que NO puede hacer' : 'What it cannot do'}
+          >
+            <p>
+              {es
+                ? 'La biblioteca se fija antes de ver los datos, asi que el metodo solo puede devolver una combinacion lineal de terminos que alguien eligio de antemano. La estructura ANIDADA es inalcanzable: una saturacion dentro de un producto, o una exponencial de un reciproco, no esta en el espacio generado a ningun nivel de dispersion y ningun presupuesto la encontrara.'
+                : 'The library is fixed before the data is seen, so the method can only return a linear combination of terms somebody chose in advance. NESTED structure is unreachable: a saturation inside a product, or an exponential of a reciprocal, is not in the span at any sparsity level and no budget will find it.'}
+            </p>
+            <p>
+              {es
+                ? 'Eso no es un defecto que disculpar: es la medicion. La programacion genetica existe para buscar el espacio de composiciones, y correr ambas familias sobre los mismos casos es como un lector ve el tamano de esa brecha.'
+                : 'That is not a defect to apologise for; it is the measurement. Genetic programming exists to search the space of compositions, and running both families over the same cases is how a reader sees the size of that gap.'}
+            </p>
+          </Callout>
+          <p>
+            {es
+              ? 'Sobre los generadores recupera el lado derecho de Lotka-Volterra practicamente exacto, porque esa ley ES un polinomio y por tanto esta dentro de su espacio. Sobre las leyes saturantes y exponenciales alcanza R2 entre 0,85 y 0,99 mientras la distancia estructural a la ley verdadera se mantiene cerca de 1,0: buen ajuste, estructura equivocada.'
+              : 'On the generators it recovers the Lotka-Volterra right-hand side essentially exactly, because that law IS a polynomial and therefore inside its span. On the saturating and exponential laws it reaches R2 between 0.85 and 0.99 while the structural distance to the true law stays near 1.0: a good fit, the wrong structure.'}
+          </p>
+          <Refs ids={['mcconaghy2011', 'brunton2016']} label={es ? 'Referencias' : 'References'} />
+        </section>
+      ),
+    },
   ];
 
   return (

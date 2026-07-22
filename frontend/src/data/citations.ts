@@ -129,6 +129,13 @@ export const CITATIONS: Citation[] = [
     doi: '10.1093/bioinformatics/btab727',
   },
   {
+    id: 'mcconaghy2011',
+    label: 'McConaghy 2011',
+    citation:
+      'McConaghy, T. (2011). FFX: Fast, Scalable, Deterministic Symbolic Regression Technology. In Genetic Programming Theory and Practice IX, 235-260. Springer.',
+    doi: '10.1007/978-1-4614-1770-5_13',
+  },
+  {
     id: 'brunton2016',
     label: 'Brunton et al. 2016',
     citation:

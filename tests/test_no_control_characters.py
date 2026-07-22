@@ -16,7 +16,9 @@ from pathlib import Path
 
 import pytest
 
-PACKAGE = Path(__file__).resolve().parents[1] / "data-pipeline" / "symlab"
+ROOT = Path(__file__).resolve().parents[1]
+PACKAGE = ROOT / "data-pipeline" / "symlab"
+FRONTEND = ROOT / "frontend" / "src"
 
 #: Newline and carriage return are structure. Everything else below 0x20 is damage.
 ALLOWED = {"\n", "\r"}
@@ -26,7 +28,24 @@ def _python_sources() -> list[Path]:
     return sorted(p for p in PACKAGE.rglob("*.py") if "__pycache__" not in p.parts)
 
 
-@pytest.mark.parametrize("path", _python_sources(), ids=lambda p: p.name)
+def _frontend_sources() -> list[Path]:
+    """The frontend too. It happened there as well.
+
+    A LaTeX literal in Methodology.tsx passed through a shell heredoc and a Python string, and one
+    of those layers read the backslash-a of a command as a BEL byte. The visible text became
+    "pprox" with an invisible 0x07 in front of it, and KaTeX rendered the wreckage. No editor shows
+    it and no exact-match edit can target it, which is why it needs a test rather than care.
+    """
+    return sorted(
+        path
+        for pattern in ("*.ts", "*.tsx", "*.css")
+        for path in FRONTEND.rglob(pattern)
+    )
+
+
+@pytest.mark.parametrize(
+    "path", _python_sources() + _frontend_sources(), ids=lambda p: p.name
+)
 def test_source_carries_no_stray_control_characters(path: Path) -> None:
     text = path.read_text(encoding="utf-8")
     offenders = []
