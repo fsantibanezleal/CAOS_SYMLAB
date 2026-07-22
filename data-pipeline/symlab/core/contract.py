@@ -53,9 +53,33 @@ from ..model.units import DIMENSIONLESS, Dims, format_dims, infer_dims
 #: matching change in the web app's mirrored TypeScript types.
 SCHEMA_VERSION = "1.0.0"
 
-#: How many significant digits reach the browser. The UI never shows more than this, so shipping
-#: more would only be noise in the payload.
-FLOAT_DIGITS = 6
+#: How many SIGNIFICANT digits reach the browser, not decimal places.
+#:
+#: Ten rather than six, because the numbers this lab argues about live where six is not enough. An
+#: R-squared of 0.999999998 rounds to exactly 1.0 at six significant digits, and "1.0" beside
+#: "structure not recovered" reads as a contradiction instead of as the finding. Six DECIMAL places,
+#: which is what this was before, additionally sent a mean squared error of 6.1e-12 to exactly zero.
+#:
+#: The cost is about four characters per float in the validation arrays. That is a fair price for
+#: not publishing a claim of a mathematically exact fit that the search did not achieve.
+FLOAT_DIGITS = 10
+
+
+def _significant(value: float, digits: int) -> float:
+    """Round to SIGNIFICANT digits, not decimal places.
+
+    `round(v, 6)` sends everything below 5e-7 to exactly 0.0. That published a mean squared error of
+    6.1e-12 as "0.0" and an R-squared of 0.999999998 as "1.0", which are claims of a mathematically
+    exact fit. This lab's whole argument is the difference between a very good fit and the right
+    answer, and a variant reporting zero error beside "structure not recovered" reads as a
+    contradiction rather than as the finding it is.
+
+    Significant digits keep the payload compact without destroying small magnitudes: a loss of
+    1e-12 stays 1e-12, and 1234567.891 stays 1234567.891.
+    """
+    if value == 0.0:
+        return 0.0
+    return float(f"{value:.{digits}g}")
 
 
 def _round_floats(obj: Any, digits: int = FLOAT_DIGITS) -> Any:
@@ -63,10 +87,10 @@ def _round_floats(obj: Any, digits: int = FLOAT_DIGITS) -> Any:
     if isinstance(obj, float):
         if not math.isfinite(obj):
             return None
-        return round(obj, digits)
+        return _significant(obj, digits)
     if isinstance(obj, (np.floating,)):
         value = float(obj)
-        return None if not math.isfinite(value) else round(value, digits)
+        return None if not math.isfinite(value) else _significant(value, digits)
     if isinstance(obj, (np.integer,)):
         return int(obj)
     if isinstance(obj, np.ndarray):

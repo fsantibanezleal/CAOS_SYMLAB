@@ -71,7 +71,17 @@ def _plain(value):
         return bool(value)
     if isinstance(value, (np.floating, float)):
         v = float(value)
-        return None if not np.isfinite(v) else round(v, 8)
+        if not np.isfinite(v):
+            return None
+        # SIGNIFICANT digits, not decimal places. `round(v, 8)` collapses everything below 5e-9 to
+        # exactly 0.0, so a mean squared error of 6.1e-12 published as "0.0" and an R-squared of
+        # 0.999999998 published as "1.0". Those are claims of an EXACT fit, and this lab's whole
+        # argument turns on the difference between a very good fit and the right answer. A method
+        # that reports zero error while reporting that it did not recover the law reads as a
+        # contradiction rather than as the finding it actually is.
+        #
+        # Ten significant digits keeps the payload compact and keeps small magnitudes intact.
+        return float(f"{v:.10g}")
     if isinstance(value, (np.integer, int)):
         return int(value)
     if isinstance(value, np.ndarray):
