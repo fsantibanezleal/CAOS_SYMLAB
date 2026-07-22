@@ -4,14 +4,14 @@
   "category": "M",
   "engine": {
     "package": "symlab",
-    "version": "0.01.000"
+    "version": "0.02.000"
   },
   "seed": 0,
   "artifact": {
     "path": "ore-mineralogy-closure/run.json",
     "format": "json",
     "schema_version": "1.0.0",
-    "bytes": 903770
+    "bytes": 903768
   },
   "lane": "precompute",
   "data": {
@@ -58,7 +58,7 @@
   "variants": [
     {
       "id": "r1-koza-baseline",
-      "seconds": 0.86,
+      "seconds": 1.153,
       "evaluations": 4000,
       "front_size": 7,
       "selected_complexity": 8,
@@ -70,7 +70,7 @@
     },
     {
       "id": "r2-linear-scaling",
-      "seconds": 1.089,
+      "seconds": 0.982,
       "evaluations": 4000,
       "front_size": 11,
       "selected_complexity": 17,
@@ -82,7 +82,7 @@
     },
     {
       "id": "r3-constant-tuning",
-      "seconds": 0.956,
+      "seconds": 1.3,
       "evaluations": 4120,
       "front_size": 15,
       "selected_complexity": 22,
@@ -94,7 +94,7 @@
     },
     {
       "id": "r4-multi-objective",
-      "seconds": 0.731,
+      "seconds": 0.995,
       "evaluations": 4120,
       "front_size": 3,
       "selected_complexity": 6,
@@ -114,7 +114,7 @@
     "mean_structural_distance": null,
     "symbolic_test_failure_rate": null,
     "test_disagreement_count": 0,
-    "total_seconds": 3.64,
+    "total_seconds": 4.43,
     "total_evaluations": 16240,
     "variants_with_irrelevant_features": 0
   }

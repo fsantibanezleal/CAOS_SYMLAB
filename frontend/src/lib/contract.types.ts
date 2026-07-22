@@ -314,6 +314,12 @@ export interface RunPayload {
 export interface IndexEntry {
   case_id: string;
   category: string;
+  /** The human category name. The sidebar must never render the raw single-letter code. */
+  category_name: string;
+  name_en: string;
+  name_es: string;
+  ground_truth_known: boolean;
+  real_or_synthetic: 'real' | 'synthetic' | 'unknown';
   manifest_path: string;
   artifact_path: string;
   bytes: number;

@@ -1,0 +1,171 @@
+{
+  "schema": "symlab.manifest/v1",
+  "case_id": "gasturbine-nox",
+  "category": "I",
+  "engine": {
+    "package": "symlab",
+    "version": "0.02.000"
+  },
+  "seed": 0,
+  "artifact": {
+    "path": "gasturbine-nox/run.json",
+    "format": "json",
+    "schema_version": "1.0.0",
+    "bytes": 5618927
+  },
+  "lane": "precompute",
+  "data": {
+    "source_id": "gas-turbine-emissions",
+    "citation": "Kaya, H., Tufekci, P. and Uzun, E. Gas Turbine CO and NOx Emission Data Set. UCI Machine Learning Repository, doi:10.24432/C5WC95. 36,733 hourly records, 2011 to 2015.",
+    "licence": "CC BY 4.0 (UCI Machine Learning Repository)",
+    "redistribution": "mirror",
+    "real_or_synthetic": "real",
+    "defects_applied": [
+      "Carbon monoxide excluded from the inputs: it is a co-measured emission rather than a driver, and including it lets a search explain one pollutant with another.",
+      "Deterministically subsampled to 4000 of the available rows (seed 0) to keep the search budget on the structure rather than on redundant rows."
+    ]
+  },
+  "contract": {
+    "n_rows": 4000,
+    "n_inputs": 9,
+    "input_keys": [
+      "AT",
+      "AP",
+      "AH",
+      "AFDP",
+      "GTEP",
+      "TIT",
+      "TAT",
+      "TEY",
+      "CDP"
+    ],
+    "target_key": "NOX",
+    "distinct_target_values": 3789,
+    "target_repeat_ratio": 1.056,
+    "constant_inputs": [],
+    "warnings": [],
+    "defects_applied": [
+      "Carbon monoxide excluded from the inputs: it is a co-measured emission rather than a driver, and including it lets a search explain one pollutant with another.",
+      "Deterministically subsampled to 4000 of the available rows (seed 0) to keep the search budget on the structure rather than on redundant rows."
+    ],
+    "licence": "CC BY 4.0 (UCI Machine Learning Repository)",
+    "redistribution": "mirror",
+    "citation": "Kaya, H., Tufekci, P. and Uzun, E. Gas Turbine CO and NOx Emission Data Set. UCI Machine Learning Repository, doi:10.24432/C5WC95. 36,733 hourly records, 2011 to 2015.",
+    "n_train": 2550,
+    "n_test": 850,
+    "n_extrapolation": 600
+  },
+  "units_declared": 0,
+  "split_note": "extrapolation split holds out the lowest and highest 300 rows of 'TIT', so the training region is an interior box and the extrapolation rows lie outside the support the search ever saw",
+  "variants": [
+    {
+      "id": "r1-koza-baseline",
+      "seconds": 2.302,
+      "evaluations": 7500,
+      "front_size": 11,
+      "selected_complexity": 13,
+      "test_r2": 0.10960721,
+      "accuracy_solution": 0,
+      "exact_recovery": null,
+      "symbolic_test_decided": null,
+      "irrelevant_features": 0
+    },
+    {
+      "id": "r2-linear-scaling",
+      "seconds": 3.487,
+      "evaluations": 7500,
+      "front_size": 17,
+      "selected_complexity": 13,
+      "test_r2": 0.37058448,
+      "accuracy_solution": 0,
+      "exact_recovery": null,
+      "symbolic_test_decided": null,
+      "irrelevant_features": 0
+    },
+    {
+      "id": "r3-constant-tuning",
+      "seconds": 2.068,
+      "evaluations": 7680,
+      "front_size": 16,
+      "selected_complexity": 15,
+      "test_r2": 0.36806331,
+      "accuracy_solution": 0,
+      "exact_recovery": null,
+      "symbolic_test_decided": null,
+      "irrelevant_features": 0
+    },
+    {
+      "id": "r4-multi-objective",
+      "seconds": 1.65,
+      "evaluations": 7680,
+      "front_size": 1,
+      "selected_complexity": 5,
+      "test_r2": 0.28608685,
+      "accuracy_solution": 0,
+      "exact_recovery": null,
+      "symbolic_test_decided": null,
+      "irrelevant_features": 0
+    },
+    {
+      "id": "r5-epsilon-lexicase",
+      "seconds": 16.108,
+      "evaluations": 7680,
+      "front_size": 2,
+      "selected_complexity": 5,
+      "test_r2": 0.28608685,
+      "accuracy_solution": 0,
+      "exact_recovery": null,
+      "symbolic_test_decided": null,
+      "irrelevant_features": 0
+    },
+    {
+      "id": "r6-age-fitness-islands",
+      "seconds": 29.583,
+      "evaluations": 8160,
+      "front_size": 1,
+      "selected_complexity": 5,
+      "test_r2": 0.28608685,
+      "accuracy_solution": 0,
+      "exact_recovery": null,
+      "symbolic_test_decided": null,
+      "irrelevant_features": 0
+    },
+    {
+      "id": "r7-deduplication",
+      "seconds": 122.95,
+      "evaluations": 8160,
+      "front_size": 1,
+      "selected_complexity": 5,
+      "test_r2": 0.28608685,
+      "accuracy_solution": 0,
+      "exact_recovery": null,
+      "symbolic_test_decided": null,
+      "irrelevant_features": 0
+    },
+    {
+      "id": "parsimony-arm",
+      "seconds": 1.795,
+      "evaluations": 7680,
+      "front_size": 7,
+      "selected_complexity": 15,
+      "test_r2": 0.38517044,
+      "accuracy_solution": 0,
+      "exact_recovery": null,
+      "symbolic_test_decided": null,
+      "irrelevant_features": 0
+    }
+  ],
+  "summary": {
+    "n_variants": 8,
+    "accuracy_solutions": 0,
+    "accuracy_solution_rate": 0.0,
+    "exact_recoveries": 0,
+    "exact_recovery_rate": null,
+    "mean_structural_distance": null,
+    "symbolic_test_failure_rate": null,
+    "test_disagreement_count": 0,
+    "total_seconds": 179.94,
+    "total_evaluations": 62040,
+    "variants_with_irrelevant_features": 0
+  }
+}

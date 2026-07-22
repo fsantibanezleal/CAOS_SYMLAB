@@ -570,3 +570,150 @@
 /* The KaTeX default font size is tuned for inline body text; a discovered expression is the
    subject of the panel, so it is set larger here. */
 .sym-equation-body .katex-display { margin: 0.3rem 0; font-size: 1.16em; }
+
+/* ---------------------------------------------------------------- page layout, toolbar, KPIs
+ *
+ * These classes were written into the JSX before they were styled, which is how the case strip
+ * shipped rendering as "rows2,550 inputs4". Writing a class name is not implementing a layout, and
+ * the only way to know the difference is to look at the rendered page.
+ */
+
+.symlab-page > * + * {
+  margin-top: 1.25rem;
+}
+
+.symlab-page .page-head {
+  margin-bottom: 0;
+}
+
+/* The case strip: label above value, evenly spaced, tabular figures so columns line up. */
+.sym-kpis {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(148px, 1fr));
+  gap: 0.75rem 1.25rem;
+  padding: 0.9rem 1.1rem;
+  border: 1px solid var(--color-border);
+  border-radius: 10px;
+  background: var(--color-bg-subtle, transparent);
+}
+
+.sym-kpis > div {
+  display: flex;
+  flex-direction: column;
+  gap: 0.2rem;
+  min-width: 0;
+}
+
+.sym-kpis span {
+  font-size: 0.7rem;
+  letter-spacing: 0.05em;
+  text-transform: uppercase;
+  color: var(--color-fg-subtle);
+  line-height: 1.25;
+}
+
+.sym-kpis strong {
+  font-size: 1.18rem;
+  font-variant-numeric: tabular-nums;
+  line-height: 1.15;
+}
+
+/* The two count columns are the point of the strip, so they are marked rather than blended in. */
+.sym-kpi-pair {
+  padding-left: 0.85rem;
+  border-left: 2px solid var(--color-accent);
+}
+
+.sym-kpi-pair strong {
+  font-size: 1.05rem;
+}
+
+.sym-gap-note,
+.sym-catalogue-note {
+  font-size: 0.83rem;
+  color: var(--color-fg-subtle);
+  max-width: 88ch;
+  margin: 0.55rem 0 0;
+}
+
+.sym-catalogue-note {
+  padding-top: 0.9rem;
+  border-top: 1px solid var(--color-border);
+}
+
+/* Side-by-side validation panels. Each half still gets real width at 1200px, and they stack on a
+   narrow viewport rather than squeezing two plots into an unreadable strip. */
+.sym-two-col {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(360px, 1fr));
+  gap: 1.5rem;
+}
+
+.sym-two-col > section {
+  min-width: 0;
+}
+
+.sym-two-col h3 {
+  margin-top: 0;
+}
+
+/* A native select, styled to match the chips rather than left as browser default. */
+.sym-select {
+  display: inline-flex;
+  flex-direction: column;
+  gap: 0.25rem;
+  font-size: 0.78rem;
+  letter-spacing: 0.05em;
+  text-transform: uppercase;
+  color: var(--color-fg-subtle);
+}
+
+.sym-select select {
+  font: inherit;
+  font-size: 0.9rem;
+  letter-spacing: normal;
+  text-transform: none;
+  color: var(--color-fg);
+  background: var(--color-surface-2, transparent);
+  border: 1px solid var(--color-border);
+  border-radius: 8px;
+  padding: 0.35rem 0.6rem;
+  min-width: 15rem;
+  cursor: pointer;
+}
+
+.sym-select select:hover,
+.sym-select select:focus-visible {
+  border-color: var(--color-accent);
+}
+
+.sym-badge {
+  display: inline-block;
+  border: 1px solid var(--color-border);
+  border-radius: 999px;
+  padding: 0.08rem 0.55rem;
+  font-size: 0.72rem;
+  color: var(--color-fg-subtle);
+  white-space: nowrap;
+}
+
+.sym-badge.is-real {
+  border-color: var(--sym-term-2);
+  color: var(--sym-term-2);
+}
+
+.sym-badge.is-truth {
+  border-color: var(--sym-term-0);
+  color: var(--sym-term-0);
+}
+
+/* The sub-tab panes need breathing room from the tab rail above them. */
+.sym-field > * + *,
+.sym-charts > * + * {
+  margin-top: 1.1rem;
+}
+
+.sym-field h3,
+.sym-charts h3 {
+  margin-bottom: 0.5rem;
+}

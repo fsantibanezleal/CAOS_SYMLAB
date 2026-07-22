@@ -113,6 +113,11 @@ def run_case(case: Case, *, seed: int = 0, noise: float = 0.0, quick: bool = Fal
     return {
         "case_id": case.id,
         "category": case.category,
+        "category_name": case.category_name,
+        "name_en": case.name_en,
+        "name_es": case.name_es,
+        "ground_truth_known": case.ground_truth_known,
+        "real_or_synthetic": case.real_or_synthetic,
         "manifest_path": f"manifests/{case.id}.json",
         "artifact_path": f"{case.id}/run.json",
         "bytes": size,

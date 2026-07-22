@@ -4,14 +4,14 @@
   "category": "I",
   "engine": {
     "package": "symlab",
-    "version": "0.01.000"
+    "version": "0.02.000"
   },
   "seed": 0,
   "artifact": {
     "path": "wwtp-removal-identity/run.json",
     "format": "json",
     "schema_version": "1.0.0",
-    "bytes": 249133
+    "bytes": 249131
   },
   "lane": "precompute",
   "data": {
@@ -51,7 +51,7 @@
   "variants": [
     {
       "id": "r1-koza-baseline",
-      "seconds": 0.462,
+      "seconds": 0.45,
       "evaluations": 5000,
       "front_size": 2,
       "selected_complexity": 2,
@@ -63,7 +63,7 @@
     },
     {
       "id": "r2-linear-scaling",
-      "seconds": 0.697,
+      "seconds": 0.804,
       "evaluations": 5000,
       "front_size": 12,
       "selected_complexity": 7,
@@ -75,7 +75,7 @@
     },
     {
       "id": "r3-constant-tuning",
-      "seconds": 0.541,
+      "seconds": 0.554,
       "evaluations": 5150,
       "front_size": 4,
       "selected_complexity": 7,
@@ -87,7 +87,7 @@
     },
     {
       "id": "r4-multi-objective",
-      "seconds": 0.726,
+      "seconds": 0.821,
       "evaluations": 5150,
       "front_size": 2,
       "selected_complexity": 7,
@@ -99,7 +99,7 @@
     },
     {
       "id": "r7-deduplication",
-      "seconds": 143.81,
+      "seconds": 187.81,
       "evaluations": 5600,
       "front_size": 2,
       "selected_complexity": 7,
@@ -119,7 +119,7 @@
     "mean_structural_distance": null,
     "symbolic_test_failure_rate": null,
     "test_disagreement_count": 0,
-    "total_seconds": 146.24,
+    "total_seconds": 190.44,
     "total_evaluations": 25900,
     "variants_with_irrelevant_features": 0
   }

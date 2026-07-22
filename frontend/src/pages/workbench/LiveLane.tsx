@@ -69,7 +69,7 @@ export function LiveLane({ run, lang }: { run: RunPayload; lang: 'en' | 'es' }) 
     };
 
     worker.postMessage({
-      caseId: run.notes.case_id,
+      generatorId: run.notes.case_id,
       population,
       generations,
       seed,
