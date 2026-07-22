@@ -84,6 +84,45 @@ than a scorer that could not decide, which is exactly why that rate is published
   beside its numbers and cutting the last row.
 - The subsample note reported "4000 of 4000 rows" because it read the array after replacing it.
 
+### Added, after the first draft of these notes
+
+- **A second search family.** Every rung of the ladder was genetic programming with one more
+  mechanism attached, which is an excellent ablation OF genetic programming and a poor survey of
+  symbolic regression. `search/sparse.py` adds the non-evolutionary family: a fixed library of
+  nonlinear terms and sequentially thresholded least squares over a sweep of sparsity levels, the
+  family behind FFX and SINDy. Written in numpy so the same module runs in the browser lane, and it
+  runs on every case.
+
+  It recovers the Lotka-Volterra right-hand side essentially exactly, because that law is a
+  polynomial and therefore inside its span. On the saturating and exponential laws it reaches R2
+  between 0.85 and 0.99 with structural distance near 1.0. A good fit and the wrong structure, from
+  a method with no relationship to genetic programming at all.
+
+- **The ingestion contract's warnings, in the app.** The pipeline detects that the flotation target
+  takes 709 distinct values across 4000 rows and warns that fitting at that resolution may leak it.
+  That warning was written to the audit manifest, which the app never opens, so the reader who most
+  needed it was the only one who could not see it. It renders on the Context tab now, with the
+  loader's applied defects beside it.
+
+- **The measured ablation.** The Experiments page listed the question each rung answers and never
+  showed a measured difference. It now reports, per rung, the cases that ran it, recoveries over
+  the checkable configurations, the change against the rung above computed only over cases that ran
+  both, median R2, median seconds and the cost multiple.
+
+### Fixed, after the first draft of these notes
+
+- **Every boolean in every artifact was an integer.** `bool` is a subclass of `int` in Python, so
+  the JSON normaliser's integer branch swallowed them all and wrote 0 or 1 while the contract
+  declared `boolean | null`. It survived because consumers tested truthiness; it broke the moment
+  one compared identity, and the damage it had already done was `units_ok === false`, which is false
+  when the value is 0, so the dimensional-consistency warning could never render.
+- **A different search family was presented as one more rung of the ladder**, inside a dropdown
+  labelled "Ladder rung" and a table whose premise is that each row adds one mechanism to the row
+  above. The family is exported now, the selector groups by it, and no paired delta is computed
+  across families.
+- The case index counted "Ten cases carry a `truth_node`" in prose. It was 16 by then. Those counts
+  are generated from the registry and gated.
+
 ### Guards added
 
 Each of these exists because the corresponding defect survived a green build:
@@ -95,7 +134,15 @@ Each of these exists because the corresponding defect survived a green build:
 - `tests/test_no_control_characters.py`: no control byte in the package source.
 - `tests/test_manifests_match_reality.py`: every pin installed at its pinned version, every pinned
   runtime package actually imported, every third-party import pinned somewhere.
-- `tests/test_case_docs_match_code.py`: no case page may contradict the code it documents.
+- `tests/test_case_docs_match_code.py`: no case page may contradict the code it documents, and the
+  generated counts must match the registry.
+- `tests/test_export_types.py`: the payload must carry the TYPES the contract declares, checked on
+  the normaliser and end to end on a real artifact.
+- `tests/test_contract_conformance.py`: the payload and the declared interfaces must match in BOTH
+  directions. TypeScript only checks the consumer; a field the producer stops writing, or writes
+  without declaring, compiles perfectly.
+- `tests/test_sparse_search.py`: evaluating the published expression must reproduce the reported
+  loss, the arm must be deterministic, and a law inside the library's span must be recovered.
 - `tools/visual-verify/symlab-workbench.mjs`: six tabs across both themes and both languages,
   asserting the provenance labels, populated dropdowns, no overflow, no console error, no
   untranslated interface copy, and that every class the app renders has a CSS rule behind it.
