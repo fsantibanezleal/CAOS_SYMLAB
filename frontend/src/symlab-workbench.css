@@ -789,3 +789,28 @@
   margin-top: 0.25rem;
   box-shadow: 0 -0.75rem 0.75rem -0.5rem var(--color-bg);
 }
+
+/* ---------------------------------------------------------------- numeric axes
+ *
+ * The validation charts shipped with axis TITLES and no tick VALUES, so a reader could see the
+ * shape of a relationship and not its magnitude: whether a residual band was +/-0.01 or +/-10.
+ * The hover readout answers that for one point at a time, which is not the same question.
+ *
+ * Deliberately quiet. A tick label competes with the data for attention and should lose.
+ */
+/* The axis group must never intercept a pointer: the parity plot resolves hover per CIRCLE, and a
+ * tick label sitting over the plot area would swallow the event and blank the value readout. */
+.sym-ticks {
+  pointer-events: none;
+}
+
+.sym-tick-label {
+  font-size: 0.62rem;
+  fill: var(--color-fg-subtle);
+  font-variant-numeric: tabular-nums;
+}
+
+.sym-tick-mark {
+  stroke: var(--color-border);
+  stroke-width: 1;
+}
