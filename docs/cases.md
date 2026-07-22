@@ -102,16 +102,21 @@ is the `truth_node` column of point 2 above.
 Totals computed by `coverage_summary()` rather than typed here: 25 cases, 6 categories, 20 with a
 known ground truth, 7 real, 18 synthetic.
 
-**The generated block above counts 16 machine-comparable cases; this matrix marks 17.** The two
-numbers are computed by different code and both are stated rather than one being adjusted to match
-the other. The block is produced by `truth_state()` in `scripts/sync_case_doc_truth_rows.py`, which
-resolves a truth for generator cases and for the expanded Feynman problems only. The pipeline's
-`preprocess.run` has a third branch: a measured case whose loader appears in
-[`MEASURED_TRUTHS`](../data-pipeline/symlab/cases/physics_truths.py) is bound to an exact identity
-and scored against it, with the regime recorded as `structure+constants`. Case 06 is the only case
-in that branch today, so `truth_state()` reports it as not comparable while the baked artifact
-carries `ground_truth_available: true`. The gap is in the documentation generator, not in the
-pipeline, and it is recorded here rather than papered over.
+The generated block and this matrix now agree at 17 machine-comparable cases. They did not, and the
+disagreement is worth recording because of where it was.
+
+`truth_state()` in `scripts/sync_case_doc_truth_rows.py` resolved a truth for generator cases and for
+the expanded Feynman problems, and stopped there. The pipeline's `preprocess.run` has a third branch:
+a measured case whose loader appears in
+[`MEASURED_TRUTHS`](../data-pipeline/symlab/cases/physics_truths.py) is bound to an exact identity and
+scored against it, with the regime recorded as `structure+constants`. Case 06, the wastewater removal
+identity, is the only case in that branch today. So the generated block reported it as not comparable,
+and published "NO, no in-repo expression to compare against" on its page, while the artifact printed
+beside it carried `ground_truth_available: true` and a scored recovery verdict.
+
+A page contradicting the artifact next to it is worse than a page with a number missing, because a
+reader has no way to tell which one is lying. `truth_state()` now reads the same tables the pipeline
+does, and `tests/test_case_docs_match_code.py` fails if a page disagrees with the code again.
 
 ## Redistribution, which is a separate question from licence
 
