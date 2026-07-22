@@ -11,7 +11,17 @@
     "path": "feynman-ii_8_31/run.json",
     "format": "json",
     "schema_version": "1.0.0",
-    "bytes": 3577136
+    "bytes": 2152529
+  },
+  "gate": {
+    "lane": "precompute",
+    "has_generator": false,
+    "wheels": [
+      "numpy"
+    ],
+    "reasons": [
+      "no first-principles generator: the browser cannot reproduce this data without the source file, which is not shipped"
+    ]
   },
   "lane": "precompute",
   "data": {
@@ -51,7 +61,7 @@
   "variants": [
     {
       "id": "r1-koza-baseline",
-      "seconds": 0.795,
+      "seconds": 1.62,
       "evaluations": 9000,
       "front_size": 10,
       "selected_complexity": 16,
@@ -63,7 +73,7 @@
     },
     {
       "id": "r2-linear-scaling",
-      "seconds": 0.8,
+      "seconds": 1.483,
       "evaluations": 9000,
       "front_size": 4,
       "selected_complexity": 6,
@@ -75,7 +85,7 @@
     },
     {
       "id": "r3-constant-tuning",
-      "seconds": 0.798,
+      "seconds": 1.597,
       "evaluations": 9180,
       "front_size": 4,
       "selected_complexity": 6,
@@ -87,7 +97,7 @@
     },
     {
       "id": "r4-multi-objective",
-      "seconds": 1.268,
+      "seconds": 2.469,
       "evaluations": 9180,
       "front_size": 4,
       "selected_complexity": 11,
@@ -99,7 +109,7 @@
     },
     {
       "id": "r5-epsilon-lexicase",
-      "seconds": 19.841,
+      "seconds": 39.027,
       "evaluations": 9180,
       "front_size": 4,
       "selected_complexity": 11,
@@ -111,7 +121,7 @@
     },
     {
       "id": "r6-age-fitness-islands",
-      "seconds": 16.083,
+      "seconds": 38.135,
       "evaluations": 9720,
       "front_size": 4,
       "selected_complexity": 11,
@@ -123,7 +133,7 @@
     },
     {
       "id": "r7-deduplication",
-      "seconds": 87.89,
+      "seconds": 180.157,
       "evaluations": 9720,
       "front_size": 4,
       "selected_complexity": 11,
@@ -135,7 +145,7 @@
     },
     {
       "id": "parsimony-arm",
-      "seconds": 0.757,
+      "seconds": 1.61,
       "evaluations": 9180,
       "front_size": 5,
       "selected_complexity": 7,
@@ -147,10 +157,10 @@
     },
     {
       "id": "sparse-regression",
-      "seconds": 0.006,
+      "seconds": 0.013,
       "evaluations": 0,
       "front_size": 3,
-      "selected_complexity": 26,
+      "selected_complexity": 41,
       "test_r2": 0.9976554202,
       "accuracy_solution": false,
       "exact_recovery": false,
@@ -167,7 +177,7 @@
     "mean_structural_distance": 0.6893,
     "symbolic_test_failure_rate": 0.0,
     "test_disagreement_count": 0,
-    "total_seconds": 128.24,
+    "total_seconds": 266.11,
     "total_evaluations": 74160,
     "variants_with_irrelevant_features": 0
   }

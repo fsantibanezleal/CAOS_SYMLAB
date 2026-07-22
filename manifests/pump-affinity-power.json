@@ -4,16 +4,24 @@
   "category": "S",
   "engine": {
     "package": "symlab",
-    "version": "0.01.000"
+    "version": "0.04.000"
   },
   "seed": 0,
   "artifact": {
     "path": "pump-affinity-power/run.json",
     "format": "json",
     "schema_version": "1.0.0",
-    "bytes": 321673
+    "bytes": 1017128
   },
-  "lane": "precompute",
+  "gate": {
+    "lane": "live",
+    "has_generator": true,
+    "wheels": [
+      "numpy"
+    ],
+    "reasons": []
+  },
+  "lane": "live",
   "data": {
     "source_id": "pump-affinity-power",
     "citation": "Affinity laws for centrifugal pumps and fans, verified (research dossier 7.2.12)",
@@ -46,57 +54,129 @@
     "n_test": 85,
     "n_extrapolation": 60
   },
-  "units_declared": 1,
-  "split_note": "extrapolation split holds out the lowest and highest 30 rows of 'n1', so the training region is an interior box and the extrapolation rows lie outside the support the search ever saw",
+  "units_declared": true,
+  "split_note": "extrapolation split holds out the lowest and highest 30 rows of 'n2', so the training region is an interior box and the extrapolation rows lie outside the support the search ever saw",
   "variants": [
     {
       "id": "r1-koza-baseline",
-      "seconds": 0.155,
-      "evaluations": 480,
-      "front_size": 4,
-      "selected_complexity": 1,
-      "test_r2": 0.01683816,
-      "accuracy_solution": 0,
-      "exact_recovery": null,
-      "symbolic_test_decided": null,
+      "seconds": 0.811,
+      "evaluations": 12000,
+      "front_size": 6,
+      "selected_complexity": 11,
+      "test_r2": -183.7272285,
+      "accuracy_solution": false,
+      "exact_recovery": false,
+      "symbolic_test_decided": true,
       "irrelevant_features": 0
     },
     {
       "id": "r2-linear-scaling",
-      "seconds": 0.092,
-      "evaluations": 480,
-      "front_size": 8,
-      "selected_complexity": 5,
-      "test_r2": -0.06709137,
-      "accuracy_solution": 0,
-      "exact_recovery": null,
-      "symbolic_test_decided": null,
+      "seconds": 2.4,
+      "evaluations": 12000,
+      "front_size": 19,
+      "selected_complexity": 23,
+      "test_r2": -4.518146067,
+      "accuracy_solution": false,
+      "exact_recovery": false,
+      "symbolic_test_decided": true,
       "irrelevant_features": 0
     },
     {
       "id": "r3-constant-tuning",
-      "seconds": 0.186,
-      "evaluations": 540,
-      "front_size": 8,
+      "seconds": 4.164,
+      "evaluations": 12240,
+      "front_size": 19,
+      "selected_complexity": 25,
+      "test_r2": 0.7703015982,
+      "accuracy_solution": false,
+      "exact_recovery": false,
+      "symbolic_test_decided": true,
+      "irrelevant_features": 0
+    },
+    {
+      "id": "r4-multi-objective",
+      "seconds": 1.29,
+      "evaluations": 12240,
+      "front_size": 2,
       "selected_complexity": 5,
-      "test_r2": -0.06709137,
-      "accuracy_solution": 0,
-      "exact_recovery": null,
-      "symbolic_test_decided": null,
+      "test_r2": -27.39228138,
+      "accuracy_solution": false,
+      "exact_recovery": false,
+      "symbolic_test_decided": true,
+      "irrelevant_features": 0
+    },
+    {
+      "id": "r5-epsilon-lexicase",
+      "seconds": 31.194,
+      "evaluations": 12240,
+      "front_size": 2,
+      "selected_complexity": 5,
+      "test_r2": -27.39228138,
+      "accuracy_solution": false,
+      "exact_recovery": false,
+      "symbolic_test_decided": true,
+      "irrelevant_features": 0
+    },
+    {
+      "id": "r6-age-fitness-islands",
+      "seconds": 17.888,
+      "evaluations": 12960,
+      "front_size": 3,
+      "selected_complexity": 5,
+      "test_r2": -27.39228138,
+      "accuracy_solution": false,
+      "exact_recovery": false,
+      "symbolic_test_decided": true,
+      "irrelevant_features": 0
+    },
+    {
+      "id": "r7-deduplication",
+      "seconds": 66.744,
+      "evaluations": 12960,
+      "front_size": 3,
+      "selected_complexity": 5,
+      "test_r2": -27.39228138,
+      "accuracy_solution": false,
+      "exact_recovery": false,
+      "symbolic_test_decided": true,
+      "irrelevant_features": 0
+    },
+    {
+      "id": "r8-unit-typed",
+      "seconds": 139.971,
+      "evaluations": 12960,
+      "front_size": 1,
+      "selected_complexity": 5,
+      "test_r2": -27.39228138,
+      "accuracy_solution": false,
+      "exact_recovery": false,
+      "symbolic_test_decided": true,
+      "irrelevant_features": 0
+    },
+    {
+      "id": "sparse-regression",
+      "seconds": 0.008,
+      "evaluations": 0,
+      "front_size": 3,
+      "selected_complexity": 215,
+      "test_r2": -119.0867464,
+      "accuracy_solution": false,
+      "exact_recovery": false,
+      "symbolic_test_decided": true,
       "irrelevant_features": 0
     }
   ],
   "summary": {
-    "n_variants": 3,
+    "n_variants": 9,
     "accuracy_solutions": 0,
     "accuracy_solution_rate": 0.0,
     "exact_recoveries": 0,
-    "exact_recovery_rate": null,
-    "mean_structural_distance": null,
-    "symbolic_test_failure_rate": null,
+    "exact_recovery_rate": 0.0,
+    "mean_structural_distance": 0.8749,
+    "symbolic_test_failure_rate": 0.0,
     "test_disagreement_count": 0,
-    "total_seconds": 0.43,
-    "total_evaluations": 1500,
+    "total_seconds": 264.47,
+    "total_evaluations": 99600,
     "variants_with_irrelevant_features": 0
   }
 }

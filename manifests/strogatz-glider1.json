@@ -11,7 +11,17 @@
     "path": "strogatz-glider1/run.json",
     "format": "json",
     "schema_version": "1.0.0",
-    "bytes": 710394
+    "bytes": 476720
+  },
+  "gate": {
+    "lane": "precompute",
+    "has_generator": false,
+    "wheels": [
+      "numpy"
+    ],
+    "reasons": [
+      "no first-principles generator: the browser cannot reproduce this data without the source file, which is not shipped"
+    ]
   },
   "lane": "precompute",
   "data": {
@@ -26,10 +36,10 @@
     "n_rows": 400,
     "n_inputs": 2,
     "input_keys": [
-      "target",
-      "x"
+      "x",
+      "y"
     ],
-    "target_key": "y",
+    "target_key": "target",
     "distinct_target_values": 400,
     "target_repeat_ratio": 1.0,
     "constant_inputs": [],
@@ -43,15 +53,15 @@
     "n_extrapolation": 60
   },
   "units_declared": false,
-  "split_note": "extrapolation split holds out the lowest and highest 30 rows of 'x', so the training region is an interior box and the extrapolation rows lie outside the support the search ever saw",
+  "split_note": "extrapolation split holds out the lowest and highest 30 rows of 'y', so the training region is an interior box and the extrapolation rows lie outside the support the search ever saw",
   "variants": [
     {
       "id": "r1-koza-baseline",
-      "seconds": 0.762,
+      "seconds": 1.809,
       "evaluations": 9000,
-      "front_size": 11,
-      "selected_complexity": 2,
-      "test_r2": -0.006501074093,
+      "front_size": 9,
+      "selected_complexity": 16,
+      "test_r2": 0.9949377105,
       "accuracy_solution": false,
       "exact_recovery": null,
       "symbolic_test_decided": null,
@@ -59,11 +69,11 @@
     },
     {
       "id": "r2-linear-scaling",
-      "seconds": 1.803,
+      "seconds": 1.141,
       "evaluations": 9000,
-      "front_size": 16,
+      "front_size": 4,
       "selected_complexity": 6,
-      "test_r2": 0.2025002973,
+      "test_r2": 0.9043377498,
       "accuracy_solution": false,
       "exact_recovery": null,
       "symbolic_test_decided": null,
@@ -71,11 +81,11 @@
     },
     {
       "id": "r3-constant-tuning",
-      "seconds": 1.371,
+      "seconds": 1.439,
       "evaluations": 9180,
-      "front_size": 11,
-      "selected_complexity": 6,
-      "test_r2": 0.2025002973,
+      "front_size": 6,
+      "selected_complexity": 12,
+      "test_r2": 0.9578546041,
       "accuracy_solution": false,
       "exact_recovery": null,
       "symbolic_test_decided": null,
@@ -83,11 +93,11 @@
     },
     {
       "id": "r4-multi-objective",
-      "seconds": 0.783,
+      "seconds": 1.729,
       "evaluations": 9180,
-      "front_size": 2,
+      "front_size": 3,
       "selected_complexity": 6,
-      "test_r2": 0.2025002973,
+      "test_r2": 0.9043377498,
       "accuracy_solution": false,
       "exact_recovery": null,
       "symbolic_test_decided": null,
@@ -95,11 +105,11 @@
     },
     {
       "id": "r5-epsilon-lexicase",
-      "seconds": 22.866,
+      "seconds": 43.915,
       "evaluations": 9180,
-      "front_size": 2,
+      "front_size": 3,
       "selected_complexity": 6,
-      "test_r2": 0.2025002973,
+      "test_r2": 0.9043377498,
       "accuracy_solution": false,
       "exact_recovery": null,
       "symbolic_test_decided": null,
@@ -107,11 +117,11 @@
     },
     {
       "id": "r6-age-fitness-islands",
-      "seconds": 7.927,
+      "seconds": 41.874,
       "evaluations": 9720,
       "front_size": 2,
       "selected_complexity": 6,
-      "test_r2": 0.2025002973,
+      "test_r2": 0.9043377498,
       "accuracy_solution": false,
       "exact_recovery": null,
       "symbolic_test_decided": null,
@@ -119,11 +129,11 @@
     },
     {
       "id": "r7-deduplication",
-      "seconds": 102.931,
+      "seconds": 280.278,
       "evaluations": 9720,
       "front_size": 2,
       "selected_complexity": 6,
-      "test_r2": 0.2025002973,
+      "test_r2": 0.9043377498,
       "accuracy_solution": false,
       "exact_recovery": null,
       "symbolic_test_decided": null,
@@ -131,11 +141,11 @@
     },
     {
       "id": "parsimony-arm",
-      "seconds": 3.046,
+      "seconds": 0.666,
       "evaluations": 9180,
-      "front_size": 21,
+      "front_size": 4,
       "selected_complexity": 6,
-      "test_r2": 0.2025002973,
+      "test_r2": 0.9043377498,
       "accuracy_solution": false,
       "exact_recovery": null,
       "symbolic_test_decided": null,
@@ -143,11 +153,11 @@
     },
     {
       "id": "sparse-regression",
-      "seconds": 0.002,
+      "seconds": 0.001,
       "evaluations": 0,
-      "front_size": 4,
-      "selected_complexity": 19,
-      "test_r2": 0.201622242,
+      "front_size": 2,
+      "selected_complexity": 59,
+      "test_r2": 0.3217874054,
       "accuracy_solution": false,
       "exact_recovery": null,
       "symbolic_test_decided": null,
@@ -163,7 +173,7 @@
     "mean_structural_distance": null,
     "symbolic_test_failure_rate": null,
     "test_disagreement_count": 0,
-    "total_seconds": 141.49,
+    "total_seconds": 372.85,
     "total_evaluations": 74160,
     "variants_with_irrelevant_features": 0
   }

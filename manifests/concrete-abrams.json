@@ -4,14 +4,24 @@
   "category": "I",
   "engine": {
     "package": "symlab",
-    "version": "0.02.000"
+    "version": "0.04.000"
   },
   "seed": 0,
   "artifact": {
     "path": "concrete-abrams/run.json",
     "format": "json",
     "schema_version": "1.0.0",
-    "bytes": 1594767
+    "bytes": 1927089
+  },
+  "gate": {
+    "lane": "precompute",
+    "has_generator": false,
+    "wheels": [
+      "numpy"
+    ],
+    "reasons": [
+      "no first-principles generator: the browser cannot reproduce this data without the source file, which is not shipped"
+    ]
   },
   "lane": "precompute",
   "data": {
@@ -52,108 +62,120 @@
     "n_test": 219,
     "n_extrapolation": 154
   },
-  "units_declared": 0,
+  "units_declared": false,
   "split_note": "extrapolation split holds out the lowest and highest 77 rows of 'cement', so the training region is an interior box and the extrapolation rows lie outside the support the search ever saw",
   "variants": [
     {
       "id": "r1-koza-baseline",
-      "seconds": 2.372,
+      "seconds": 0.927,
       "evaluations": 12000,
       "front_size": 9,
       "selected_complexity": 13,
-      "test_r2": 0.47847795,
-      "accuracy_solution": 0,
+      "test_r2": 0.4784779508,
+      "accuracy_solution": false,
       "exact_recovery": null,
       "symbolic_test_decided": null,
       "irrelevant_features": 0
     },
     {
       "id": "r2-linear-scaling",
-      "seconds": 3.531,
+      "seconds": 1.336,
       "evaluations": 12000,
       "front_size": 12,
       "selected_complexity": 23,
-      "test_r2": 0.6596637,
-      "accuracy_solution": 0,
+      "test_r2": 0.6596637048,
+      "accuracy_solution": false,
       "exact_recovery": null,
       "symbolic_test_decided": null,
       "irrelevant_features": 0
     },
     {
       "id": "r3-constant-tuning",
-      "seconds": 4.705,
+      "seconds": 1.571,
       "evaluations": 12240,
       "front_size": 18,
       "selected_complexity": 21,
-      "test_r2": 0.62804651,
-      "accuracy_solution": 0,
+      "test_r2": 0.6280465111,
+      "accuracy_solution": false,
       "exact_recovery": null,
       "symbolic_test_decided": null,
       "irrelevant_features": 0
     },
     {
       "id": "r4-multi-objective",
-      "seconds": 2.849,
+      "seconds": 1.06,
       "evaluations": 12240,
       "front_size": 2,
       "selected_complexity": 7,
-      "test_r2": 0.33798114,
-      "accuracy_solution": 0,
+      "test_r2": 0.3379811415,
+      "accuracy_solution": false,
       "exact_recovery": null,
       "symbolic_test_decided": null,
       "irrelevant_features": 0
     },
     {
       "id": "r5-epsilon-lexicase",
-      "seconds": 59.621,
+      "seconds": 19.183,
       "evaluations": 12240,
       "front_size": 2,
       "selected_complexity": 7,
-      "test_r2": 0.33798114,
-      "accuracy_solution": 0,
+      "test_r2": 0.3379811415,
+      "accuracy_solution": false,
       "exact_recovery": null,
       "symbolic_test_decided": null,
       "irrelevant_features": 0
     },
     {
       "id": "r6-age-fitness-islands",
-      "seconds": 46.938,
+      "seconds": 16.541,
       "evaluations": 12960,
-      "front_size": 2,
+      "front_size": 3,
       "selected_complexity": 7,
-      "test_r2": 0.33798114,
-      "accuracy_solution": 0,
+      "test_r2": 0.3379811415,
+      "accuracy_solution": false,
       "exact_recovery": null,
       "symbolic_test_decided": null,
       "irrelevant_features": 0
     },
     {
       "id": "r7-deduplication",
-      "seconds": 339.402,
+      "seconds": 115.877,
       "evaluations": 12960,
       "front_size": 3,
       "selected_complexity": 7,
-      "test_r2": 0.33798114,
-      "accuracy_solution": 0,
+      "test_r2": 0.3379811415,
+      "accuracy_solution": false,
       "exact_recovery": null,
       "symbolic_test_decided": null,
       "irrelevant_features": 0
     },
     {
       "id": "parsimony-arm",
-      "seconds": 3.065,
+      "seconds": 1.281,
       "evaluations": 12240,
       "front_size": 17,
       "selected_complexity": 23,
-      "test_r2": 0.6596637,
-      "accuracy_solution": 0,
+      "test_r2": 0.6596637048,
+      "accuracy_solution": false,
+      "exact_recovery": null,
+      "symbolic_test_decided": null,
+      "irrelevant_features": 0
+    },
+    {
+      "id": "sparse-regression",
+      "seconds": 0.037,
+      "evaluations": 0,
+      "front_size": 6,
+      "selected_complexity": 252,
+      "test_r2": 0.8959966134,
+      "accuracy_solution": false,
       "exact_recovery": null,
       "symbolic_test_decided": null,
       "irrelevant_features": 0
     }
   ],
   "summary": {
-    "n_variants": 8,
+    "n_variants": 9,
     "accuracy_solutions": 0,
     "accuracy_solution_rate": 0.0,
     "exact_recoveries": 0,
@@ -161,7 +183,7 @@
     "mean_structural_distance": null,
     "symbolic_test_failure_rate": null,
     "test_disagreement_count": 0,
-    "total_seconds": 462.48,
+    "total_seconds": 157.81,
     "total_evaluations": 98880,
     "variants_with_irrelevant_features": 0
   }

@@ -1,0 +1,166 @@
+{
+  "schema": "symlab.manifest/v1",
+  "case_id": "nusselt-gnielinski",
+  "category": "S",
+  "engine": {
+    "package": "symlab",
+    "version": "0.04.000"
+  },
+  "seed": 0,
+  "artifact": {
+    "path": "nusselt-gnielinski/run.json",
+    "format": "json",
+    "schema_version": "1.0.0",
+    "bytes": 532676
+  },
+  "gate": {
+    "lane": "live",
+    "has_generator": true,
+    "wheels": [
+      "numpy"
+    ],
+    "reasons": []
+  },
+  "lane": "live",
+  "data": {
+    "source_id": "nusselt-gnielinski",
+    "citation": "Gnielinski correlation, verified (research dossier 7.2.8)",
+    "licence": "MIT (generator authored in this repository)",
+    "redistribution": "mirror",
+    "real_or_synthetic": "synthetic",
+    "defects_applied": []
+  },
+  "contract": {
+    "n_rows": 400,
+    "n_inputs": 2,
+    "input_keys": [
+      "Re",
+      "Pr"
+    ],
+    "target_key": "Nu",
+    "distinct_target_values": 400,
+    "target_repeat_ratio": 1.0,
+    "constant_inputs": [],
+    "warnings": [],
+    "defects_applied": [],
+    "licence": "MIT (generator authored in this repository)",
+    "redistribution": "mirror",
+    "citation": "Gnielinski correlation, verified (research dossier 7.2.8)",
+    "n_train": 255,
+    "n_test": 85,
+    "n_extrapolation": 60
+  },
+  "units_declared": false,
+  "split_note": "extrapolation split holds out the lowest and highest 30 rows of 'Re', so the training region is an interior box and the extrapolation rows lie outside the support the search ever saw",
+  "variants": [
+    {
+      "id": "r1-koza-baseline",
+      "seconds": 1.336,
+      "evaluations": 12000,
+      "front_size": 13,
+      "selected_complexity": 8,
+      "test_r2": 0.8744174184,
+      "accuracy_solution": false,
+      "exact_recovery": false,
+      "symbolic_test_decided": true,
+      "irrelevant_features": 0
+    },
+    {
+      "id": "r2-linear-scaling",
+      "seconds": 2.129,
+      "evaluations": 12000,
+      "front_size": 25,
+      "selected_complexity": 22,
+      "test_r2": 0.9361487151,
+      "accuracy_solution": false,
+      "exact_recovery": false,
+      "symbolic_test_decided": true,
+      "irrelevant_features": 0
+    },
+    {
+      "id": "r3-constant-tuning",
+      "seconds": 3.038,
+      "evaluations": 12240,
+      "front_size": 22,
+      "selected_complexity": 16,
+      "test_r2": 0.9352260772,
+      "accuracy_solution": false,
+      "exact_recovery": false,
+      "symbolic_test_decided": true,
+      "irrelevant_features": 0
+    },
+    {
+      "id": "r4-multi-objective",
+      "seconds": 1.012,
+      "evaluations": 12240,
+      "front_size": 3,
+      "selected_complexity": 7,
+      "test_r2": 0.8064207711,
+      "accuracy_solution": false,
+      "exact_recovery": false,
+      "symbolic_test_decided": true,
+      "irrelevant_features": 0
+    },
+    {
+      "id": "r5-epsilon-lexicase",
+      "seconds": 16.201,
+      "evaluations": 12240,
+      "front_size": 3,
+      "selected_complexity": 7,
+      "test_r2": 0.8064207711,
+      "accuracy_solution": false,
+      "exact_recovery": false,
+      "symbolic_test_decided": true,
+      "irrelevant_features": 0
+    },
+    {
+      "id": "r6-age-fitness-islands",
+      "seconds": 16.084,
+      "evaluations": 12960,
+      "front_size": 2,
+      "selected_complexity": 7,
+      "test_r2": 0.8064207711,
+      "accuracy_solution": false,
+      "exact_recovery": false,
+      "symbolic_test_decided": true,
+      "irrelevant_features": 0
+    },
+    {
+      "id": "r7-deduplication",
+      "seconds": 145.087,
+      "evaluations": 12960,
+      "front_size": 2,
+      "selected_complexity": 7,
+      "test_r2": 0.8064207711,
+      "accuracy_solution": false,
+      "exact_recovery": false,
+      "symbolic_test_decided": true,
+      "irrelevant_features": 0
+    },
+    {
+      "id": "sparse-regression",
+      "seconds": 0.002,
+      "evaluations": 0,
+      "front_size": 5,
+      "selected_complexity": 18,
+      "test_r2": 0.9541478198,
+      "accuracy_solution": false,
+      "exact_recovery": false,
+      "symbolic_test_decided": true,
+      "irrelevant_features": 0
+    }
+  ],
+  "summary": {
+    "n_variants": 8,
+    "accuracy_solutions": 0,
+    "accuracy_solution_rate": 0.0,
+    "exact_recoveries": 0,
+    "exact_recovery_rate": 0.0,
+    "mean_structural_distance": 0.8156,
+    "symbolic_test_failure_rate": 0.0,
+    "test_disagreement_count": 0,
+    "total_seconds": 184.89,
+    "total_evaluations": 86640,
+    "variants_with_irrelevant_features": 0
+  }
+}

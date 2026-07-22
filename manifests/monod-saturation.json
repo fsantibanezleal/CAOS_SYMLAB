@@ -11,9 +11,17 @@
     "path": "monod-saturation/run.json",
     "format": "json",
     "schema_version": "1.0.0",
-    "bytes": 192982
+    "bytes": 616168
   },
-  "lane": "precompute",
+  "gate": {
+    "lane": "live",
+    "has_generator": true,
+    "wheels": [
+      "numpy"
+    ],
+    "reasons": []
+  },
+  "lane": "live",
   "data": {
     "source_id": "monod-saturation",
     "citation": "Michaelis-Menten kinetics, verified reference transcription (research dossier 7.2.1)",
@@ -48,11 +56,11 @@
   "variants": [
     {
       "id": "r1-koza-baseline",
-      "seconds": 0.046,
-      "evaluations": 480,
-      "front_size": 5,
-      "selected_complexity": 14,
-      "test_r2": 0.2392631506,
+      "seconds": 1.536,
+      "evaluations": 12000,
+      "front_size": 16,
+      "selected_complexity": 17,
+      "test_r2": 0.8985050557,
       "accuracy_solution": false,
       "exact_recovery": false,
       "symbolic_test_decided": true,
@@ -60,11 +68,11 @@
     },
     {
       "id": "r2-linear-scaling",
-      "seconds": 0.036,
-      "evaluations": 480,
-      "front_size": 4,
-      "selected_complexity": 9,
-      "test_r2": 0.45319868,
+      "seconds": 1.144,
+      "evaluations": 12000,
+      "front_size": 13,
+      "selected_complexity": 14,
+      "test_r2": 0.4383297125,
       "accuracy_solution": false,
       "exact_recovery": false,
       "symbolic_test_decided": true,
@@ -72,11 +80,71 @@
     },
     {
       "id": "r3-constant-tuning",
-      "seconds": 0.048,
-      "evaluations": 540,
-      "front_size": 1,
-      "selected_complexity": 5,
-      "test_r2": 0.3416152606,
+      "seconds": 1.342,
+      "evaluations": 12240,
+      "front_size": 18,
+      "selected_complexity": 16,
+      "test_r2": 0.4623598247,
+      "accuracy_solution": false,
+      "exact_recovery": false,
+      "symbolic_test_decided": true,
+      "irrelevant_features": 0
+    },
+    {
+      "id": "r4-multi-objective",
+      "seconds": 1.09,
+      "evaluations": 12240,
+      "front_size": 3,
+      "selected_complexity": 8,
+      "test_r2": 0.3717372881,
+      "accuracy_solution": false,
+      "exact_recovery": false,
+      "symbolic_test_decided": true,
+      "irrelevant_features": 0
+    },
+    {
+      "id": "r5-epsilon-lexicase",
+      "seconds": 27.503,
+      "evaluations": 12240,
+      "front_size": 3,
+      "selected_complexity": 8,
+      "test_r2": 0.3717372881,
+      "accuracy_solution": false,
+      "exact_recovery": false,
+      "symbolic_test_decided": true,
+      "irrelevant_features": 0
+    },
+    {
+      "id": "r6-age-fitness-islands",
+      "seconds": 18.709,
+      "evaluations": 12960,
+      "front_size": 3,
+      "selected_complexity": 7,
+      "test_r2": 0.3956129848,
+      "accuracy_solution": false,
+      "exact_recovery": false,
+      "symbolic_test_decided": true,
+      "irrelevant_features": 0
+    },
+    {
+      "id": "r7-deduplication",
+      "seconds": 122.286,
+      "evaluations": 12960,
+      "front_size": 3,
+      "selected_complexity": 7,
+      "test_r2": 0.3956129848,
+      "accuracy_solution": false,
+      "exact_recovery": false,
+      "symbolic_test_decided": true,
+      "irrelevant_features": 0
+    },
+    {
+      "id": "sparse-regression",
+      "seconds": 0.002,
+      "evaluations": 0,
+      "front_size": 6,
+      "selected_complexity": 34,
+      "test_r2": 0.8867041732,
       "accuracy_solution": false,
       "exact_recovery": false,
       "symbolic_test_decided": true,
@@ -84,16 +152,16 @@
     }
   ],
   "summary": {
-    "n_variants": 3,
+    "n_variants": 8,
     "accuracy_solutions": 0,
     "accuracy_solution_rate": 0.0,
     "exact_recoveries": 0,
     "exact_recovery_rate": 0.0,
-    "mean_structural_distance": 0.7698,
+    "mean_structural_distance": 0.7354,
     "symbolic_test_failure_rate": 0.0,
     "test_disagreement_count": 0,
-    "total_seconds": 0.13,
-    "total_evaluations": 1500,
+    "total_seconds": 173.61,
+    "total_evaluations": 86640,
     "variants_with_irrelevant_features": 0
   }
 }

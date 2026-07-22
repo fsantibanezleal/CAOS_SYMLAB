@@ -8,15 +8,20 @@ Version format is X.XX.XXX; the manifest carries the semver form with zeros drop
 The version this lab starts actually taking its own headline measurement, and the measurement
 immediately shows the gap the product was built to show. On the re-baked Feynman cases:
 
-| Case | Law | Accuracy | Recovery | Structural distance |
+| Case | Law | Accuracy | Recovery | Mean structural distance |
 |---|---|---|---|---|
-| I.12.1 | F = mu*Nn | 8/8 | 8/8 | 0.000 |
-| I.12.5 | F = q2*Ef | 8/8 | 8/8 | 0.000 |
-| I.6.2a | Gaussian | 5/8 | 0/8 | 0.788 |
+| I.12.1 | F = mu*Nn | 9/9 | 8/9 | 0.044 |
+| I.12.5 | F = q2*Ef | 9/9 | 8/9 | 0.044 |
+| I.6.2a | Gaussian | 6/9 | 0/9 | 0.796 |
 
-Five of eight configurations cleared the accuracy threshold on the Gaussian and none recovered the
+Six of nine configurations cleared the accuracy threshold on the Gaussian and none recovered the
 structure. The symbolic test failure rate on that case is 0.0, so the zero is a real result rather
 than a scorer that could not decide, which is exactly why that rate is published separately.
+
+On the two products the ladder recovers everywhere and the sparse arm does not, which is the whole
+argument for running a second family: a fixed library of terms cannot express a product of two
+inputs, so it fits one well and returns the wrong structure with a clear conscience. That single
+miss is the 8/9 in both rows.
 
 ### Added
 

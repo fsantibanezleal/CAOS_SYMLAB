@@ -11,7 +11,17 @@
     "path": "strogatz-barmag1/run.json",
     "format": "json",
     "schema_version": "1.0.0",
-    "bytes": 714083
+    "bytes": 534745
+  },
+  "gate": {
+    "lane": "precompute",
+    "has_generator": false,
+    "wheels": [
+      "numpy"
+    ],
+    "reasons": [
+      "no first-principles generator: the browser cannot reproduce this data without the source file, which is not shipped"
+    ]
   },
   "lane": "precompute",
   "data": {
@@ -26,10 +36,10 @@
     "n_rows": 400,
     "n_inputs": 2,
     "input_keys": [
-      "target",
-      "x"
+      "x",
+      "y"
     ],
-    "target_key": "y",
+    "target_key": "target",
     "distinct_target_values": 400,
     "target_repeat_ratio": 1.0,
     "constant_inputs": [],
@@ -43,15 +53,15 @@
     "n_extrapolation": 60
   },
   "units_declared": false,
-  "split_note": "extrapolation split holds out the lowest and highest 30 rows of 'x', so the training region is an interior box and the extrapolation rows lie outside the support the search ever saw",
+  "split_note": "extrapolation split holds out the lowest and highest 30 rows of 'y', so the training region is an interior box and the extrapolation rows lie outside the support the search ever saw",
   "variants": [
     {
       "id": "r1-koza-baseline",
-      "seconds": 0.704,
+      "seconds": 1.149,
       "evaluations": 9000,
-      "front_size": 10,
-      "selected_complexity": 1,
-      "test_r2": -0.0001796685254,
+      "front_size": 6,
+      "selected_complexity": 5,
+      "test_r2": 0.8752984392,
       "accuracy_solution": false,
       "exact_recovery": null,
       "symbolic_test_decided": null,
@@ -59,11 +69,11 @@
     },
     {
       "id": "r2-linear-scaling",
-      "seconds": 1.516,
+      "seconds": 2.414,
       "evaluations": 9000,
       "front_size": 17,
-      "selected_complexity": 20,
-      "test_r2": 0.2623853745,
+      "selected_complexity": 28,
+      "test_r2": 0.9949116875,
       "accuracy_solution": false,
       "exact_recovery": null,
       "symbolic_test_decided": null,
@@ -71,11 +81,11 @@
     },
     {
       "id": "r3-constant-tuning",
-      "seconds": 1.242,
+      "seconds": 1.912,
       "evaluations": 9180,
-      "front_size": 16,
-      "selected_complexity": 5,
-      "test_r2": 0.0172396126,
+      "front_size": 10,
+      "selected_complexity": 16,
+      "test_r2": 0.9923659759,
       "accuracy_solution": false,
       "exact_recovery": null,
       "symbolic_test_decided": null,
@@ -83,11 +93,11 @@
     },
     {
       "id": "r4-multi-objective",
-      "seconds": 1.07,
+      "seconds": 1.633,
       "evaluations": 9180,
-      "front_size": 5,
-      "selected_complexity": 5,
-      "test_r2": 0.0172396126,
+      "front_size": 4,
+      "selected_complexity": 8,
+      "test_r2": 0.8402005025,
       "accuracy_solution": false,
       "exact_recovery": null,
       "symbolic_test_decided": null,
@@ -95,11 +105,11 @@
     },
     {
       "id": "r5-epsilon-lexicase",
-      "seconds": 13.673,
+      "seconds": 44.101,
       "evaluations": 9180,
-      "front_size": 5,
-      "selected_complexity": 5,
-      "test_r2": 0.0172396126,
+      "front_size": 4,
+      "selected_complexity": 8,
+      "test_r2": 0.8402005025,
       "accuracy_solution": false,
       "exact_recovery": null,
       "symbolic_test_decided": null,
@@ -107,11 +117,11 @@
     },
     {
       "id": "r6-age-fitness-islands",
-      "seconds": 13.413,
+      "seconds": 28.947,
       "evaluations": 9720,
-      "front_size": 4,
-      "selected_complexity": 5,
-      "test_r2": 0.0172396126,
+      "front_size": 3,
+      "selected_complexity": 8,
+      "test_r2": 0.8402005025,
       "accuracy_solution": false,
       "exact_recovery": null,
       "symbolic_test_decided": null,
@@ -119,11 +129,11 @@
     },
     {
       "id": "r7-deduplication",
-      "seconds": 131.54,
+      "seconds": 169.808,
       "evaluations": 9720,
-      "front_size": 4,
-      "selected_complexity": 5,
-      "test_r2": 0.0172396126,
+      "front_size": 3,
+      "selected_complexity": 8,
+      "test_r2": 0.8402005025,
       "accuracy_solution": false,
       "exact_recovery": null,
       "symbolic_test_decided": null,
@@ -131,11 +141,11 @@
     },
     {
       "id": "parsimony-arm",
-      "seconds": 1.234,
+      "seconds": 1.154,
       "evaluations": 9180,
-      "front_size": 16,
-      "selected_complexity": 25,
-      "test_r2": 0.4031218418,
+      "front_size": 10,
+      "selected_complexity": 17,
+      "test_r2": 0.9710659423,
       "accuracy_solution": false,
       "exact_recovery": null,
       "symbolic_test_decided": null,
@@ -143,11 +153,11 @@
     },
     {
       "id": "sparse-regression",
-      "seconds": 0.001,
+      "seconds": 0.002,
       "evaluations": 0,
       "front_size": 1,
-      "selected_complexity": 40,
-      "test_r2": 0.4377895756,
+      "selected_complexity": 65,
+      "test_r2": 0.9742476905,
       "accuracy_solution": false,
       "exact_recovery": null,
       "symbolic_test_decided": null,
@@ -163,7 +173,7 @@
     "mean_structural_distance": null,
     "symbolic_test_failure_rate": null,
     "test_disagreement_count": 0,
-    "total_seconds": 164.39,
+    "total_seconds": 251.12,
     "total_evaluations": 74160,
     "variants_with_irrelevant_features": 0
   }

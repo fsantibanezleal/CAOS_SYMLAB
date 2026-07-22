@@ -4,14 +4,24 @@
   "category": "I",
   "engine": {
     "package": "symlab",
-    "version": "0.02.000"
+    "version": "0.04.000"
   },
   "seed": 0,
   "artifact": {
     "path": "ccpp-derating/run.json",
     "format": "json",
     "schema_version": "1.0.0",
-    "bytes": 3389883
+    "bytes": 3107914
+  },
+  "gate": {
+    "lane": "precompute",
+    "has_generator": false,
+    "wheels": [
+      "numpy"
+    ],
+    "reasons": [
+      "no first-principles generator: the browser cannot reproduce this data without the source file, which is not shipped"
+    ]
   },
   "lane": "precompute",
   "data": {
@@ -22,7 +32,7 @@
     "real_or_synthetic": "real",
     "defects_applied": [
       "Only the first of the five shuffled folds in the workbook is read. The folds are reorderings of the same 9,568 records; concatenating them would duplicate every row five times and destroy any held-out split.",
-      "Deterministically subsampled to 4000 of the available rows (seed 0) to keep the search budget on the structure rather than on redundant rows."
+      "Deterministically subsampled to 4000 of 9568 available rows (seed 0) to keep the search budget on the structure rather than on redundant rows."
     ]
   },
   "contract": {
@@ -41,7 +51,7 @@
     "warnings": [],
     "defects_applied": [
       "Only the first of the five shuffled folds in the workbook is read. The folds are reorderings of the same 9,568 records; concatenating them would duplicate every row five times and destroy any held-out split.",
-      "Deterministically subsampled to 4000 of the available rows (seed 0) to keep the search budget on the structure rather than on redundant rows."
+      "Deterministically subsampled to 4000 of 9568 available rows (seed 0) to keep the search budget on the structure rather than on redundant rows."
     ],
     "licence": "CC BY 4.0 (UCI Machine Learning Repository)",
     "redistribution": "mirror",
@@ -50,108 +60,120 @@
     "n_test": 850,
     "n_extrapolation": 600
   },
-  "units_declared": 0,
+  "units_declared": false,
   "split_note": "extrapolation split holds out the lowest and highest 300 rows of 'RH', so the training region is an interior box and the extrapolation rows lie outside the support the search ever saw",
   "variants": [
     {
       "id": "r1-koza-baseline",
-      "seconds": 6.314,
+      "seconds": 1.583,
       "evaluations": 12000,
       "front_size": 12,
       "selected_complexity": 15,
-      "test_r2": 0.16181555,
-      "accuracy_solution": 0,
+      "test_r2": 0.1618155544,
+      "accuracy_solution": false,
       "exact_recovery": null,
       "symbolic_test_decided": null,
       "irrelevant_features": 0
     },
     {
       "id": "r2-linear-scaling",
-      "seconds": 5.662,
+      "seconds": 1.58,
       "evaluations": 12000,
       "front_size": 13,
       "selected_complexity": 17,
-      "test_r2": 0.93066302,
-      "accuracy_solution": 0,
+      "test_r2": 0.9306630153,
+      "accuracy_solution": false,
       "exact_recovery": null,
       "symbolic_test_decided": null,
       "irrelevant_features": 0
     },
     {
       "id": "r3-constant-tuning",
-      "seconds": 16.84,
+      "seconds": 5.007,
       "evaluations": 12240,
       "front_size": 16,
       "selected_complexity": 15,
-      "test_r2": 0.92791379,
-      "accuracy_solution": 0,
+      "test_r2": 0.9279137869,
+      "accuracy_solution": false,
       "exact_recovery": null,
       "symbolic_test_decided": null,
       "irrelevant_features": 0
     },
     {
       "id": "r4-multi-objective",
-      "seconds": 4.127,
+      "seconds": 1.094,
       "evaluations": 12240,
       "front_size": 2,
       "selected_complexity": 7,
-      "test_r2": 0.8979442,
-      "accuracy_solution": 0,
+      "test_r2": 0.8979442035,
+      "accuracy_solution": false,
       "exact_recovery": null,
       "symbolic_test_decided": null,
       "irrelevant_features": 0
     },
     {
       "id": "r5-epsilon-lexicase",
-      "seconds": 88.15,
+      "seconds": 23.166,
       "evaluations": 12240,
       "front_size": 2,
       "selected_complexity": 7,
-      "test_r2": 0.8979442,
-      "accuracy_solution": 0,
+      "test_r2": 0.8979442035,
+      "accuracy_solution": false,
       "exact_recovery": null,
       "symbolic_test_decided": null,
       "irrelevant_features": 0
     },
     {
       "id": "r6-age-fitness-islands",
-      "seconds": 65.113,
+      "seconds": 17.001,
       "evaluations": 12960,
       "front_size": 2,
       "selected_complexity": 7,
-      "test_r2": 0.8979442,
-      "accuracy_solution": 0,
+      "test_r2": 0.8979442035,
+      "accuracy_solution": false,
       "exact_recovery": null,
       "symbolic_test_decided": null,
       "irrelevant_features": 0
     },
     {
       "id": "r7-deduplication",
-      "seconds": 470.023,
+      "seconds": 105.145,
       "evaluations": 12960,
-      "front_size": 3,
+      "front_size": 2,
       "selected_complexity": 7,
-      "test_r2": 0.8979442,
-      "accuracy_solution": 0,
+      "test_r2": 0.8979442035,
+      "accuracy_solution": false,
       "exact_recovery": null,
       "symbolic_test_decided": null,
       "irrelevant_features": 0
     },
     {
       "id": "parsimony-arm",
-      "seconds": 21.278,
+      "seconds": 3.544,
       "evaluations": 12240,
       "front_size": 13,
       "selected_complexity": 25,
-      "test_r2": 0.92623925,
-      "accuracy_solution": 0,
+      "test_r2": 0.9262392456,
+      "accuracy_solution": false,
+      "exact_recovery": null,
+      "symbolic_test_decided": null,
+      "irrelevant_features": 0
+    },
+    {
+      "id": "sparse-regression",
+      "seconds": 0.019,
+      "evaluations": 0,
+      "front_size": 7,
+      "selected_complexity": 99,
+      "test_r2": 0.9222950717,
+      "accuracy_solution": false,
       "exact_recovery": null,
       "symbolic_test_decided": null,
       "irrelevant_features": 0
     }
   ],
   "summary": {
-    "n_variants": 8,
+    "n_variants": 9,
     "accuracy_solutions": 0,
     "accuracy_solution_rate": 0.0,
     "exact_recoveries": 0,
@@ -159,7 +181,7 @@
     "mean_structural_distance": null,
     "symbolic_test_failure_rate": null,
     "test_disagreement_count": 0,
-    "total_seconds": 677.51,
+    "total_seconds": 158.14,
     "total_evaluations": 98880,
     "variants_with_irrelevant_features": 0
   }

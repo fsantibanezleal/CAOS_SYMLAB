@@ -1,0 +1,179 @@
+{
+  "schema": "symlab.manifest/v1",
+  "case_id": "arrhenius-rate",
+  "category": "S",
+  "engine": {
+    "package": "symlab",
+    "version": "0.04.000"
+  },
+  "seed": 0,
+  "artifact": {
+    "path": "arrhenius-rate/run.json",
+    "format": "json",
+    "schema_version": "1.0.0",
+    "bytes": 797827
+  },
+  "gate": {
+    "lane": "live",
+    "has_generator": true,
+    "wheels": [
+      "numpy"
+    ],
+    "reasons": []
+  },
+  "lane": "live",
+  "data": {
+    "source_id": "arrhenius-rate",
+    "citation": "Arrhenius equation, verified reference transcription (research dossier 7.2.2)",
+    "licence": "MIT (generator authored in this repository)",
+    "redistribution": "mirror",
+    "real_or_synthetic": "synthetic",
+    "defects_applied": []
+  },
+  "contract": {
+    "n_rows": 400,
+    "n_inputs": 3,
+    "input_keys": [
+      "T",
+      "Ea",
+      "A"
+    ],
+    "target_key": "k",
+    "distinct_target_values": 221,
+    "target_repeat_ratio": 1.81,
+    "constant_inputs": [],
+    "warnings": [],
+    "defects_applied": [],
+    "licence": "MIT (generator authored in this repository)",
+    "redistribution": "mirror",
+    "citation": "Arrhenius equation, verified reference transcription (research dossier 7.2.2)",
+    "n_train": 255,
+    "n_test": 85,
+    "n_extrapolation": 60
+  },
+  "units_declared": true,
+  "split_note": "extrapolation split holds out the lowest and highest 30 rows of 'A', so the training region is an interior box and the extrapolation rows lie outside the support the search ever saw",
+  "variants": [
+    {
+      "id": "r1-koza-baseline",
+      "seconds": 2.941,
+      "evaluations": 12000,
+      "front_size": 34,
+      "selected_complexity": 7,
+      "test_r2": -1840.526061,
+      "accuracy_solution": false,
+      "exact_recovery": false,
+      "symbolic_test_decided": true,
+      "irrelevant_features": 0
+    },
+    {
+      "id": "r2-linear-scaling",
+      "seconds": 1.794,
+      "evaluations": 12000,
+      "front_size": 22,
+      "selected_complexity": 38,
+      "test_r2": -2059429.701,
+      "accuracy_solution": false,
+      "exact_recovery": false,
+      "symbolic_test_decided": true,
+      "irrelevant_features": 0
+    },
+    {
+      "id": "r3-constant-tuning",
+      "seconds": 4.042,
+      "evaluations": 12240,
+      "front_size": 20,
+      "selected_complexity": 46,
+      "test_r2": -664904.7692,
+      "accuracy_solution": false,
+      "exact_recovery": false,
+      "symbolic_test_decided": true,
+      "irrelevant_features": 0
+    },
+    {
+      "id": "r4-multi-objective",
+      "seconds": 1.026,
+      "evaluations": 12240,
+      "front_size": 2,
+      "selected_complexity": 5,
+      "test_r2": -14775.0008,
+      "accuracy_solution": false,
+      "exact_recovery": false,
+      "symbolic_test_decided": true,
+      "irrelevant_features": 0
+    },
+    {
+      "id": "r5-epsilon-lexicase",
+      "seconds": 25.011,
+      "evaluations": 12240,
+      "front_size": 2,
+      "selected_complexity": 5,
+      "test_r2": -14775.0008,
+      "accuracy_solution": false,
+      "exact_recovery": false,
+      "symbolic_test_decided": true,
+      "irrelevant_features": 0
+    },
+    {
+      "id": "r6-age-fitness-islands",
+      "seconds": 12.523,
+      "evaluations": 12960,
+      "front_size": 2,
+      "selected_complexity": 5,
+      "test_r2": -14775.0008,
+      "accuracy_solution": false,
+      "exact_recovery": false,
+      "symbolic_test_decided": true,
+      "irrelevant_features": 0
+    },
+    {
+      "id": "r7-deduplication",
+      "seconds": 118.359,
+      "evaluations": 12960,
+      "front_size": 2,
+      "selected_complexity": 5,
+      "test_r2": -14775.0008,
+      "accuracy_solution": false,
+      "exact_recovery": false,
+      "symbolic_test_decided": true,
+      "irrelevant_features": 0
+    },
+    {
+      "id": "r8-unit-typed",
+      "seconds": 191.815,
+      "evaluations": 12960,
+      "front_size": 2,
+      "selected_complexity": 5,
+      "test_r2": -14775.0008,
+      "accuracy_solution": false,
+      "exact_recovery": false,
+      "symbolic_test_decided": true,
+      "irrelevant_features": 0
+    },
+    {
+      "id": "sparse-regression",
+      "seconds": 0.002,
+      "evaluations": 0,
+      "front_size": 4,
+      "selected_complexity": 71,
+      "test_r2": -224745.1989,
+      "accuracy_solution": false,
+      "exact_recovery": false,
+      "symbolic_test_decided": true,
+      "irrelevant_features": 0
+    }
+  ],
+  "summary": {
+    "n_variants": 9,
+    "accuracy_solutions": 0,
+    "accuracy_solution_rate": 0.0,
+    "exact_recoveries": 0,
+    "exact_recovery_rate": 0.0,
+    "mean_structural_distance": 0.8257,
+    "symbolic_test_failure_rate": 0.0,
+    "test_disagreement_count": 0,
+    "total_seconds": 357.51,
+    "total_evaluations": 99600,
+    "variants_with_irrelevant_features": 0
+  }
+}

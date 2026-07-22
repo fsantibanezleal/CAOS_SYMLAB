@@ -4,14 +4,24 @@
   "category": "M",
   "engine": {
     "package": "symlab",
-    "version": "0.02.000"
+    "version": "0.04.000"
   },
   "seed": 0,
   "artifact": {
     "path": "ore-mineralogy-closure/run.json",
     "format": "json",
     "schema_version": "1.0.0",
-    "bytes": 903768
+    "bytes": 1161747
+  },
+  "gate": {
+    "lane": "precompute",
+    "has_generator": false,
+    "wheels": [
+      "numpy"
+    ],
+    "reasons": [
+      "no first-principles generator: the browser cannot reproduce this data without the source file, which is not shipped"
+    ]
   },
   "lane": "precompute",
   "data": {
@@ -21,10 +31,11 @@
     "redistribution": "mirror",
     "real_or_synthetic": "real",
     "defects_applied": [
-      "Aggregated to the hourly grid before any fitting. The concentrate assays are hourly laboratory measurements repeated across every 20-second process row; fitting at row level would leak the target about 13.5 times over. Row-level access is not offered by this loader.",
+      "Aggregated to the hourly grid before any fitting. The concentrate assays are hourly laboratory measurements copied across every 20-second process row, 737,453 rows over 4,097 timestamps, so each assay appears 180 times; fitting at row level scores the model against 180 copies of the same measurement. Row-level access is not offered by this loader.",
+      "Assay columns averaged within the hour, not sampled: %_Iron_Concentrate in 216 of 4097 hours; %_Silica_Concentrate in 310 of 4097 hours. The averaged column is therefore a smoothed quantity where it varied.",
       "Comma decimal separator handled explicitly; 0 malformed rows skipped.",
       "Both concentrate assay columns excluded from the inputs: predicting one from the other is reading the answer off the same laboratory measurement, not soft sensing.",
-      "Deterministically subsampled to 4000 of the available rows (seed 0) to keep the search budget on the structure rather than on redundant rows."
+      "Deterministically subsampled to 4000 of 4097 available rows (seed 0) to keep the search budget on the structure rather than on redundant rows."
     ]
   },
   "contract": {
@@ -41,10 +52,11 @@
       "the target takes only 278 distinct values across 4000 rows (14.4 repeats each). If those repeats come from a coarser measurement grid, fitting at this resolution leaks the target."
     ],
     "defects_applied": [
-      "Aggregated to the hourly grid before any fitting. The concentrate assays are hourly laboratory measurements repeated across every 20-second process row; fitting at row level would leak the target about 13.5 times over. Row-level access is not offered by this loader.",
+      "Aggregated to the hourly grid before any fitting. The concentrate assays are hourly laboratory measurements copied across every 20-second process row, 737,453 rows over 4,097 timestamps, so each assay appears 180 times; fitting at row level scores the model against 180 copies of the same measurement. Row-level access is not offered by this loader.",
+      "Assay columns averaged within the hour, not sampled: %_Iron_Concentrate in 216 of 4097 hours; %_Silica_Concentrate in 310 of 4097 hours. The averaged column is therefore a smoothed quantity where it varied.",
       "Comma decimal separator handled explicitly; 0 malformed rows skipped.",
       "Both concentrate assay columns excluded from the inputs: predicting one from the other is reading the answer off the same laboratory measurement, not soft sensing.",
-      "Deterministically subsampled to 4000 of the available rows (seed 0) to keep the search budget on the structure rather than on redundant rows."
+      "Deterministically subsampled to 4000 of 4097 available rows (seed 0) to keep the search budget on the structure rather than on redundant rows."
     ],
     "licence": "CC0 1.0 Public Domain (OpenML dataset 43311)",
     "redistribution": "mirror",
@@ -53,60 +65,72 @@
     "n_test": 850,
     "n_extrapolation": 600
   },
-  "units_declared": 0,
+  "units_declared": false,
   "split_note": "extrapolation split holds out the lowest and highest 300 rows of '%_Silica_Feed', so the training region is an interior box and the extrapolation rows lie outside the support the search ever saw",
   "variants": [
     {
       "id": "r1-koza-baseline",
-      "seconds": 1.153,
+      "seconds": 0.508,
       "evaluations": 4000,
       "front_size": 7,
       "selected_complexity": 8,
-      "test_r2": 0.9078113,
-      "accuracy_solution": 0,
+      "test_r2": 0.9078113024,
+      "accuracy_solution": false,
       "exact_recovery": null,
       "symbolic_test_decided": null,
       "irrelevant_features": 0
     },
     {
       "id": "r2-linear-scaling",
-      "seconds": 0.982,
+      "seconds": 0.483,
       "evaluations": 4000,
       "front_size": 11,
       "selected_complexity": 17,
-      "test_r2": 0.96755798,
-      "accuracy_solution": 0,
+      "test_r2": 0.9675579772,
+      "accuracy_solution": false,
       "exact_recovery": null,
       "symbolic_test_decided": null,
       "irrelevant_features": 0
     },
     {
       "id": "r3-constant-tuning",
-      "seconds": 1.3,
+      "seconds": 0.574,
       "evaluations": 4120,
       "front_size": 15,
       "selected_complexity": 22,
-      "test_r2": 0.96082075,
-      "accuracy_solution": 0,
+      "test_r2": 0.9608207546,
+      "accuracy_solution": false,
       "exact_recovery": null,
       "symbolic_test_decided": null,
       "irrelevant_features": 0
     },
     {
       "id": "r4-multi-objective",
-      "seconds": 0.995,
+      "seconds": 0.407,
       "evaluations": 4120,
       "front_size": 3,
       "selected_complexity": 6,
-      "test_r2": 0.9593092,
-      "accuracy_solution": 0,
+      "test_r2": 0.9593092031,
+      "accuracy_solution": false,
+      "exact_recovery": null,
+      "symbolic_test_decided": null,
+      "irrelevant_features": 0
+    },
+    {
+      "id": "sparse-regression",
+      "seconds": 0.003,
+      "evaluations": 0,
+      "front_size": 2,
+      "selected_complexity": 25,
+      "test_r2": 0.969623097,
+      "accuracy_solution": false,
       "exact_recovery": null,
       "symbolic_test_decided": null,
       "irrelevant_features": 0
     }
   ],
   "summary": {
-    "n_variants": 4,
+    "n_variants": 5,
     "accuracy_solutions": 0,
     "accuracy_solution_rate": 0.0,
     "exact_recoveries": 0,
@@ -114,7 +138,7 @@
     "mean_structural_distance": null,
     "symbolic_test_failure_rate": null,
     "test_disagreement_count": 0,
-    "total_seconds": 4.43,
+    "total_seconds": 1.97,
     "total_evaluations": 16240,
     "variants_with_irrelevant_features": 0
   }

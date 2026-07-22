@@ -4,14 +4,24 @@
   "category": "M",
   "engine": {
     "package": "symlab",
-    "version": "0.02.000"
+    "version": "0.04.000"
   },
   "seed": 0,
   "artifact": {
     "path": "flotation-silica/run.json",
     "format": "json",
     "schema_version": "1.0.0",
-    "bytes": 12934820
+    "bytes": 17860278
+  },
+  "gate": {
+    "lane": "precompute",
+    "has_generator": false,
+    "wheels": [
+      "numpy"
+    ],
+    "reasons": [
+      "no first-principles generator: the browser cannot reproduce this data without the source file, which is not shipped"
+    ]
   },
   "lane": "precompute",
   "data": {
@@ -21,10 +31,11 @@
     "redistribution": "mirror",
     "real_or_synthetic": "real",
     "defects_applied": [
-      "Aggregated to the hourly grid before any fitting. The concentrate assays are hourly laboratory measurements repeated across every 20-second process row; fitting at row level would leak the target about 13.5 times over. Row-level access is not offered by this loader.",
+      "Aggregated to the hourly grid before any fitting. The concentrate assays are hourly laboratory measurements copied across every 20-second process row, 737,453 rows over 4,097 timestamps, so each assay appears 180 times; fitting at row level scores the model against 180 copies of the same measurement. Row-level access is not offered by this loader.",
+      "Assay columns averaged within the hour, not sampled: %_Iron_Concentrate in 216 of 4097 hours; %_Silica_Concentrate in 310 of 4097 hours. The averaged column is therefore a smoothed quantity where it varied.",
       "Comma decimal separator handled explicitly; 0 malformed rows skipped.",
       "Both concentrate assay columns excluded from the inputs: predicting one from the other is reading the answer off the same laboratory measurement, not soft sensing.",
-      "Deterministically subsampled to 4000 of the available rows (seed 0) to keep the search budget on the structure rather than on redundant rows."
+      "Deterministically subsampled to 4000 of 4097 available rows (seed 0) to keep the search budget on the structure rather than on redundant rows."
     ]
   },
   "contract": {
@@ -61,10 +72,11 @@
       "the target takes only 709 distinct values across 4000 rows (5.6 repeats each). If those repeats come from a coarser measurement grid, fitting at this resolution leaks the target."
     ],
     "defects_applied": [
-      "Aggregated to the hourly grid before any fitting. The concentrate assays are hourly laboratory measurements repeated across every 20-second process row; fitting at row level would leak the target about 13.5 times over. Row-level access is not offered by this loader.",
+      "Aggregated to the hourly grid before any fitting. The concentrate assays are hourly laboratory measurements copied across every 20-second process row, 737,453 rows over 4,097 timestamps, so each assay appears 180 times; fitting at row level scores the model against 180 copies of the same measurement. Row-level access is not offered by this loader.",
+      "Assay columns averaged within the hour, not sampled: %_Iron_Concentrate in 216 of 4097 hours; %_Silica_Concentrate in 310 of 4097 hours. The averaged column is therefore a smoothed quantity where it varied.",
       "Comma decimal separator handled explicitly; 0 malformed rows skipped.",
       "Both concentrate assay columns excluded from the inputs: predicting one from the other is reading the answer off the same laboratory measurement, not soft sensing.",
-      "Deterministically subsampled to 4000 of the available rows (seed 0) to keep the search budget on the structure rather than on redundant rows."
+      "Deterministically subsampled to 4000 of 4097 available rows (seed 0) to keep the search budget on the structure rather than on redundant rows."
     ],
     "licence": "CC0 1.0 Public Domain (OpenML dataset 43311)",
     "redistribution": "mirror",
@@ -73,108 +85,120 @@
     "n_test": 850,
     "n_extrapolation": 600
   },
-  "units_declared": 0,
+  "units_declared": false,
   "split_note": "extrapolation split holds out the lowest and highest 300 rows of 'Starch_Flow', so the training region is an interior box and the extrapolation rows lie outside the support the search ever saw",
   "variants": [
     {
       "id": "r1-koza-baseline",
-      "seconds": 1.082,
+      "seconds": 0.467,
       "evaluations": 7500,
       "front_size": 4,
       "selected_complexity": 5,
-      "test_r2": 0.04096783,
-      "accuracy_solution": 0,
+      "test_r2": 0.04096782517,
+      "accuracy_solution": false,
       "exact_recovery": null,
       "symbolic_test_decided": null,
       "irrelevant_features": 0
     },
     {
       "id": "r2-linear-scaling",
-      "seconds": 2.265,
+      "seconds": 1.147,
       "evaluations": 7500,
       "front_size": 14,
       "selected_complexity": 12,
-      "test_r2": 0.1117116,
-      "accuracy_solution": 0,
+      "test_r2": 0.1117116022,
+      "accuracy_solution": false,
       "exact_recovery": null,
       "symbolic_test_decided": null,
       "irrelevant_features": 0
     },
     {
       "id": "r3-constant-tuning",
-      "seconds": 2.565,
+      "seconds": 1.005,
       "evaluations": 7680,
       "front_size": 13,
       "selected_complexity": 16,
-      "test_r2": 0.13833209,
-      "accuracy_solution": 0,
+      "test_r2": 0.1383320873,
+      "accuracy_solution": false,
       "exact_recovery": null,
       "symbolic_test_decided": null,
       "irrelevant_features": 0
     },
     {
       "id": "r4-multi-objective",
-      "seconds": 1.854,
+      "seconds": 0.699,
       "evaluations": 7680,
       "front_size": 2,
       "selected_complexity": 5,
-      "test_r2": 0.03792558,
-      "accuracy_solution": 0,
+      "test_r2": 0.03792558015,
+      "accuracy_solution": false,
       "exact_recovery": null,
       "symbolic_test_decided": null,
       "irrelevant_features": 0
     },
     {
       "id": "r5-epsilon-lexicase",
-      "seconds": 17.245,
+      "seconds": 6.147,
       "evaluations": 7680,
       "front_size": 2,
       "selected_complexity": 5,
-      "test_r2": 0.03792558,
-      "accuracy_solution": 0,
+      "test_r2": 0.03792558015,
+      "accuracy_solution": false,
       "exact_recovery": null,
       "symbolic_test_decided": null,
       "irrelevant_features": 0
     },
     {
       "id": "r6-age-fitness-islands",
-      "seconds": 26.499,
+      "seconds": 10.89,
       "evaluations": 8160,
-      "front_size": 2,
+      "front_size": 3,
       "selected_complexity": 7,
-      "test_r2": 0.04988086,
-      "accuracy_solution": 0,
+      "test_r2": 0.04988085503,
+      "accuracy_solution": false,
       "exact_recovery": null,
       "symbolic_test_decided": null,
       "irrelevant_features": 0
     },
     {
       "id": "r7-deduplication",
-      "seconds": 128.891,
+      "seconds": 48.679,
       "evaluations": 8160,
       "front_size": 2,
       "selected_complexity": 7,
-      "test_r2": 0.04988086,
-      "accuracy_solution": 0,
+      "test_r2": 0.04988085503,
+      "accuracy_solution": false,
       "exact_recovery": null,
       "symbolic_test_decided": null,
       "irrelevant_features": 0
     },
     {
       "id": "parsimony-arm",
-      "seconds": 1.945,
+      "seconds": 0.749,
       "evaluations": 7680,
       "front_size": 10,
       "selected_complexity": 13,
-      "test_r2": 0.12813216,
-      "accuracy_solution": 0,
+      "test_r2": 0.1281321561,
+      "accuracy_solution": false,
+      "exact_recovery": null,
+      "symbolic_test_decided": null,
+      "irrelevant_features": 0
+    },
+    {
+      "id": "sparse-regression",
+      "seconds": 3.409,
+      "evaluations": 0,
+      "front_size": 4,
+      "selected_complexity": 1650,
+      "test_r2": -0.009660679905,
+      "accuracy_solution": false,
       "exact_recovery": null,
       "symbolic_test_decided": null,
       "irrelevant_features": 0
     }
   ],
   "summary": {
-    "n_variants": 8,
+    "n_variants": 9,
     "accuracy_solutions": 0,
     "accuracy_solution_rate": 0.0,
     "exact_recoveries": 0,
@@ -182,7 +206,7 @@
     "mean_structural_distance": null,
     "symbolic_test_failure_rate": null,
     "test_disagreement_count": 0,
-    "total_seconds": 182.35,
+    "total_seconds": 73.19,
     "total_evaluations": 62040,
     "variants_with_irrelevant_features": 0
   }

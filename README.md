@@ -26,9 +26,9 @@ Measured here on the Feynman Gaussian, with both search families at published bu
 
 | Family | Configuration | R2 (test) | Recovered | Seconds |
 |---|---|---|---|---|
-| genetic programming | Koza baseline | 0.989307 | no | 1.99 |
-| genetic programming | + linear scaling | 1 - 5.6e-06 | no | 3.46 |
-| genetic programming | + deduplication | 0.996795 | no | 386.17 |
+| genetic programming | Koza baseline | 0.989307 | no | 3.27 |
+| genetic programming | + linear scaling | 1 - 5.6e-06 | no | 3.32 |
+| genetic programming | + deduplication | 0.996795 | no | 299.17 |
 | sparse regression | sparse regression (non-GP) | 1 - 1.8e-09 | no | 0.01 |
 
 <!-- headline:end -->

@@ -4,14 +4,24 @@
   "category": "I",
   "engine": {
     "package": "symlab",
-    "version": "0.02.000"
+    "version": "0.04.000"
   },
   "seed": 0,
   "artifact": {
     "path": "wwtp-removal-identity/run.json",
     "format": "json",
     "schema_version": "1.0.0",
-    "bytes": 249131
+    "bytes": 321404
+  },
+  "gate": {
+    "lane": "precompute",
+    "has_generator": false,
+    "wheels": [
+      "numpy"
+    ],
+    "reasons": [
+      "no first-principles generator: the browser cannot reproduce this data without the source file, which is not shipped"
+    ]
   },
   "lane": "precompute",
   "data": {
@@ -46,80 +56,92 @@
     "n_test": 81,
     "n_extrapolation": 56
   },
-  "units_declared": 0,
+  "units_declared": false,
   "split_note": "extrapolation split holds out the lowest and highest 28 rows of 'DBO-E', so the training region is an interior box and the extrapolation rows lie outside the support the search ever saw",
   "variants": [
     {
       "id": "r1-koza-baseline",
-      "seconds": 0.45,
+      "seconds": 0.218,
       "evaluations": 5000,
       "front_size": 2,
       "selected_complexity": 2,
-      "test_r2": -0.01661601,
-      "accuracy_solution": 0,
-      "exact_recovery": null,
-      "symbolic_test_decided": null,
+      "test_r2": -0.01661601232,
+      "accuracy_solution": false,
+      "exact_recovery": false,
+      "symbolic_test_decided": true,
       "irrelevant_features": 0
     },
     {
       "id": "r2-linear-scaling",
-      "seconds": 0.804,
+      "seconds": 0.389,
       "evaluations": 5000,
       "front_size": 12,
       "selected_complexity": 7,
-      "test_r2": 0.99994104,
-      "accuracy_solution": 1,
-      "exact_recovery": null,
-      "symbolic_test_decided": null,
+      "test_r2": 0.9999410443,
+      "accuracy_solution": true,
+      "exact_recovery": false,
+      "symbolic_test_decided": true,
       "irrelevant_features": 0
     },
     {
       "id": "r3-constant-tuning",
-      "seconds": 0.554,
+      "seconds": 0.284,
       "evaluations": 5150,
       "front_size": 4,
       "selected_complexity": 7,
-      "test_r2": 0.99994104,
-      "accuracy_solution": 1,
-      "exact_recovery": null,
-      "symbolic_test_decided": null,
+      "test_r2": 0.9999410443,
+      "accuracy_solution": true,
+      "exact_recovery": false,
+      "symbolic_test_decided": true,
       "irrelevant_features": 0
     },
     {
       "id": "r4-multi-objective",
-      "seconds": 0.821,
+      "seconds": 0.393,
       "evaluations": 5150,
       "front_size": 2,
       "selected_complexity": 7,
-      "test_r2": 0.99994104,
-      "accuracy_solution": 1,
-      "exact_recovery": null,
-      "symbolic_test_decided": null,
+      "test_r2": 0.9999410443,
+      "accuracy_solution": true,
+      "exact_recovery": false,
+      "symbolic_test_decided": true,
       "irrelevant_features": 0
     },
     {
       "id": "r7-deduplication",
-      "seconds": 187.81,
+      "seconds": 70.27,
       "evaluations": 5600,
       "front_size": 2,
       "selected_complexity": 7,
-      "test_r2": 0.99994104,
-      "accuracy_solution": 1,
-      "exact_recovery": null,
-      "symbolic_test_decided": null,
+      "test_r2": 0.9999410443,
+      "accuracy_solution": true,
+      "exact_recovery": false,
+      "symbolic_test_decided": true,
+      "irrelevant_features": 0
+    },
+    {
+      "id": "sparse-regression",
+      "seconds": 0.002,
+      "evaluations": 0,
+      "front_size": 5,
+      "selected_complexity": 20,
+      "test_r2": 0.9962896168,
+      "accuracy_solution": false,
+      "exact_recovery": false,
+      "symbolic_test_decided": true,
       "irrelevant_features": 0
     }
   ],
   "summary": {
-    "n_variants": 5,
+    "n_variants": 6,
     "accuracy_solutions": 4,
-    "accuracy_solution_rate": 0.8,
+    "accuracy_solution_rate": 0.6667,
     "exact_recoveries": 0,
-    "exact_recovery_rate": null,
-    "mean_structural_distance": null,
-    "symbolic_test_failure_rate": null,
+    "exact_recovery_rate": 0.0,
+    "mean_structural_distance": 0.6488,
+    "symbolic_test_failure_rate": 0.0,
     "test_disagreement_count": 0,
-    "total_seconds": 190.44,
+    "total_seconds": 71.56,
     "total_evaluations": 25900,
     "variants_with_irrelevant_features": 0
   }

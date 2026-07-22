@@ -1,0 +1,167 @@
+{
+  "schema": "symlab.manifest/v1",
+  "case_id": "asm1-aerobic-growth",
+  "category": "E",
+  "engine": {
+    "package": "symlab",
+    "version": "0.04.000"
+  },
+  "seed": 0,
+  "artifact": {
+    "path": "asm1-aerobic-growth/run.json",
+    "format": "json",
+    "schema_version": "1.0.0",
+    "bytes": 670545
+  },
+  "gate": {
+    "lane": "live",
+    "has_generator": true,
+    "wheels": [
+      "numpy"
+    ],
+    "reasons": []
+  },
+  "lane": "live",
+  "data": {
+    "source_id": "asm1-aerobic-growth",
+    "citation": "IWA ASM1 kinetic rate expressions, from the published BSM1 specification (research dossier 7.2.15)",
+    "licence": "MIT (generator authored in this repository)",
+    "redistribution": "mirror",
+    "real_or_synthetic": "synthetic",
+    "defects_applied": []
+  },
+  "contract": {
+    "n_rows": 400,
+    "n_inputs": 3,
+    "input_keys": [
+      "Ss",
+      "So",
+      "Xbh"
+    ],
+    "target_key": "rate",
+    "distinct_target_values": 400,
+    "target_repeat_ratio": 1.0,
+    "constant_inputs": [],
+    "warnings": [],
+    "defects_applied": [],
+    "licence": "MIT (generator authored in this repository)",
+    "redistribution": "mirror",
+    "citation": "IWA ASM1 kinetic rate expressions, from the published BSM1 specification (research dossier 7.2.15)",
+    "n_train": 255,
+    "n_test": 85,
+    "n_extrapolation": 60
+  },
+  "units_declared": false,
+  "split_note": "extrapolation split holds out the lowest and highest 30 rows of 'Xbh', so the training region is an interior box and the extrapolation rows lie outside the support the search ever saw",
+  "variants": [
+    {
+      "id": "r1-koza-baseline",
+      "seconds": 1.599,
+      "evaluations": 12000,
+      "front_size": 21,
+      "selected_complexity": 16,
+      "test_r2": 0.4825765617,
+      "accuracy_solution": false,
+      "exact_recovery": false,
+      "symbolic_test_decided": true,
+      "irrelevant_features": 0
+    },
+    {
+      "id": "r2-linear-scaling",
+      "seconds": 2.232,
+      "evaluations": 12000,
+      "front_size": 18,
+      "selected_complexity": 13,
+      "test_r2": 0.4043370928,
+      "accuracy_solution": false,
+      "exact_recovery": false,
+      "symbolic_test_decided": true,
+      "irrelevant_features": 0
+    },
+    {
+      "id": "r3-constant-tuning",
+      "seconds": 2.316,
+      "evaluations": 12240,
+      "front_size": 24,
+      "selected_complexity": 13,
+      "test_r2": 0.4043370928,
+      "accuracy_solution": false,
+      "exact_recovery": false,
+      "symbolic_test_decided": true,
+      "irrelevant_features": 0
+    },
+    {
+      "id": "r4-multi-objective",
+      "seconds": 1.091,
+      "evaluations": 12240,
+      "front_size": 3,
+      "selected_complexity": 7,
+      "test_r2": 0.2690083,
+      "accuracy_solution": false,
+      "exact_recovery": false,
+      "symbolic_test_decided": true,
+      "irrelevant_features": 0
+    },
+    {
+      "id": "r5-epsilon-lexicase",
+      "seconds": 24.216,
+      "evaluations": 12240,
+      "front_size": 3,
+      "selected_complexity": 7,
+      "test_r2": 0.1821323522,
+      "accuracy_solution": false,
+      "exact_recovery": false,
+      "symbolic_test_decided": true,
+      "irrelevant_features": 0
+    },
+    {
+      "id": "r6-age-fitness-islands",
+      "seconds": 17.124,
+      "evaluations": 12960,
+      "front_size": 3,
+      "selected_complexity": 7,
+      "test_r2": 0.2690083,
+      "accuracy_solution": false,
+      "exact_recovery": false,
+      "symbolic_test_decided": true,
+      "irrelevant_features": 0
+    },
+    {
+      "id": "r7-deduplication",
+      "seconds": 108.47,
+      "evaluations": 12960,
+      "front_size": 3,
+      "selected_complexity": 7,
+      "test_r2": 0.2690083,
+      "accuracy_solution": false,
+      "exact_recovery": false,
+      "symbolic_test_decided": true,
+      "irrelevant_features": 0
+    },
+    {
+      "id": "sparse-regression",
+      "seconds": 0.002,
+      "evaluations": 0,
+      "front_size": 5,
+      "selected_complexity": 62,
+      "test_r2": 0.7441030855,
+      "accuracy_solution": false,
+      "exact_recovery": false,
+      "symbolic_test_decided": true,
+      "irrelevant_features": 0
+    }
+  ],
+  "summary": {
+    "n_variants": 8,
+    "accuracy_solutions": 0,
+    "accuracy_solution_rate": 0.0,
+    "exact_recoveries": 0,
+    "exact_recovery_rate": 0.0,
+    "mean_structural_distance": 0.7064,
+    "symbolic_test_failure_rate": 0.0,
+    "test_disagreement_count": 0,
+    "total_seconds": 157.05,
+    "total_evaluations": 86640,
+    "variants_with_irrelevant_features": 0
+  }
+}

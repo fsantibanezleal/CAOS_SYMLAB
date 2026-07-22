@@ -13,9 +13,9 @@ static replay (the browser never needs the GPU).
 **SymLab has no GPU step.** The search is a population of small expression trees evaluated against at most
 4000 rows, which is memory-bandwidth bound on arrays far too small to repay a device transfer. The costs that
 actually dominate are not arithmetic throughput: measured across the committed manifests, with each case's
-Koza baseline as 1, epsilon-lexicase selection costs a median of about 30 times the baseline wall clock and the
-deduplication rung about 150 times, while linear scaling and constant tuning stay under 2. Neither selection
-nor deduplication bookkeeping is work a GPU accelerates. `requirements-gpu.txt` is a commented placeholder for
+Koza baseline as 1, epsilon-lexicase selection costs a median of about 24 times the baseline wall clock and the
+deduplication rung about 122 times, while linear scaling, constant tuning and multi-objective survival all stay
+under 1.5. Neither selection nor deduplication bookkeeping is work a GPU accelerates. `requirements-gpu.txt` is a commented placeholder for
 that reason rather than by omission, and it says so in the file.
 
 If a future rung reaches for a differentiable or neural component (a transformer prior over expressions, for
