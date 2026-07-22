@@ -17,6 +17,7 @@ from __future__ import annotations
 
 import argparse
 import json
+import os
 import sys
 import time
 from dataclasses import replace
@@ -34,8 +35,17 @@ from .stages import preprocess as preprocess_stage
 from .stages import train as train_stage
 
 REPO_ROOT = Path(__file__).resolve().parents[2]
-DERIVED = REPO_ROOT / "data" / "derived"
-MANIFESTS = REPO_ROOT / "manifests"
+# The canonical output tree, overridable so a TEST can never write into it.
+#
+# `tests/test_contract_conformance.py` bakes a case to compare the real document against the
+# declared interfaces. Without this it wrote a reduced-budget run over the published artifact, so
+# running the suite silently replaced a committed full-budget result with a --quick one, and running
+# it DURING a bake produced a file that was half of each. That exact failure has cost this line a
+# release before: a pytest run clobbered a committed bake and two versions shipped it.
+_OUTPUT_OVERRIDE = os.environ.get("SYMLAB_OUTPUT_DIR")
+_OUTPUT_ROOT = Path(_OUTPUT_OVERRIDE) if _OUTPUT_OVERRIDE else REPO_ROOT
+DERIVED = _OUTPUT_ROOT / "data" / "derived"
+MANIFESTS = _OUTPUT_ROOT / "manifests"
 
 STAGES = ("preprocess", "feature_extraction", "train", "infer", "evaluate", "export")
 

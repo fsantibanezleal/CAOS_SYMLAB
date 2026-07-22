@@ -1,0 +1,170 @@
+{
+  "schema": "symlab.manifest/v1",
+  "case_id": "strogatz-barmag2",
+  "category": "P",
+  "engine": {
+    "package": "symlab",
+    "version": "0.04.000"
+  },
+  "seed": 0,
+  "artifact": {
+    "path": "strogatz-barmag2/run.json",
+    "format": "json",
+    "schema_version": "1.0.0",
+    "bytes": 740279
+  },
+  "lane": "precompute",
+  "data": {
+    "source_id": "pmlb-strogatz_barmag2",
+    "citation": "Romano, J. D. et al. PMLB v1.0: an open source dataset collection for benchmarking machine learning methods. arXiv:2012.00058. MIT licensed.",
+    "licence": "MIT (EpistasisLab/pmlb)",
+    "redistribution": "mirror",
+    "real_or_synthetic": "real",
+    "defects_applied": []
+  },
+  "contract": {
+    "n_rows": 400,
+    "n_inputs": 2,
+    "input_keys": [
+      "target",
+      "x"
+    ],
+    "target_key": "y",
+    "distinct_target_values": 400,
+    "target_repeat_ratio": 1.0,
+    "constant_inputs": [],
+    "warnings": [],
+    "defects_applied": [],
+    "licence": "MIT (EpistasisLab/pmlb)",
+    "redistribution": "mirror",
+    "citation": "Romano, J. D. et al. PMLB v1.0: an open source dataset collection for benchmarking machine learning methods. arXiv:2012.00058. MIT licensed.",
+    "n_train": 255,
+    "n_test": 85,
+    "n_extrapolation": 60
+  },
+  "units_declared": false,
+  "split_note": "extrapolation split holds out the lowest and highest 30 rows of 'target', so the training region is an interior box and the extrapolation rows lie outside the support the search ever saw",
+  "variants": [
+    {
+      "id": "r1-koza-baseline",
+      "seconds": 0.791,
+      "evaluations": 9000,
+      "front_size": 12,
+      "selected_complexity": 11,
+      "test_r2": 0.2367056352,
+      "accuracy_solution": false,
+      "exact_recovery": null,
+      "symbolic_test_decided": null,
+      "irrelevant_features": 0
+    },
+    {
+      "id": "r2-linear-scaling",
+      "seconds": 1.749,
+      "evaluations": 9000,
+      "front_size": 15,
+      "selected_complexity": 20,
+      "test_r2": 0.5078221319,
+      "accuracy_solution": false,
+      "exact_recovery": null,
+      "symbolic_test_decided": null,
+      "irrelevant_features": 0
+    },
+    {
+      "id": "r3-constant-tuning",
+      "seconds": 1.528,
+      "evaluations": 9180,
+      "front_size": 23,
+      "selected_complexity": 16,
+      "test_r2": 0.4554775636,
+      "accuracy_solution": false,
+      "exact_recovery": null,
+      "symbolic_test_decided": null,
+      "irrelevant_features": 0
+    },
+    {
+      "id": "r4-multi-objective",
+      "seconds": 1.023,
+      "evaluations": 9180,
+      "front_size": 5,
+      "selected_complexity": 5,
+      "test_r2": 0.08476381538,
+      "accuracy_solution": false,
+      "exact_recovery": null,
+      "symbolic_test_decided": null,
+      "irrelevant_features": 0
+    },
+    {
+      "id": "r5-epsilon-lexicase",
+      "seconds": 17.252,
+      "evaluations": 9180,
+      "front_size": 5,
+      "selected_complexity": 5,
+      "test_r2": 0.08476381538,
+      "accuracy_solution": false,
+      "exact_recovery": null,
+      "symbolic_test_decided": null,
+      "irrelevant_features": 0
+    },
+    {
+      "id": "r6-age-fitness-islands",
+      "seconds": 13.893,
+      "evaluations": 9720,
+      "front_size": 5,
+      "selected_complexity": 5,
+      "test_r2": 0.08476381538,
+      "accuracy_solution": false,
+      "exact_recovery": null,
+      "symbolic_test_decided": null,
+      "irrelevant_features": 0
+    },
+    {
+      "id": "r7-deduplication",
+      "seconds": 82.301,
+      "evaluations": 9720,
+      "front_size": 5,
+      "selected_complexity": 5,
+      "test_r2": 0.08476381538,
+      "accuracy_solution": false,
+      "exact_recovery": null,
+      "symbolic_test_decided": null,
+      "irrelevant_features": 0
+    },
+    {
+      "id": "parsimony-arm",
+      "seconds": 1.273,
+      "evaluations": 9180,
+      "front_size": 25,
+      "selected_complexity": 29,
+      "test_r2": 0.4835931703,
+      "accuracy_solution": false,
+      "exact_recovery": null,
+      "symbolic_test_decided": null,
+      "irrelevant_features": 0
+    },
+    {
+      "id": "sparse-regression",
+      "seconds": 0.001,
+      "evaluations": 0,
+      "front_size": 1,
+      "selected_complexity": 34,
+      "test_r2": 0.2697283181,
+      "accuracy_solution": false,
+      "exact_recovery": null,
+      "symbolic_test_decided": null,
+      "irrelevant_features": 0
+    }
+  ],
+  "summary": {
+    "n_variants": 9,
+    "accuracy_solutions": 0,
+    "accuracy_solution_rate": 0.0,
+    "exact_recoveries": 0,
+    "exact_recovery_rate": null,
+    "mean_structural_distance": null,
+    "symbolic_test_failure_rate": null,
+    "test_disagreement_count": 0,
+    "total_seconds": 119.81,
+    "total_evaluations": 74160,
+    "variants_with_irrelevant_features": 0
+  }
+}

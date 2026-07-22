@@ -34,7 +34,7 @@
       "real_or_synthetic": "synthetic",
       "manifest_path": "manifests/monod-saturation.json",
       "artifact_path": "monod-saturation/run.json",
-      "bytes": 220406,
+      "bytes": 192982,
       "n_variants": 3,
       "summary": {
         "n_variants": 3,
@@ -42,10 +42,10 @@
         "accuracy_solution_rate": 0.0,
         "exact_recoveries": 0,
         "exact_recovery_rate": 0.0,
-        "mean_structural_distance": 0.7579,
+        "mean_structural_distance": 0.7698,
         "symbolic_test_failure_rate": 0.0,
         "test_disagreement_count": 0,
-        "total_seconds": 0.15,
+        "total_seconds": 0.13,
         "total_evaluations": 1500,
         "variants_with_irrelevant_features": 0
       }

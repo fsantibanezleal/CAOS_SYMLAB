@@ -11,7 +11,7 @@
     "path": "monod-saturation/run.json",
     "format": "json",
     "schema_version": "1.0.0",
-    "bytes": 220406
+    "bytes": 192982
   },
   "lane": "precompute",
   "data": {
@@ -48,11 +48,11 @@
   "variants": [
     {
       "id": "r1-koza-baseline",
-      "seconds": 0.043,
+      "seconds": 0.046,
       "evaluations": 480,
-      "front_size": 7,
-      "selected_complexity": 16,
-      "test_r2": 0.4190366744,
+      "front_size": 5,
+      "selected_complexity": 14,
+      "test_r2": 0.2392631506,
       "accuracy_solution": false,
       "exact_recovery": false,
       "symbolic_test_decided": true,
@@ -60,11 +60,11 @@
     },
     {
       "id": "r2-linear-scaling",
-      "seconds": 0.033,
+      "seconds": 0.036,
       "evaluations": 480,
-      "front_size": 5,
+      "front_size": 4,
       "selected_complexity": 9,
-      "test_r2": 0.4221193445,
+      "test_r2": 0.45319868,
       "accuracy_solution": false,
       "exact_recovery": false,
       "symbolic_test_decided": true,
@@ -72,11 +72,11 @@
     },
     {
       "id": "r3-constant-tuning",
-      "seconds": 0.078,
+      "seconds": 0.048,
       "evaluations": 540,
-      "front_size": 6,
+      "front_size": 1,
       "selected_complexity": 5,
-      "test_r2": 0.3917046605,
+      "test_r2": 0.3416152606,
       "accuracy_solution": false,
       "exact_recovery": false,
       "symbolic_test_decided": true,
@@ -89,10 +89,10 @@
     "accuracy_solution_rate": 0.0,
     "exact_recoveries": 0,
     "exact_recovery_rate": 0.0,
-    "mean_structural_distance": 0.7579,
+    "mean_structural_distance": 0.7698,
     "symbolic_test_failure_rate": 0.0,
     "test_disagreement_count": 0,
-    "total_seconds": 0.15,
+    "total_seconds": 0.13,
     "total_evaluations": 1500,
     "variants_with_irrelevant_features": 0
   }

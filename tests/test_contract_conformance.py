@@ -19,16 +19,21 @@ read by the case navigator through the index, and was never declared on `CaseNot
 from __future__ import annotations
 
 import json
+import os
 import re
 import subprocess
 import sys
+import tempfile
 from pathlib import Path
 
 import pytest
 
 ROOT = Path(__file__).resolve().parents[1]
 TYPES = ROOT / "frontend" / "src" / "lib" / "contract.types.ts"
-ARTIFACT = ROOT / "data" / "derived" / "monod-saturation" / "run.json"
+#: Where the reference bake is written. NEVER the canonical tree: a test that regenerates an
+#: artifact into `data/derived/` replaces a committed full-budget run with a reduced-budget one, and
+#: doing it while a bake is in flight produces a file that is half of each.
+SANDBOX = Path(tempfile.gettempdir()) / "symlab-contract-conformance"
 
 #: interface name -> how to reach the matching object inside the run document.
 CHECKS = {
@@ -67,17 +72,22 @@ def _declared_fields(source: str, interface: str) -> dict[str, bool]:
 def document() -> dict:
     """A freshly baked artifact, so the test describes the CURRENT exporter.
 
-    Reduced budget: this checks the shape of the document, not the quality of the search.
+    Reduced budget, because this checks the SHAPE of the document rather than the quality of the
+    search, and written into a sandbox so the committed artifacts are untouched.
     """
+    SANDBOX.mkdir(parents=True, exist_ok=True)
+    environment = dict(os.environ, SYMLAB_OUTPUT_DIR=str(SANDBOX))
     result = subprocess.run(
         [sys.executable, "-m", "symlab.pipeline", "monod-saturation", "--quick"],
         cwd=ROOT,
         capture_output=True,
         text=True,
+        env=environment,
     )
-    if result.returncode != 0 or not ARTIFACT.exists():
+    artifact = SANDBOX / "data" / "derived" / "monod-saturation" / "run.json"
+    if result.returncode != 0 or not artifact.exists():
         pytest.skip(f"could not bake a reference artifact: {result.stderr[-300:]}")
-    return json.loads(ARTIFACT.read_text(encoding="utf-8"))
+    return json.loads(artifact.read_text(encoding="utf-8"))
 
 
 @pytest.mark.parametrize("interface", sorted(CHECKS))
