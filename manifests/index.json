@@ -24,23 +24,23 @@
   },
   "cases": [
     {
-      "case_id": "wwtp-removal-identity",
-      "category": "I",
-      "manifest_path": "manifests/wwtp-removal-identity.json",
-      "artifact_path": "wwtp-removal-identity/run.json",
-      "bytes": 249133,
-      "n_variants": 5,
+      "case_id": "heat-exchanger-ntu",
+      "category": "S",
+      "manifest_path": "manifests/heat-exchanger-ntu.json",
+      "artifact_path": "heat-exchanger-ntu/run.json",
+      "bytes": 360596,
+      "n_variants": 7,
       "summary": {
-        "n_variants": 5,
-        "accuracy_solutions": 4,
-        "accuracy_solution_rate": 0.8,
+        "n_variants": 7,
+        "accuracy_solutions": 0,
+        "accuracy_solution_rate": 0.0,
         "exact_recoveries": 0,
         "exact_recovery_rate": null,
         "mean_structural_distance": null,
         "symbolic_test_failure_rate": null,
         "test_disagreement_count": 0,
-        "total_seconds": 146.24,
-        "total_evaluations": 25900,
+        "total_seconds": 773.3,
+        "total_evaluations": 86640,
         "variants_with_irrelevant_features": 0
       }
     }

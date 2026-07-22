@@ -164,7 +164,13 @@ def infer_dims(node: Node, input_dims: list[Dims], *, const_dims: Dims | None = 
             return UnitCheck(True, first)
 
         if rule in ("add", "sub"):
+            # The "sub" rule is shared by the binary quotient and by the UNARY reciprocal, so the
+            # arity has to be respected here. Indexing the second child unconditionally raised an
+            # IndexError on `inv`, which surfaced on the pump-affinity case where reciprocals are
+            # exactly what the physics calls for. A reciprocal negates the exponents.
             left = values[0] if values[0] is not None else DIMENSIONLESS
+            if spec.arity == 1:
+                return UnitCheck(True, sub(DIMENSIONLESS, left))
             right = values[1] if values[1] is not None else DIMENSIONLESS
             return UnitCheck(True, add(left, right) if rule == "add" else sub(left, right))
 

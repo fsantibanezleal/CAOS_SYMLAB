@@ -1,0 +1,147 @@
+{
+  "schema": "symlab.manifest/v1",
+  "case_id": "monod-saturation",
+  "category": "B",
+  "engine": {
+    "package": "symlab",
+    "version": "0.01.000"
+  },
+  "seed": 0,
+  "artifact": {
+    "path": "monod-saturation/run.json",
+    "format": "json",
+    "schema_version": "1.0.0",
+    "bytes": 511575
+  },
+  "lane": "precompute",
+  "data": {
+    "source_id": "monod-saturation",
+    "citation": "Michaelis-Menten kinetics, verified reference transcription (research dossier 7.2.1)",
+    "licence": "MIT (generator authored in this repository)",
+    "redistribution": "mirror",
+    "real_or_synthetic": "synthetic",
+    "defects_applied": []
+  },
+  "contract": {
+    "n_rows": 400,
+    "n_inputs": 3,
+    "input_keys": [
+      "a",
+      "Vmax",
+      "Km"
+    ],
+    "target_key": "v",
+    "distinct_target_values": 400,
+    "target_repeat_ratio": 1.0,
+    "constant_inputs": [],
+    "warnings": [],
+    "defects_applied": [],
+    "licence": "MIT (generator authored in this repository)",
+    "redistribution": "mirror",
+    "citation": "Michaelis-Menten kinetics, verified reference transcription (research dossier 7.2.1)",
+    "n_train": 255,
+    "n_test": 85,
+    "n_extrapolation": 60
+  },
+  "units_declared": 0,
+  "split_note": "extrapolation split holds out the lowest and highest 30 rows of 'a', so the training region is an interior box and the extrapolation rows lie outside the support the search ever saw",
+  "variants": [
+    {
+      "id": "r1-koza-baseline",
+      "seconds": 3.441,
+      "evaluations": 12000,
+      "front_size": 18,
+      "selected_complexity": 29,
+      "test_r2": 0.92359305,
+      "accuracy_solution": 0,
+      "exact_recovery": null,
+      "symbolic_test_decided": null,
+      "irrelevant_features": 0
+    },
+    {
+      "id": "r2-linear-scaling",
+      "seconds": 4.014,
+      "evaluations": 12000,
+      "front_size": 13,
+      "selected_complexity": 19,
+      "test_r2": 0.47945584,
+      "accuracy_solution": 0,
+      "exact_recovery": null,
+      "symbolic_test_decided": null,
+      "irrelevant_features": 0
+    },
+    {
+      "id": "r3-constant-tuning",
+      "seconds": 4.527,
+      "evaluations": 12240,
+      "front_size": 14,
+      "selected_complexity": 17,
+      "test_r2": 0.46426573,
+      "accuracy_solution": 0,
+      "exact_recovery": null,
+      "symbolic_test_decided": null,
+      "irrelevant_features": 0
+    },
+    {
+      "id": "r4-multi-objective",
+      "seconds": 3.442,
+      "evaluations": 12240,
+      "front_size": 3,
+      "selected_complexity": 5,
+      "test_r2": 0.30888254,
+      "accuracy_solution": 0,
+      "exact_recovery": null,
+      "symbolic_test_decided": null,
+      "irrelevant_features": 0
+    },
+    {
+      "id": "r5-epsilon-lexicase",
+      "seconds": 80.591,
+      "evaluations": 12240,
+      "front_size": 3,
+      "selected_complexity": 5,
+      "test_r2": 0.30888254,
+      "accuracy_solution": 0,
+      "exact_recovery": null,
+      "symbolic_test_decided": null,
+      "irrelevant_features": 0
+    },
+    {
+      "id": "r6-age-fitness-islands",
+      "seconds": 52.071,
+      "evaluations": 12960,
+      "front_size": 3,
+      "selected_complexity": 5,
+      "test_r2": 0.30888254,
+      "accuracy_solution": 0,
+      "exact_recovery": null,
+      "symbolic_test_decided": null,
+      "irrelevant_features": 0
+    },
+    {
+      "id": "r7-deduplication",
+      "seconds": 402.016,
+      "evaluations": 12960,
+      "front_size": 2,
+      "selected_complexity": 5,
+      "test_r2": 0.30888254,
+      "accuracy_solution": 0,
+      "exact_recovery": null,
+      "symbolic_test_decided": null,
+      "irrelevant_features": 0
+    }
+  ],
+  "summary": {
+    "n_variants": 7,
+    "accuracy_solutions": 0,
+    "accuracy_solution_rate": 0.0,
+    "exact_recoveries": 0,
+    "exact_recovery_rate": null,
+    "mean_structural_distance": null,
+    "symbolic_test_failure_rate": null,
+    "test_disagreement_count": 0,
+    "total_seconds": 550.1,
+    "total_evaluations": 86640,
+    "variants_with_irrelevant_features": 0
+  }
+}

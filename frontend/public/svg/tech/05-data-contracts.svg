@@ -1,94 +1,54 @@
-<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 900 470" width="900" class="arch-svg" role="img" aria-label="The design: two data contracts and the lane gate">
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 900 450" width="900" class="arch-svg" role="img" aria-label="The two data contracts: ingestion and artifact">
   <style>
     .arch-svg text { font-family: var(--font-sans, Inter, "Segoe UI", system-ui, sans-serif); }
-    .arch-svg .mono { font-family: var(--font-mono, ui-monospace, Consolas, monospace); }
+    .arch-svg .mono { font-family: var(--font-mono, ui-monospace, Consolas, monospace); font-size: 10px; }
     .arch-svg .bx { fill: var(--color-surface-2); stroke: var(--color-border); stroke-width: 1.2; }
-    .arch-svg .bx-in { stroke: var(--color-accent); }
-    .arch-svg .bx-out { stroke: var(--color-good); }
-    .arch-svg .bx-gate { stroke: var(--color-warn); }
-    .arch-svg .grp { fill: none; stroke: var(--color-border); stroke-dasharray: 5 4; }
+    .arch-svg .bx-hi { stroke: var(--color-accent); stroke-width: 1.8; }
+    .arch-svg .bx-warn { stroke: var(--color-warn, #c2415f); stroke-width: 1.6; stroke-dasharray: 5 3; }
     .arch-svg .ttl { fill: var(--color-fg); font-size: 13px; font-weight: 700; }
     .arch-svg .sub { fill: var(--color-fg-subtle); font-size: 10px; }
-    .arch-svg .it { fill: var(--color-fg); font-size: 10.5px; }
-    .arch-svg .cd { fill: var(--color-accent); font-size: 9.5px; }
-    .arch-svg .key { fill: var(--color-good); font-size: 9.5px; }
-    .arch-svg .mu { fill: var(--color-fg-subtle); font-size: 10px; }
-    .arch-svg .flow { fill: none; stroke: var(--color-fg-faint); stroke-width: 1.5; }
-    .arch-svg .lbl { fill: var(--color-fg-subtle); font-size: 9.5px; }
+    .arch-svg .hd { fill: var(--color-fg); font-size: 15px; font-weight: 700; }
+    .arch-svg .lane { fill: var(--color-fg-subtle); font-size: 11px; font-weight: 700; letter-spacing: 0.08em; }
+    .arch-svg .ln-hi { stroke: var(--color-accent); stroke-width: 1.8; fill: none; }
+    .arch-svg .dot { fill: var(--color-accent); }
   </style>
-  <defs>
-    <marker id="dc-arrow" viewBox="0 0 8 8" refX="7" refY="4" markerWidth="7" markerHeight="7" orient="auto-start-reverse">
-      <path d="M0,0 L8,4 L0,8 z" fill="var(--color-fg-faint)"/>
-    </marker>
-  </defs>
 
-  <text class="ttl" x="22" y="30">The design, two data contracts + the lane gate</text>
-  <text class="sub" x="22" y="47">a contract is a validated schema; everything in and out of the pipeline passes one, so the app is bring-your-own-data</text>
+  <text class="hd" x="24" y="28">The two data contracts</text>
+  <text class="sub" x="24" y="48">One at the way in, one at the way out. Both are enforced, and a violation fails loudly rather than propagating quietly.</text>
 
-  <!-- Contract 1: ingestion -->
-  <rect class="bx bx-in" x="14" y="68" width="252" height="220" rx="11"/>
-  <text class="it" x="30" y="92" style="font-weight:700">Contract 1 · Ingestion</text>
-  <text class="cd mono" x="30" y="108">io/schema.py · io/contract.py</text>
-  <text class="mu" x="30" y="128">what a valid INPUT case looks like:</text>
-  <rect class="bx" x="30" y="138" width="220" height="40" rx="6"/>
-  <text class="it" x="42" y="156">field names + dtypes + units</text>
-  <text class="mu" x="42" y="170">domain quantities, not pixels</text>
-  <rect class="bx" x="30" y="184" width="220" height="40" rx="6"/>
-  <text class="it" x="42" y="202">range / NaN / outlier guards</text>
-  <text class="mu" x="42" y="216">rejects malformed cases early</text>
-  <rect class="bx" x="30" y="230" width="220" height="44" rx="6"/>
-  <text class="it" x="42" y="248">accepts built-in OR your data</text>
-  <text class="key mono" x="42" y="264">data/examples/*.csv</text>
+  <text class="lane" x="24" y="82">CONTRACT 1, INGESTION</text>
+  <rect class="bx bx-hi" x="24" y="94" width="852" height="130" rx="8"/>
+  <text class="ttl" x="40" y="118">raw bytes to a validated table</text>
+  <text class="sub" x="40" y="138">Required schema, units, ranges, and an EXPLICIT outlier and missing-value policy. Bad data is rejected, never silently coerced.</text>
+  <text class="sub" x="40" y="154">Fatal violations raise. Warnings are recorded in the manifest, so a reader sees what the pipeline noticed and chose to allow.</text>
 
-  <!-- Pipeline + gate -->
-  <rect class="bx bx-gate" x="324" y="68" width="252" height="220" rx="11"/>
-  <text class="it" x="340" y="92" style="font-weight:700">Pipeline + lane gate</text>
-  <text class="cd mono" x="340" y="108">core/gate.py · pipeline.py</text>
-  <rect class="bx" x="340" y="124" width="220" height="42" rx="6"/>
-  <text class="it" x="352" y="142">staged, deterministic</text>
-  <text class="cd mono" x="352" y="158">stages/*.py · core/trace.py</text>
-  <rect class="bx" x="340" y="172" width="220" height="42" rx="6"/>
-  <text class="it" x="352" y="190">lane gate: default vs retrain</text>
-  <text class="mu" x="352" y="206">numpy-light unless --retrain</text>
-  <rect class="bx" x="340" y="220" width="220" height="54" rx="6"/>
-  <text class="it" x="352" y="238">manifest = provenance</text>
-  <text class="cd mono" x="352" y="254">core/manifest.py</text>
-  <text class="mu" x="352" y="268">seeds, inputs, hashes, reproducible</text>
+  <rect class="bx bx-warn" x="40" y="166" width="404" height="46" rx="6"/>
+  <text class="sub" x="54" y="186">Generic target-broadcast detector: if the target takes far fewer</text>
+  <text class="sub" x="54" y="202">distinct values than there are rows, fitting at that resolution leaks it.</text>
 
-  <!-- Contract 2: artifact -->
-  <rect class="bx bx-out" x="634" y="68" width="252" height="220" rx="11"/>
-  <text class="it" x="650" y="92" style="font-weight:700">Contract 2 · Artifact</text>
-  <text class="cd mono" x="650" y="108">data/derived/ · manifests</text>
-  <text class="mu" x="650" y="128">what a valid OUTPUT looks like:</text>
-  <rect class="bx" x="650" y="138" width="220" height="40" rx="6"/>
-  <text class="it" x="662" y="156">per-case results + metrics</text>
-  <text class="key mono" x="662" y="170">case-results.json</text>
-  <rect class="bx" x="650" y="184" width="220" height="40" rx="6"/>
-  <text class="it" x="662" y="202">model index (onnx + meta)</text>
-  <text class="key mono" x="662" y="216">manifests/index.json</text>
-  <rect class="bx" x="650" y="230" width="220" height="44" rx="6"/>
-  <text class="it" x="662" y="248">the SAME shape the web reads</text>
-  <text class="key mono" x="662" y="264">contract.types.ts (mirror)</text>
+  <rect class="bx bx-warn" x="456" y="166" width="404" height="46" rx="6"/>
+  <text class="sub" x="470" y="186">Real defects carried verbatim: one source states no missing values</text>
+  <text class="sub" x="470" y="202">and ships 591; one recorded URL served an entirely different dataset.</text>
 
-  <path class="flow" d="M266,178 H322" marker-end="url(#dc-arrow)"/>
-  <path class="flow" d="M576,178 H632" marker-end="url(#dc-arrow)"/>
-  <text class="lbl" x="272" y="170">validate</text>
-  <text class="lbl" x="582" y="170">emit + validate</text>
+  <path class="ln-hi" d="M450 224 V262"/><polygon class="dot" points="446,262 450,272 454,262"/>
 
-  <!-- cases by category + mirror -->
-  <rect class="grp" x="14" y="312" width="430" height="142" rx="10"/>
-  <text class="it" x="30" y="334" style="font-weight:700">Cases by category</text>
-  <text class="cd mono" x="30" y="350">cases/&lt;domain&gt;_cases.py · registry.py</text>
-  <text class="mu" x="30" y="372">• control / degenerate, sanity anchors</text>
-  <text class="mu" x="30" y="392">• canonical regimes, the science range</text>
-  <text class="mu" x="30" y="412">• real-data, sourced, labelled honestly</text>
-  <text class="mu" x="30" y="438">each case carries its own units + provenance</text>
+  <text class="lane" x="24" y="296">CONTRACT 2, ARTIFACT</text>
+  <rect class="bx bx-hi" x="24" y="308" width="852" height="130" rx="8"/>
+  <text class="ttl" x="40" y="332">pipeline to web, frozen at schema_version 1.0.0</text>
+  <text class="sub" x="40" y="350">A TypeScript type mirrors this schema, so a drift between what Python writes and what the app expects fails the BUILD.</text>
 
-  <rect class="grp" x="460" y="312" width="426" height="142" rx="10"/>
-  <text class="it" x="476" y="334" style="font-weight:700">The mirror that gates the build</text>
-  <text class="mu" x="476" y="356">the TS type mirrors Contract 2 exactly;</text>
-  <text class="mu" x="476" y="374">if the pipeline changes the artifact shape</text>
-  <text class="mu" x="476" y="392">and the mirror is not updated, tsc fails.</text>
-  <text class="cd mono" x="476" y="414">frontend/src/lib/contract.types.ts</text>
-  <text class="mu" x="476" y="438">→ web and pipeline can never silently drift</text>
+  <rect class="bx" x="40" y="362" width="264" height="64" rx="6"/>
+  <text class="sub" x="54" y="382">Every float rounded before it ships.</text>
+  <text class="sub" x="54" y="400">Node ids are ONE integer space, shared by</text>
+  <text class="sub" x="54" y="416">the equation, the tree and the terms.</text>
+
+  <rect class="bx" x="318" y="362" width="264" height="64" rx="6"/>
+  <text class="sub" x="332" y="382">Colour index assigned in Python, so the</text>
+  <text class="sub" x="332" y="400">equation, tree and contribution palettes</text>
+  <text class="sub" x="332" y="416">cannot drift apart.</text>
+
+  <rect class="bx" x="596" y="362" width="264" height="64" rx="6"/>
+  <text class="sub" x="610" y="382">Every downsample discloses its original</text>
+  <text class="sub" x="610" y="400">count. Showing part of the data is fine;</text>
+  <text class="sub" x="610" y="416">not saying so is not.</text>
 </svg>

@@ -437,3 +437,22 @@ def test_infix_is_readable(sample_expression: Node) -> None:
     text = to_infix(sample_expression, ["a", "b", "c"])
     assert "sin" in text and "a" in text
     assert math.isfinite(2.31)
+
+
+def test_reciprocal_unit_rule_respects_arity() -> None:
+    """The `sub` unit rule is shared by the binary quotient and the UNARY reciprocal.
+
+    Indexing the second child unconditionally raised an IndexError on `inv`, which surfaced on the
+    pump-affinity case where reciprocals are exactly what the physics calls for. A reciprocal
+    negates the exponents.
+    """
+    verdict = units.infer_dims(Node.call("inv", Node.var(0)), [units.dims(s=1)])
+    assert verdict.ok
+    assert verdict.dims == units.dims(s=-1)
+
+
+def test_reciprocal_of_a_frequency_is_a_time() -> None:
+    verdict = units.check(
+        Node.call("inv", Node.var(0)), [units.COMMON["frequency"]], units.COMMON["time"]
+    )
+    assert verdict.ok
