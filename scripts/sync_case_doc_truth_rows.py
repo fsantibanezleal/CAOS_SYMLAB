@@ -53,6 +53,20 @@ def truth_state(case_id: str) -> tuple[bool, str, str]:
             f"{blocked} cannot be written in this operator set",
         )
 
+    # A measured case can still carry an EXACT identity, where the recorded quantity is defined as a
+    # combination of other recorded columns. `truth_state` did not consult that table, so the
+    # wastewater case was generated as "NO" and "unknown" while `preprocess` was actually scoring it.
+    # The page then contradicted the artifact beside it.
+    from symlab.cases.physics_truths import IDEALISED_NOT_RECOVERABLE, MEASURED_TRUTHS
+
+    if case.loader in MEASURED_TRUTHS:
+        _builder, tolerance, reason = MEASURED_TRUTHS[case.loader]
+        return True, "structure+constants", (
+            f"an exact identity over measured rows, verified to {tolerance:.0e} relative. {reason}"
+        )
+    if case.loader in IDEALISED_NOT_RECOVERABLE:
+        return False, "unknown", IDEALISED_NOT_RECOVERABLE[case.loader]
+
     return False, "unknown", "loaded from a file; no in-repo expression to compare against"
 
 

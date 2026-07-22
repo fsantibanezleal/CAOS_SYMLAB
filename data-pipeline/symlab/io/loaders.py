@@ -90,15 +90,31 @@ def _read_zip_member(source: Source, suffixes: tuple[str, ...]) -> bytes:
 
 
 def load_pmlb(dataset: str) -> LoadedDataset:
-    """Load one PMLB dataset. The last column is the target, by PMLB convention."""
+    """Load one PMLB dataset, taking the column NAMED `target` wherever it sits.
+
+    The convention is usually last-column, and every Feynman file in this collection follows it. The
+    Strogatz files do not: they are headed `target, x, y`, with the derivative FIRST. Assuming the
+    last column meant the pipeline fitted `y` from `[dx/dt, x]`, predicting a state variable from
+    the derivative, which is the inverse of the question those cases claim to ask, and all seven
+    baked Strogatz artifacts measured it.
+
+    Checked against the published right-hand side for `bacres1`,
+    dx/dt = 20 - x - x*y/(1 + 0.5*x^2): the first column reproduces it to 4.9e-14 and the last
+    column misses by 55.2.
+
+    So the name decides, and position is only the fallback for a file that does not carry one.
+    """
     source = SOURCES[f"pmlb-{dataset}"]
     with gzip.open(source.path, "rt", encoding="utf-8") as handle:
         header = handle.readline().rstrip("\n").split("\t")
         rows = np.loadtxt(handle, delimiter="\t")
     if rows.ndim == 1:
         rows = rows.reshape(1, -1)
-    X, y = rows[:, :-1], rows[:, -1]
-    keys = header[:-1]
+
+    target_index = header.index("target") if "target" in header else len(header) - 1
+    input_indices = [i for i in range(len(header)) if i != target_index]
+    X, y = rows[:, input_indices], rows[:, target_index]
+    keys = [header[i] for i in input_indices]
     return LoadedDataset(
         id=f"pmlb-{dataset}",
         name=source.name,
@@ -107,8 +123,8 @@ def load_pmlb(dataset: str) -> LoadedDataset:
         input_display=list(keys),
         input_units=["1"] * len(keys),
         input_dims=[DIMENSIONLESS] * len(keys),
-        target_key=header[-1],
-        target_display=header[-1],
+        target_key=header[target_index],
+        target_display=header[target_index],
         target_unit="1",
         source_id=source.id,
         citation=source.citation,

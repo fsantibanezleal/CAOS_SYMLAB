@@ -20,7 +20,7 @@ screen; the human name does.
 | M | Mining and metallurgy | The domain the research found to be the field's clearest gap | 5 |
 | B | Biology and ecology | Published models with fitted parameters to compare against | 3 |
 | E | Environment and energy | Physical bounds a discovered form can visibly violate | 2 |
-| S | Synthetic generators | First-principles, exactly scoreable, four with a real twin | 6 |
+| S | Synthetic generators | First-principles, exactly scoreable, cross-domain | 6 |
 
 Category is a property of the CASE, not of the generator behind it. Several first-principles
 generators are filed under the domain they belong to rather than under S: the Monod hyperbola is a
@@ -33,10 +33,10 @@ cross-domain generators that do not belong to any single track.
 |---|---|
 | cases in the registry | 25 |
 | declaring a known ground truth | 20 |
-| carrying a machine-comparable `truth_node` | 16 |
+| carrying a machine-comparable `truth_node` | 17 |
 | regime `structure` | 8 |
-| regime `structure+constants` | 9 |
-| regime `unknown` (loaded from a file) | 8 |
+| regime `structure+constants` | 10 |
+| regime `unknown` (loaded from a file) | 7 |
 | search configurations across all cases | 218 |
 | configurations per case, min to max | 5 to 9 |
 
@@ -73,34 +73,45 @@ is the `truth_node` column of point 2 above.
 
 | # | Case | Cat | Real or synthetic | Published law | Machine-comparable | Regime | Source | Licence |
 |---|---|---|---|---|---|---|---|---|
-| [01](cases/01_feynman-suite.md) | Feynman equations | P | synthetic | yes, 18 published laws | no | unknown | PMLB `feynman_*` | MIT |
+| [01](cases/01_feynman-suite.md) | Feynman equations | P | synthetic | yes, 18 published laws | yes, 17 of 18 | structure | PMLB `feynman_*` | MIT |
 | [02](cases/02_strogatz-dynamics.md) | Strogatz systems | P | synthetic | yes, 14 ODE right-hand sides | no | unknown | PMLB `strogatz_*` | MIT |
 | [03](cases/03_nikuradse-friction.md) | Nikuradse friction | P | real | no closed form fits these points | no | unknown | PMLB `nikuradse_1` | MIT |
 | [04](cases/04_ccpp-derating.md) | Combined cycle derating | I | real | no, physical anchor only | no | unknown | UCI 294 | CC BY 4.0 |
 | [05](cases/05_concrete-abrams.md) | Concrete strength | I | real | Abrams, empirical, not exact here | no | unknown | UCI 165 | CC BY 4.0 |
-| [06](cases/06_wwtp-removal-identity.md) | Removal identity | I | real | yes, exact by column definition | no | unknown | UCI 106 | CC BY 4.0 |
+| [06](cases/06_wwtp-removal-identity.md) | Removal identity | I | real | yes, exact by column definition | yes, via `MEASURED_TRUTHS` (see the note below) | `structure+constants` at bake time | UCI 106 | CC BY 4.0 |
 | [07](cases/07_gasturbine-nox.md) | Gas turbine NOx | I | real | no, Zeldovich family only | no | unknown | UCI 551 | CC BY 4.0 |
-| [08](cases/08_antoine-vapour-pressure.md) | Antoine vapour pressure | I | synthetic | yes | no | structure+constants | generator | MIT |
-| [09](cases/09_cstr-conversion.md) | CSTR conversion | I | synthetic | yes | no | structure+constants | generator | MIT |
+| [08](cases/08_antoine-vapour-pressure.md) | Antoine vapour pressure | I | synthetic | yes | yes | structure+constants | generator | MIT |
+| [09](cases/09_cstr-conversion.md) | CSTR conversion | I | synthetic | yes | yes | structure+constants | generator | MIT |
 | [10](cases/10_flotation-silica.md) | Flotation soft sensor | M | real | no | no | unknown | OpenML 43311 | CC0 1.0 |
 | [11](cases/11_ore-mineralogy-closure.md) | Ore mineralogy closure | M | real | yes, stoichiometric reference line | no | unknown | OpenML 43311 | CC0 1.0 |
 | [12](cases/12_comminution-bond.md) | Comminution energy | M | synthetic | yes, three rival laws | yes | structure | generator | MIT |
 | [13](cases/13_flotation-kinetics.md) | Flotation kinetics | M | synthetic | yes | yes | structure | generator | MIT |
 | [14](cases/14_two-product-recovery.md) | Two-product balance | M | synthetic | yes | yes | structure | generator | MIT |
 | [15](cases/15_monod-saturation.md) | Michaelis-Menten, Monod | B | synthetic | yes | yes | structure | generator | MIT |
-| [16](cases/16_theta-logistic-growth.md) | Theta-logistic growth | B | synthetic | yes | no | structure | generator | MIT |
+| [16](cases/16_theta-logistic-growth.md) | Theta-logistic growth | B | synthetic | yes | yes | structure | generator | MIT |
 | [17](cases/17_lotka-volterra-rhs.md) | Lotka-Volterra prey RHS | B | synthetic | yes | yes | structure+constants | generator | MIT |
 | [18](cases/18_asm1-aerobic-growth.md) | ASM1 aerobic growth | E | synthetic | yes | yes | structure+constants | generator | MIT |
 | [19](cases/19_wind-power-curve.md) | Wind power curve | E | synthetic | yes, piecewise | no | structure+constants | generator | MIT |
-| [20](cases/20_friction-factor.md) | Pipe friction factor | S | synthetic | yes | no | structure+constants | generator | MIT |
+| [20](cases/20_friction-factor.md) | Pipe friction factor | S | synthetic | yes | yes | structure+constants | generator | MIT |
 | [21](cases/21_heat-exchanger-ntu.md) | Effectiveness-NTU | S | synthetic | yes | yes | structure+constants | generator | MIT |
-| [22](cases/22_nusselt-gnielinski.md) | Gnielinski Nusselt | S | synthetic | yes, deliberately unfittable | no | structure+constants | generator | MIT |
+| [22](cases/22_nusselt-gnielinski.md) | Gnielinski Nusselt | S | synthetic | yes, deliberately unfittable by a power law | yes | structure+constants | generator | MIT |
 | [23](cases/23_pump-affinity-power.md) | Pump affinity power | S | synthetic | yes | yes | structure | generator | MIT |
 | [24](cases/24_stokes-settling.md) | Stokes settling | S | synthetic | yes | yes | structure+constants | generator | MIT |
 | [25](cases/25_arrhenius-rate.md) | Arrhenius rate | S | synthetic | yes | yes | structure | generator | MIT |
 
 Totals computed by `coverage_summary()` rather than typed here: 25 cases, 6 categories, 20 with a
 known ground truth, 7 real, 18 synthetic.
+
+**The generated block above counts 16 machine-comparable cases; this matrix marks 17.** The two
+numbers are computed by different code and both are stated rather than one being adjusted to match
+the other. The block is produced by `truth_state()` in `scripts/sync_case_doc_truth_rows.py`, which
+resolves a truth for generator cases and for the expanded Feynman problems only. The pipeline's
+`preprocess.run` has a third branch: a measured case whose loader appears in
+[`MEASURED_TRUTHS`](../data-pipeline/symlab/cases/physics_truths.py) is bound to an exact identity
+and scored against it, with the regime recorded as `structure+constants`. Case 06 is the only case
+in that branch today, so `truth_state()` reports it as not comparable while the baked artifact
+carries `ground_truth_available: true`. The gap is in the documentation generator, not in the
+pipeline, and it is recorded here rather than papered over.
 
 ## Redistribution, which is a separate question from licence
 
@@ -112,7 +123,7 @@ records the licence and the redistribution verdict as two independent fields
 |---|---|---|
 | `mirror` | Permissive: a compact sample may be committed with attribution | PMLB (MIT), the four UCI sets (CC BY 4.0), OpenML 43311 (CC0), every in-repo generator (MIT) |
 | `derived` | Only derived metrics and artifacts may be published | GeoMet (CC BY 4.0), the geometallurgy companion table |
-| `link-only` | Never re-hosted in any form; fetch script plus citation | reserved for sources that state no licence |
+| `link-only` | Never re-hosted in any form; fetch script plus citation | reserved for sources that state no licence; NO source in the registry carries this verdict today |
 
 Raw data never enters git. It lands in the vault at `E:/_Datos/symlab/raw`; only compact derived
 artifacts under `data/derived/` and the manifests under `manifests/` are committed.
@@ -145,12 +156,19 @@ manifest at ingestion time, so a reader of a number can see what was done to the
   HTTP 404. PMLB carries both collections under MIT, which for Nikuradse is strictly better than the
   original: the original stated no licence at all.
 - **An astronomy archive derives one of its columns from the law under test**, which makes a naive
-  run circular. That case was excluded from the set entirely rather than shipped with a caveat.
+  run circular. The NASA Exoplanet Archive's Planetary Systems table derives orbital semi-major axis
+  from orbital period and stellar mass through Kepler's third law in the source papers, so fitting
+  that law from those three columns rediscovers the archive's own arithmetic. It was excluded from
+  the set entirely rather than shipped with a caveat.
 
 ## The calibration twins
 
-Four synthetic generators have a real-data twin in the case list. That pairing is what lets the
-engine be calibrated where the answer is known and then taken where it is not.
+Seven generators in [`generators.py`](../data-pipeline/symlab/cases/generators.py) declare a
+`real_data_twin`: `monod-saturation`, `comminution-bond`, `comminution-kick`, `flotation-kinetics`,
+`friction-factor`, `theta-logistic-growth` and `lotka-volterra-rhs`. TWO of those twins are shipped
+as cases in the registry; the rest name a dataset that is not built. The pairing is what lets the
+engine be calibrated where the answer is known and then taken where it is not, so the table below
+states which half of each pair actually exists.
 
 | Generator case | Real twin | Why the pair is worth having |
 |---|---|---|
@@ -159,10 +177,15 @@ engine be calibrated where the answer is known and then taken where it is not.
 | [12 comminution energy](cases/12_comminution-bond.md) | GeoMet comminution table (CC BY 4.0, derived-only) | The Bond combination of `1/sqrt(P80)` and `1/sqrt(F80)` against a real geometallurgical table |
 | [15 Monod saturation](cases/15_monod-saturation.md) | penicillin fermentation (not yet shipped as a case) | The same algebraic form is enzyme kinetics and fermentation growth |
 
-Two of these twins are named in the generator objects but are not yet in the registry as cases: the
-GeoMet comminution table needs its companion paper read to pin the semantics of the `th1`, `th2`,
-`th3`, `M`, `A`, `fr` and `xr` columns, and the penicillin case is not built. Both are recorded here
-as pending rather than described as shipped.
+Only the first two rows are complete pairs. The GeoMet comminution table needs its companion paper
+read to pin the semantics of the `th1`, `th2`, `th3`, `M`, `A`, `fr` and `xr` columns, and the
+penicillin case is not built. Three further twins are declared on generators and are not in this
+table because neither the twin nor a case for it exists in the registry: `gpdd-density-dependence`
+for [16](cases/16_theta-logistic-growth.md), `lynx-hare-lotka-volterra` for
+[17](cases/17_lotka-volterra-rhs.md) and `geomet-bond` again for `comminution-kick`. The
+[19 wind power curve](cases/19_wind-power-curve.md) generator names the Kelmarsh farm as a twin in
+its CAVEAT text but leaves the `real_data_twin` field unset, so it is counted with the pending ones.
+All of these are recorded as pending rather than described as shipped.
 
 ## Contamination, declared
 
