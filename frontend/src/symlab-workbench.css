@@ -755,3 +755,15 @@
 .sym-live-method select {
   margin-top: 0.3rem;
 }
+
+/* Why recovery is not checkable. Marked as a distinct statement rather than blended into the
+   surrounding copy: it is the difference between a gap in the lab and a finding about the method. */
+.sym-why-not {
+  margin: 0.7rem 0 0;
+  padding: 0.5rem 0.7rem;
+  border-left: 3px solid var(--sym-term-4);
+  border-radius: 0 6px 6px 0;
+  background: color-mix(in srgb, var(--color-fg) 4%, transparent);
+  font-size: 0.8rem;
+  line-height: 1.5;
+}

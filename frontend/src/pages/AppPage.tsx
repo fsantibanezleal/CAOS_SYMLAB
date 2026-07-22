@@ -157,6 +157,7 @@ export default function AppPage() {
             targetSymbol={run.dataset.target.display}
             truthLatex={run.notes.ground_truth_latex}
             truthAvailable={Boolean(run.notes.ground_truth_available ?? run.notes.ground_truth_latex)}
+            notCheckableReason={run.notes.not_checkable_reason ?? ''}
             regime={run.notes.regime ?? 'unknown'}
             score={variant.score}
             variantLabel={es ? variant.label_es : variant.label_en}

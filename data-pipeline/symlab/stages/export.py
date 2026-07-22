@@ -26,6 +26,7 @@ import numpy as np
 
 from .. import __version__
 from ..cases.registry import Case
+from ..cases import physics_truths
 from ..model import latex as tex
 from ..core.contract import (
     SCHEMA_VERSION,
@@ -236,6 +237,16 @@ def build_run(
                 if truth is not None else case.ground_truth_latex
             ),
             "ground_truth_available": truth is not None,
+            # WHY it is not checkable, not merely THAT it is not. "nobody wrote the truth down",
+            # "the law is outside the search space" and "the published formula does not describe
+            # this data" mean entirely different things about the result on screen.
+            "not_checkable_reason": (
+                "" if truth is not None else physics_truths.not_checkable_reason(
+                    case.loader,
+                    is_generator=case.is_generator,
+                    generator_id=case.loader.split(":", 1)[1] if case.is_generator else "",
+                )
+            ),
             "regime": prepared.regime,
             "real_or_synthetic": case.real_or_synthetic,
             "caveats": list(case.caveats),

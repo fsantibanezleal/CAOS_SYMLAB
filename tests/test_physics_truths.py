@@ -141,3 +141,49 @@ def test_an_idealised_reference_is_never_scored_as_a_truth(loader: str) -> None:
     assert loader not in MEASURED_TRUTHS
     assert measured_truth_for(loader, ["anything"]) is None
     assert len(IDEALISED_NOT_RECOVERABLE[loader].split()) > 25
+
+
+# ------------------------------------------------------------------ why it is not checkable
+
+
+@pytest.mark.parametrize(
+    "loader,is_generator,generator_id",
+    [
+        ("ore-mineralogy-closure", False, ""),
+        ("pmlb-dataset:feynman_I_26_2", False, ""),
+        ("generator:wind-power-curve", True, "wind-power-curve"),
+        ("ccpp-derating", False, ""),
+    ],
+)
+def test_every_unscoreable_case_explains_itself(
+    loader: str, is_generator: bool, generator_id: str
+) -> None:
+    """"Not checkable" alone is the least useful half of the sentence.
+
+    A reader cannot tell "nobody wrote the truth down" from "the law is outside the search space"
+    from "the published formula does not describe this data", and those mean entirely different
+    things about the result in front of them. One is a gap in this lab; another is a statement about
+    the operator set; the third is a statement about the reference.
+    """
+    from symlab.cases.physics_truths import not_checkable_reason
+
+    reason = not_checkable_reason(loader, is_generator=is_generator, generator_id=generator_id)
+    assert reason, f"{loader} is unscoreable and offers no reason"
+    assert len(reason.split()) > 15, f"{loader}: the reason must explain, not label"
+
+
+@pytest.mark.parametrize(
+    "loader,is_generator,generator_id",
+    [
+        ("generator:monod-saturation", True, "monod-saturation"),
+        ("pmlb-dataset:feynman_I_12_1", False, ""),
+        ("wwtp-removal-identity", False, ""),
+    ],
+)
+def test_a_scoreable_case_offers_no_excuse(
+    loader: str, is_generator: bool, generator_id: str
+) -> None:
+    """The reason must be empty where recovery IS scored, or the app shows a contradiction."""
+    from symlab.cases.physics_truths import not_checkable_reason
+
+    assert not_checkable_reason(loader, is_generator=is_generator, generator_id=generator_id) == ""

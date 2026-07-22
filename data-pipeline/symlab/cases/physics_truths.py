@@ -200,3 +200,55 @@ def truth_for(dataset: str, input_keys: list[str]) -> Node | None:
         # The columns are not what this law expects. Returning None reports "not checkable", which
         # is true, rather than scoring against an expression bound to the wrong variables.
         return None
+
+
+def not_checkable_reason(loader: str, *, is_generator: bool, generator_id: str = "") -> str:
+    """Why recovery cannot be scored for this case, or an empty string when it can.
+
+    Every one of these reasons was already written down in this module and none of them reached a
+    reader: the app said "not checkable" and stopped. That is the least useful half of the sentence.
+    A reader cannot tell "nobody wrote the truth down" from "the law is outside the search space"
+    from "the published formula does not describe this data", and those mean completely different
+    things about the result they are looking at.
+    """
+    if is_generator:
+        from .generators import GENERATORS
+
+        generator = GENERATORS.get(generator_id)
+        if generator is None:
+            return "no generator is registered under this id, so there is nothing to compare against."
+        if generator.truth_node is not None:
+            return ""
+        if generator_id == "wind-power-curve":
+            return (
+                "The curve is piecewise: zero below cut-in, zero above cut-out, and capped at rated "
+                "power between. The operator set has no comparison, no minimum and no indicator, so "
+                "the law cannot be written in the language the search uses. Reporting zero recovery "
+                "would describe the primitive set rather than the method."
+            )
+        return (
+            "No machine-comparable expression is wired for this generator, so the equivalence test "
+            "has nothing to score against. This is a gap in the lab, not a result about the search."
+        )
+
+    if loader.startswith("pmlb-dataset:"):
+        dataset = loader.split(":", 1)[1]
+        if dataset in INEXPRESSIBLE:
+            return INEXPRESSIBLE[dataset]
+        if dataset in FEYNMAN_TRUTHS:
+            return ""
+        return (
+            "This problem has a published law, but no machine-comparable expression is wired for it "
+            "in this lab, so recovery is not scored. That is a gap here rather than a finding."
+        )
+
+    if loader in MEASURED_TRUTHS:
+        return ""
+    if loader in IDEALISED_NOT_RECOVERABLE:
+        return IDEALISED_NOT_RECOVERABLE[loader]
+
+    return (
+        "This case is measurement from a plant or an instrument. No published closed form exists to "
+        "recover, so it contributes to the error metrics and to no recovery rate. Reporting it as "
+        "zero recovery would be a false statement about the method."
+    )

@@ -318,6 +318,11 @@ export interface CaseNotes {
   /** True when a machine-comparable law exists, so recovery is scoreable at all. Distinct from
    *  `ground_truth_known`: a case can have a law we can print but not one we can compare against. */
   ground_truth_available?: boolean;
+  /** WHY recovery cannot be scored, empty when it can. "nobody wrote the truth down", "the law is
+   *  outside the search space" and "the published formula does not describe this data" mean
+   *  entirely different things about the result on screen, and "not checkable" alone says none of
+   *  them. */
+  not_checkable_reason?: string;
   /** "structure" when the physical parameters were given as input columns, so only the form was
    *  unknown; "structure+constants" when the numbers had to be recovered too. */
   regime?: string;

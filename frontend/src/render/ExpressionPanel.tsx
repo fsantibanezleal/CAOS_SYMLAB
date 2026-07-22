@@ -70,6 +70,8 @@ export interface ExpressionPanelProps {
   /** The published law, when the case has one. */
   truthLatex: string | null;
   truthAvailable: boolean;
+  /** Why recovery cannot be scored here. Empty when it can. */
+  notCheckableReason?: string;
   /** "structure": the parameters were input columns, so only the form was unknown.
    *  "structure+constants": the numbers had to be recovered too. */
   regime: string;
@@ -86,6 +88,7 @@ export function ExpressionPanel({
   targetSymbol,
   truthLatex,
   truthAvailable,
+  notCheckableReason = '',
   regime,
   score,
   variantLabel,
@@ -239,11 +242,23 @@ export function ExpressionPanel({
               </dl>
             </>
           ) : (
-            <p className="sym-side-blank">
-              {es
-                ? 'La expresion de la izquierda es un HALLAZGO sin referencia. Contribuye a las metricas de error y a ninguna tasa de recuperacion. Reportarla como recuperacion cero seria falso.'
-                : 'The expression on the left is a FINDING with no reference. It contributes to the error metrics and to no recovery rate. Reporting it as zero recovery would be false.'}
-            </p>
+            <div className="sym-side-blank">
+              <p>
+                {es
+                  ? 'La expresion de la izquierda es un HALLAZGO sin referencia. Contribuye a las metricas de error y a ninguna tasa de recuperacion. Reportarla como recuperacion cero seria falso.'
+                  : 'The expression on the left is a FINDING with no reference. It contributes to the error metrics and to no recovery rate. Reporting it as zero recovery would be false.'}
+              </p>
+              {/* WHY, not just THAT. Without this the reader cannot tell "nobody wrote the truth
+                  down" from "the law is outside the search space" from "the published formula does
+                  not describe this data", and those say different things about what they are
+                  looking at. */}
+              {notCheckableReason && (
+                <p className="sym-why-not" lang="en">
+                  <strong>{es ? 'Por que no es comprobable: ' : 'Why it is not checkable: '}</strong>
+                  {notCheckableReason}
+                </p>
+              )}
+            </div>
           )}
         </section>
       </div>
