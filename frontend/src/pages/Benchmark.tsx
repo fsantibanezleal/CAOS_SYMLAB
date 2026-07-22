@@ -4,6 +4,7 @@ import { useEffect, useMemo, useState } from 'react';
 import { loadIndex, loadRun } from '../lib/data';
 import type { CaseIndex, RunPayload } from '../lib/contract.types';
 import { useLang } from '../lib/useLang';
+import { groupDigits } from '../lib/format';
 
 /**
  * Benchmark: numbers read from the committed artifacts, never typed into the page.
@@ -156,7 +157,7 @@ export default function Benchmark() {
             </li>
             <li>
               {es ? 'evaluaciones totales' : 'total evaluations'}:{' '}
-              <strong>{totals.evaluations.toLocaleString()}</strong>
+              <strong>{groupDigits(totals.evaluations)}</strong>
             </li>
             <li>
               {es ? 'segundos de busqueda' : 'search seconds'}: <strong>{totals.seconds.toFixed(0)}</strong>

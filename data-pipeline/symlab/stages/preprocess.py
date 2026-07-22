@@ -52,6 +52,13 @@ class PreparedCase:
     split_note: str
     contract_report: dict = field(default_factory=dict)
     noise: float = 0.0
+    #: The generating law as a machine-comparable expression, where one exists. This is used ONLY to
+    #: score the result; the search never sees it. Cases without one contribute to the error metrics
+    #: and never to a recovery rate.
+    truth: object | None = None
+    #: How hard recovery actually is here: "structure" when the physical parameters are input
+    #: columns so only the form is unknown, "structure+constants" when the numbers must be found too.
+    regime: str = "unknown"
 
     @property
     def n_inputs(self) -> int:
@@ -132,6 +139,7 @@ def load_case_dataset(case: Case, *, noise: float = 0.0, seed: int = 0,
         generator = GENERATORS[case.loader.split(":", 1)[1]]
         X, y = make_dataset(generator, n_rows=case.n_rows or 400, seed=seed, noise=noise)
         return LoadedDataset(
+            n_rows_source=int(X.shape[0]),
             id=case.id, name=generator.name, X=X, y=y,
             input_keys=generator.input_keys,
             input_display=[i.display for i in generator.inputs],
@@ -152,12 +160,16 @@ def load_case_dataset(case: Case, *, noise: float = 0.0, seed: int = 0,
 
     if case.loader.startswith("pmlb-dataset:"):
         dataset = load_pmlb(case.loader.split(":", 1)[1])
-        if max_rows is not None and dataset.X.shape[0] > max_rows:
+        # The original count is captured BEFORE the arrays are replaced. Reading shape[0] after the
+        # assignment reported "subsampled to 4000 of 4000 rows", which is not a true statement.
+        n_source = int(dataset.X.shape[0])
+        dataset.n_rows_source = n_source
+        if max_rows is not None and n_source > max_rows:
             rng = np.random.default_rng(seed)
-            keep = np.sort(rng.choice(dataset.X.shape[0], size=max_rows, replace=False))
+            keep = np.sort(rng.choice(n_source, size=max_rows, replace=False))
             dataset.X, dataset.y = dataset.X[keep], dataset.y[keep]
             dataset.defects_applied = dataset.defects_applied + [
-                f"Deterministically subsampled to {max_rows} of {dataset.X.shape[0]} rows (seed "
+                f"Deterministically subsampled to {max_rows} of {n_source} rows (seed "
                 f"{seed}). The source ships 100,000 rows of a smooth low-dimensional law; the extra "
                 "rows carry no additional information about its structure and would spend the whole "
                 "search budget on redundancy."
@@ -171,13 +183,15 @@ def load_case_dataset(case: Case, *, noise: float = 0.0, seed: int = 0,
         )
 
     dataset = LOADERS[case.loader]()
-    if max_rows is not None and dataset.X.shape[0] > max_rows:
+    n_source = int(dataset.X.shape[0])
+    dataset.n_rows_source = n_source
+    if max_rows is not None and n_source > max_rows:
         rng = np.random.default_rng(seed)
-        keep = np.sort(rng.choice(dataset.X.shape[0], size=max_rows, replace=False))
+        keep = np.sort(rng.choice(n_source, size=max_rows, replace=False))
         dataset.X = dataset.X[keep]
         dataset.y = dataset.y[keep]
         dataset.defects_applied = dataset.defects_applied + [
-            f"Deterministically subsampled to {max_rows} of the available rows (seed {seed}) to keep "
+            f"Deterministically subsampled to {max_rows} of {n_source} available rows (seed {seed}) to keep "
             "the search budget on the structure rather than on redundant rows."
         ]
     return dataset
@@ -215,6 +229,13 @@ def run(case: Case, *, noise: float = 0.0, seed: int = 0,
     test_index = shuffled[:n_test]
     train_index = shuffled[n_test:]
 
+    truth = None
+    regime = "unknown"
+    if case.is_generator:
+        generator = GENERATORS[case.loader.split(":", 1)[1]]
+        truth = generator.truth_node() if generator.truth_node is not None else None
+        regime = generator.regime
+
     return PreparedCase(
         case_id=case.id,
         dataset=dataset,
@@ -223,6 +244,8 @@ def run(case: Case, *, noise: float = 0.0, seed: int = 0,
         X_extrap=dataset.X[extrap_index] if extrap_index is not None else None,
         y_extrap=dataset.y[extrap_index] if extrap_index is not None else None,
         split_note=split_note,
+        truth=truth,
+        regime=regime,
         contract_report=report | {
             "n_train": int(len(train_index)),
             "n_test": int(len(test_index)),

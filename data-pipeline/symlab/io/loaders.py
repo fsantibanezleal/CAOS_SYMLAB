@@ -51,6 +51,9 @@ class LoadedDataset:
     licence: str = ""
     redistribution: str = ""
     real_or_synthetic: str = "real"
+    #: How many rows the SOURCE carried, before any subsample. Recorded so the app can state
+    #: "4 000 of 9 568 used" rather than printing one number that contradicts the case description.
+    n_rows_source: int | None = None
     defects_applied: list[str] = field(default_factory=list)
     notes: str = ""
     ground_truth_latex: str | None = None

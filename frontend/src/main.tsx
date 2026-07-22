@@ -7,6 +7,7 @@ import { createRoot } from 'react-dom/client';
 import { BrowserRouter, Route, Routes } from 'react-router-dom';
 
 import './symlab.css';
+import './symlab-workbench.css';
 import { ARCHITECTURE } from './architecture';
 import { CITATIONS } from './data/citations';
 import { EXTERNAL_LINKS, VERSION } from './lib/links';

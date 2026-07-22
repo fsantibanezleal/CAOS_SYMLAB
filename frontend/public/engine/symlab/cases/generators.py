@@ -31,6 +31,7 @@ from typing import Callable
 
 import numpy as np
 
+from ..model.expr import Node
 from ..model.units import COMMON, DIMENSIONLESS, Dims, dims
 
 #: Gas constant, J/(mol K). CODATA value.
@@ -74,6 +75,16 @@ class Generator:
     caveats: tuple[str, ...] = ()
     suggested_primitives: str = "physics"
     real_data_twin: str | None = None
+    #: The truth as a machine-comparable expression tree, or None where the law cannot be written in
+    #: this operator set. ONLY generators carrying one contribute to a recovery rate; the rest
+    #: contribute to error metrics only, and the app says "not checkable" rather than reporting zero.
+    truth_node: Callable[[], Node] | None = None
+    #: How hard the recovery task actually is, stated rather than left implicit.
+    #:   "structure"           the physical parameters are input COLUMNS, so only the FORM is unknown.
+    #:                         This is the convention the published physics benchmarks use.
+    #:   "structure+constants" the parameters are baked into the generator, so the NUMBERS must be
+    #:                         recovered as well, which is a materially harder task.
+    regime: str = "structure"
 
     @property
     def input_keys(self) -> list[str]:
@@ -142,6 +153,9 @@ MICHAELIS_MENTEN = Generator(
         "shows that as a worked example of a transformation that helps a human and hurts a fit.",
     ),
     real_data_twin="penicillin-monod",
+    truth_node=lambda: Node.call("div", Node.call("mul", Node.var(1), Node.var(0)),
+                                Node.call("add", Node.var(2), Node.var(0))),
+    regime="structure",
 )
 
 
@@ -179,6 +193,9 @@ ARRHENIUS = Generator(
         "primitive set can express the answer at all. An engine without division inside an exponent "
         "cannot recover it, and reporting that as a search failure would be a category error.",
     ),
+    truth_node=lambda: Node.call("mul", Node.var(2), Node.call("exp", Node.call("neg",
+        Node.call("div", Node.var(1), Node.call("mul", Node.const(R_GAS), Node.var(0)))))),
+    regime="structure",
 )
 
 
@@ -218,6 +235,7 @@ CSTR = Generator(
         "target is a function of two inputs. Sampling them too would make the problem trivially "
         "separable and remove the point of the case.",
     ),
+    regime="structure+constants",
 )
 
 
@@ -259,6 +277,10 @@ COMMINUTION_BOND = Generator(
         "the research could not verify, so it is deliberately NOT shipped as a scored target.",
     ),
     real_data_twin="geomet-bond",
+    truth_node=lambda: Node.call("mul", Node.call("mul", Node.const(10.0), Node.var(2)),
+        Node.call("sub", Node.call("inv", Node.call("sqrt", Node.var(1))),
+                          Node.call("inv", Node.call("sqrt", Node.var(0))))),
+    regime="structure",
 )
 
 
@@ -282,6 +304,9 @@ COMMINUTION_KICK = Generator(
     recovery_target="the logarithmic ratio form, distinguished from Bond's inverse-square-root",
     caveats=("Shipped so the model-selection question in the Bond case has a real alternative to select.",),
     real_data_twin="geomet-bond",
+    truth_node=lambda: Node.call("mul", Node.var(2),
+        Node.call("log", Node.call("div", Node.var(0), Node.var(1)))),
+    regime="structure",
 )
 
 
@@ -325,6 +350,9 @@ FLOTATION_KINETICS = Generator(
         "complexity-versus-accuracy Pareto demonstration on a real industrial problem.",
     ),
     real_data_twin="flotation-silica",
+    truth_node=lambda: Node.call("mul", Node.var(1), Node.call("sub", Node.const(1.0),
+        Node.call("exp", Node.call("neg", Node.call("mul", Node.var(2), Node.var(0)))))),
+    regime="structure",
 )
 
 
@@ -362,6 +390,11 @@ TWO_PRODUCT = Generator(
         "search spaces reach only with a competent simplification stage, so a failure here is "
         "informative about the engine rather than about the data.",
     ),
+    truth_node=lambda: Node.call("mul", Node.call("mul", Node.const(100.0),
+        Node.call("div", Node.var(1), Node.var(0))),
+        Node.call("div", Node.call("sub", Node.var(0), Node.var(2)),
+                          Node.call("sub", Node.var(1), Node.var(2)))),
+    regime="structure",
 )
 
 
@@ -399,6 +432,13 @@ NTU_COUNTERFLOW = Generator(
         "That is the point of the case: a fitted result that blows up at Cr = 1 is wrong in a way a "
         "plain error metric hides completely, and the extrapolation view is what exposes it.",
     ),
+    truth_node=lambda: Node.call("div",
+        Node.call("sub", Node.const(1.0), Node.call("exp", Node.call("neg",
+            Node.call("mul", Node.var(0), Node.call("sub", Node.const(1.0), Node.var(1)))))),
+        Node.call("sub", Node.const(1.0), Node.call("mul", Node.var(1),
+            Node.call("exp", Node.call("neg",
+                Node.call("mul", Node.var(0), Node.call("sub", Node.const(1.0), Node.var(1)))))))),
+    regime="structure+constants",
 )
 
 
@@ -437,6 +477,7 @@ DITTUS_BOELTER = Generator(
         "from it cannot be fitted by one at low Reynolds number, which the lab ships as a clean "
         "demonstration of model misspecification.",
     ),
+    regime="structure+constants",
 )
 
 
@@ -467,6 +508,7 @@ GNIELINSKI = Generator(
         "This case is designed to be UNRECOVERABLE by the obvious hypothesis. Reporting a good "
         "power-law fit here and stopping is exactly the failure the lab exists to demonstrate.",
     ),
+    regime="structure+constants",
 )
 
 
@@ -506,6 +548,7 @@ FRICTION_FACTOR = Generator(
         "calibrate the engine, real data to expose what the correlation misses.",
     ),
     real_data_twin="nikuradse-friction",
+    regime="structure+constants",
 )
 
 
@@ -549,6 +592,10 @@ STOKES = Generator(
         "No open tabulated sphere-drag experimental dataset was found in the research, so this case "
         "stays synthetic rather than claiming a real twin.",
     ),
+    truth_node=lambda: Node.call("mul", Node.call("mul", Node.const(2.0 / 9.0 * G0),
+        Node.call("div", Node.call("sub", Node.var(1), Node.var(2)), Node.var(3))),
+        Node.call("square", Node.var(0))),
+    regime="structure+constants",
 )
 
 
@@ -583,6 +630,7 @@ ANTOINE = Generator(
         "Real-data twin: the batch distillation dataset names its three chemical systems, so the true "
         "Antoine constants of every component are independently obtainable rather than assumed.",
     ),
+    regime="structure+constants",
 )
 
 
@@ -626,6 +674,13 @@ AFFINITY_POWER = Generator(
         "unit-typed rung: with units enforced the exponents are forced, without units they must be "
         "found. Running both configurations on this one case is the whole argument for rung 8.",
     ),
+    truth_node=lambda: Node.call("mul", Node.call("mul",
+        Node.call("div", Node.var(4), Node.var(5)),
+        Node.call("mul", Node.call("div", Node.var(0), Node.var(1)),
+            Node.call("square", Node.call("div", Node.var(0), Node.var(1))))),
+        Node.call("mul", Node.call("square", Node.call("square", Node.call("div", Node.var(2), Node.var(3)))),
+                          Node.call("div", Node.var(2), Node.var(3)))),
+    regime="structure",
 )
 
 
@@ -671,6 +726,7 @@ WIND_POWER = Generator(
         "an honest partial fit or an overconfident smooth one.",
         "Real-data twin: the Kelmarsh farm, using the same swept area and rated power.",
     ),
+    regime="structure+constants",
 )
 
 
@@ -709,6 +765,7 @@ THETA_LOGISTIC = Generator(
         "can be compared against a published one rather than only against the residual.",
     ),
     real_data_twin="gpdd-density-dependence",
+    regime="structure",
 )
 
 
@@ -745,6 +802,9 @@ LOTKA_VOLTERRA = Generator(
         "Real-data twin: the lynx-hare series, 21 points, 1900 to 1920.",
     ),
     real_data_twin="lynx-hare-lotka-volterra",
+    truth_node=lambda: Node.call("sub", Node.call("mul", Node.const(0.55), Node.var(0)),
+        Node.call("mul", Node.const(0.028), Node.call("mul", Node.var(0), Node.var(1)))),
+    regime="structure+constants",
 )
 
 
@@ -784,6 +844,11 @@ ASM1_GROWTH = Generator(
         "The BSM1 model is published but its reference implementation is not, so this lab implements "
         "and owns its own simulator rather than claiming compatibility with one it cannot inspect.",
     ),
+    truth_node=lambda: Node.call("mul", Node.call("mul", Node.const(4.0),
+        Node.call("div", Node.var(0), Node.call("add", Node.const(10.0), Node.var(0)))),
+        Node.call("mul", Node.call("div", Node.var(1), Node.call("add", Node.const(0.2), Node.var(1))),
+                          Node.var(2))),
+    regime="structure+constants",
 )
 
 

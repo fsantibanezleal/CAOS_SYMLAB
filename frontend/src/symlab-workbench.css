@@ -1,0 +1,684 @@
+/* ================================================================================================
+ * The workbench: the case navigator, the result-against-reference comparison, the structure panel
+ * and the validation panel.
+ *
+ * Kept in its own file rather than appended to symlab.css because these rules describe the App
+ * page specifically, and the base sheet describes the product. Both are theme-aware through the
+ * shell custom properties: no colour is written as a literal that only reads in one theme.
+ * ============================================================================================= */
+
+/* ---------------------------------------------------------------- case navigator (sidebar) */
+
+.sym-nav {
+  display: flex;
+  flex-direction: column;
+  gap: 0.7rem;
+}
+
+.sym-nav-field {
+  display: flex;
+  flex-direction: column;
+  gap: 0.28rem;
+}
+
+.sym-nav-label {
+  font-size: 0.7rem;
+  font-weight: 600;
+  letter-spacing: 0.07em;
+  text-transform: uppercase;
+  color: var(--color-fg-subtle);
+}
+
+/* Native select, styled to the shell rather than replaced. A custom listbox would have to
+   re-implement keyboard navigation, type-ahead and the mobile picker, all of which the platform
+   control already gets right. */
+.sym-select {
+  width: 100%;
+  font: inherit;
+  font-size: 0.88rem;
+  color: var(--color-fg);
+  background-color: var(--color-bg);
+  border: 1px solid var(--color-border);
+  border-radius: 8px;
+  padding: 0.42rem 2rem 0.42rem 0.6rem;
+  cursor: pointer;
+  appearance: none;
+  background-image: linear-gradient(45deg, transparent 50%, currentColor 50%),
+    linear-gradient(135deg, currentColor 50%, transparent 50%);
+  background-position: right 1.05rem center, right 0.75rem center;
+  background-size: 5px 5px, 5px 5px;
+  background-repeat: no-repeat;
+  transition: border-color 120ms ease;
+}
+
+.sym-select:hover,
+.sym-select:focus-visible {
+  border-color: var(--color-accent);
+  outline: none;
+}
+
+.sym-lane {
+  display: grid;
+  grid-auto-flow: column;
+  grid-auto-columns: 1fr;
+  gap: 0;
+  border: 1px solid var(--color-border);
+  border-radius: 8px;
+  overflow: hidden;
+}
+
+.sym-lane-button {
+  font: inherit;
+  font-size: 0.82rem;
+  color: var(--color-fg-subtle);
+  background: none;
+  border: none;
+  padding: 0.4rem 0.5rem;
+  cursor: pointer;
+  transition: background 120ms ease, color 120ms ease;
+}
+
+.sym-lane-button + .sym-lane-button {
+  border-left: 1px solid var(--color-border);
+}
+
+.sym-lane-button:hover {
+  color: var(--color-fg);
+}
+
+.sym-lane-button.on {
+  background: var(--color-accent);
+  color: var(--color-accent-contrast, #fff);
+  font-weight: 600;
+}
+
+.sym-nav-anchor {
+  font-size: 0.76rem;
+  line-height: 1.45;
+  color: var(--color-fg-subtle);
+  margin: 0;
+}
+
+/* ---------------------------------------------------------------- content blocks */
+
+.sym-block + .sym-block {
+  margin-top: 1.6rem;
+  padding-top: 1.3rem;
+  border-top: 1px solid var(--color-border);
+}
+
+.sym-block > h3 {
+  margin: 0 0 0.3rem;
+  font-size: 1.02rem;
+}
+
+.sym-block-lede {
+  margin: 0 0 0.9rem;
+  max-width: 68ch;
+  font-size: 0.86rem;
+  line-height: 1.55;
+  color: var(--color-fg-subtle);
+}
+
+/* ---------------------------------------------------------------- result against reference
+ *
+ * A reader must never have to guess whether the equation on screen is what the search FOUND or the
+ * law that was typed in. That distinction is the entire claim of this product, so the two are set
+ * side by side, each labelled ABOVE its mathematics, with the verdict between them.
+ */
+
+.sym-compare-grid {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) auto minmax(0, 1fr);
+  gap: 0 1.1rem;
+  align-items: stretch;
+}
+
+@media (max-width: 900px) {
+  .sym-compare-grid {
+    grid-template-columns: minmax(0, 1fr);
+    gap: 1rem;
+  }
+  .sym-verdict-rail {
+    display: none;
+  }
+}
+
+.sym-side {
+  display: flex;
+  flex-direction: column;
+  min-width: 0;
+  padding: 0.9rem 1rem 0.8rem;
+  border: 1px solid var(--color-border);
+  border-radius: 12px;
+}
+
+.sym-side-found {
+  border-color: color-mix(in srgb, var(--color-accent) 55%, var(--color-border));
+  background: color-mix(in srgb, var(--color-accent) 5%, transparent);
+}
+
+.sym-side header p {
+  margin: 0.4rem 0 0;
+  font-size: 0.78rem;
+  line-height: 1.5;
+  color: var(--color-fg-subtle);
+}
+
+.sym-tag {
+  display: inline-block;
+  font-size: 0.66rem;
+  font-weight: 700;
+  letter-spacing: 0.09em;
+  padding: 0.18rem 0.55rem;
+  border-radius: 999px;
+}
+
+.sym-tag-found {
+  background: var(--color-accent);
+  color: var(--color-accent-contrast, #fff);
+}
+
+.sym-tag-truth {
+  background: none;
+  border: 1px solid var(--color-fg-subtle);
+  color: var(--color-fg-subtle);
+}
+
+/* The mathematics itself scrolls inside its own box: a wide expression must never make the page
+   scroll sideways. */
+.sym-math {
+  flex: 1;
+  display: flex;
+  align-items: center;
+  margin: 0.85rem 0;
+  padding: 0.3rem 0;
+  overflow-x: auto;
+  overflow-y: hidden;
+}
+
+.sym-math .katex-display {
+  margin: 0;
+  width: 100%;
+}
+
+.sym-side-metrics {
+  display: grid;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  gap: 0.5rem;
+  margin: 0;
+  padding-top: 0.65rem;
+  border-top: 1px solid var(--color-border);
+}
+
+.sym-side-metrics > div {
+  min-width: 0;
+}
+
+.sym-side-metrics dt {
+  font-size: 0.66rem;
+  letter-spacing: 0.05em;
+  text-transform: uppercase;
+  color: var(--color-fg-subtle);
+}
+
+.sym-side-metrics dd {
+  margin: 0.12rem 0 0;
+  font-variant-numeric: tabular-nums;
+  font-size: 0.95rem;
+  font-weight: 600;
+}
+
+.sym-side-blank {
+  flex: 1;
+  display: flex;
+  align-items: center;
+  margin: 0.85rem 0 0;
+  font-size: 0.82rem;
+  line-height: 1.55;
+  color: var(--color-fg-subtle);
+}
+
+/* The rail between the two sides: one glyph carrying the verdict, so the comparison reads at a
+   glance before any number is parsed. */
+.sym-verdict-rail {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 2.2rem;
+}
+
+.sym-verdict-mark {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 2.2rem;
+  height: 2.2rem;
+  border-radius: 50%;
+  border: 2px solid var(--color-border);
+  font-size: 1.15rem;
+  font-weight: 700;
+  color: var(--color-fg-subtle);
+  background: var(--color-bg);
+}
+
+.sym-verdict-rail.is-yes .sym-verdict-mark {
+  border-color: var(--sym-term-2);
+  color: var(--sym-term-2);
+}
+
+.sym-verdict-rail.is-no .sym-verdict-mark {
+  border-color: var(--sym-term-4);
+  color: var(--sym-term-4);
+}
+
+.sym-verdict {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: baseline;
+  gap: 0.35rem 1.3rem;
+  margin-top: 1rem;
+  padding: 0.6rem 0.85rem;
+  border-radius: 9px;
+  border-left: 3px solid var(--color-border);
+  background: color-mix(in srgb, var(--color-fg) 4%, transparent);
+  font-size: 0.84rem;
+}
+
+.sym-verdict strong {
+  letter-spacing: 0.05em;
+}
+
+.sym-verdict.is-yes {
+  border-left-color: var(--sym-term-2);
+}
+
+.sym-verdict.is-no {
+  border-left-color: var(--sym-term-4);
+}
+
+.sym-verdict b {
+  font-variant-numeric: tabular-nums;
+}
+
+.sym-rounding {
+  margin-top: 1.2rem;
+}
+
+.sym-rounding h4 {
+  margin: 0 0 0.25rem;
+  font-size: 0.72rem;
+  letter-spacing: 0.07em;
+  text-transform: uppercase;
+  color: var(--color-fg-subtle);
+}
+
+.sym-warn {
+  color: var(--color-fg);
+  border-left: 3px solid var(--sym-term-4);
+  padding-left: 0.7rem;
+}
+
+/* ---------------------------------------------------------------- components table */
+
+.sym-terms {
+  width: 100%;
+  border-collapse: collapse;
+  font-size: 0.85rem;
+}
+
+.sym-terms th,
+.sym-terms td {
+  text-align: left;
+  padding: 0.42rem 0.6rem;
+  border-bottom: 1px solid var(--color-border);
+  vertical-align: middle;
+}
+
+.sym-terms thead th {
+  font-size: 0.68rem;
+  letter-spacing: 0.06em;
+  text-transform: uppercase;
+  color: var(--color-fg-subtle);
+  font-weight: 600;
+}
+
+.sym-terms tbody th {
+  font-weight: 500;
+}
+
+.sym-terms tbody th code {
+  font-size: 0.8rem;
+}
+
+.sym-term-row {
+  transition: background 110ms ease;
+}
+
+.sym-term-row:hover,
+.sym-term-row.is-active {
+  background: color-mix(in srgb, var(--color-accent) 8%, transparent);
+}
+
+.sym-term-swatch {
+  display: inline-block;
+  width: 0.55rem;
+  height: 0.55rem;
+  border-radius: 2px;
+  margin-right: 0.45rem;
+  background: currentColor;
+}
+
+.sym-terms .sym-term-0 .sym-term-swatch { background: var(--sym-term-0); }
+.sym-terms .sym-term-1 .sym-term-swatch { background: var(--sym-term-1); }
+.sym-terms .sym-term-2 .sym-term-swatch { background: var(--sym-term-2); }
+.sym-terms .sym-term-3 .sym-term-swatch { background: var(--sym-term-3); }
+.sym-terms .sym-term-4 .sym-term-swatch { background: var(--sym-term-4); }
+.sym-terms .sym-term-5 .sym-term-swatch { background: var(--sym-term-5); }
+.sym-terms .sym-term-6 .sym-term-swatch { background: var(--sym-term-6); }
+.sym-terms .sym-term-7 .sym-term-swatch { background: var(--sym-term-7); }
+
+.sym-bar-cell {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  min-width: 9rem;
+}
+
+.sym-bar {
+  height: 0.5rem;
+  min-width: 2px;
+  border-radius: 2px;
+  background: var(--color-accent);
+  opacity: 0.75;
+}
+
+.sym-bar-value {
+  font-variant-numeric: tabular-nums;
+  font-size: 0.78rem;
+  color: var(--color-fg-subtle);
+  white-space: nowrap;
+}
+
+.sym-oplist {
+  list-style: none;
+  margin: 0 0 0.6rem;
+  padding: 0;
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.35rem;
+}
+
+.sym-oplist li {
+  display: flex;
+  align-items: baseline;
+  gap: 0.35rem;
+  padding: 0.2rem 0.55rem;
+  border: 1px solid var(--color-border);
+  border-radius: 999px;
+  font-size: 0.8rem;
+}
+
+.sym-oplist span {
+  font-variant-numeric: tabular-nums;
+  font-weight: 600;
+  color: var(--color-accent);
+}
+
+.sym-kv {
+  display: flex;
+  align-items: baseline;
+  justify-content: space-between;
+  gap: 1rem;
+  margin: 0 0 0.4rem;
+  font-size: 0.86rem;
+}
+
+.sym-kv span {
+  color: var(--color-fg-subtle);
+}
+
+.sym-kv strong {
+  font-variant-numeric: tabular-nums;
+}
+
+/* ---------------------------------------------------------------- residuals grid */
+
+.sym-resid-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(240px, 1fr));
+  gap: 1rem;
+  margin-bottom: 0.8rem;
+}
+
+.sym-resid {
+  margin: 0;
+  min-width: 0;
+}
+
+.sym-resid svg {
+  width: 100%;
+  height: auto;
+  display: block;
+}
+
+.sym-resid figcaption {
+  margin-top: 0.2rem;
+  font-size: 0.78rem;
+  color: var(--color-fg-subtle);
+  text-align: center;
+}
+
+.sym-resid-point {
+  fill: var(--color-accent);
+  opacity: 0.55;
+}
+
+.sym-zero-line {
+  stroke: var(--color-fg-subtle);
+  stroke-width: 1;
+  stroke-dasharray: 3 3;
+  opacity: 0.7;
+}
+
+/* ---------------------------------------------------------------- panel containers
+ *
+ * These carry the vertical rhythm of each tab. They are listed explicitly rather than left as bare
+ * wrappers because the verification harness asserts that every class the app renders has a rule:
+ * a class in the markup with no rule behind it is exactly how a panel ships looking unformatted
+ * while the build stays green.
+ */
+
+.sym-compare,
+.sym-structure,
+.sym-validation,
+.sym-live,
+.sym-charts {
+  display: flow-root;
+  min-width: 0;
+}
+
+.sym-side-truth {
+  border-style: dashed;
+}
+
+.sym-pareto,
+.sym-history {
+  display: flow-root;
+  min-width: 0;
+}
+
+.sym-pareto-svg,
+.sym-history svg,
+.sym-parity svg,
+.sym-extrap svg {
+  width: 100%;
+  height: auto;
+  display: block;
+}
+
+/* ---------------------------------------------------------------- stacked comparison
+ *
+ * A long expression in a half-width column clips, and a clipped formula reads as a broken page
+ * rather than a scrollable one. Past a measured length the two sides stack to full width, which is
+ * roughly twice the room and removes the clipping in almost every case.
+ */
+
+.sym-compare-grid.is-stacked {
+  grid-template-columns: minmax(0, 1fr);
+  gap: 0.9rem;
+}
+
+.sym-compare-grid.is-stacked .sym-verdict-rail {
+  width: auto;
+  padding: 0;
+}
+
+.sym-compare-grid.is-stacked .sym-side {
+  flex-direction: column;
+}
+
+.sym-compare-grid.is-stacked .sym-side-metrics {
+  grid-template-columns: repeat(auto-fit, minmax(9rem, 1fr));
+}
+
+/* Where the maths still exceeds its box, the overflow must be VISIBLE. A silently clipped formula
+   is indistinguishable from a rendering failure, so the scrollbar is always shown and the right
+   edge fades to say there is more. */
+.sym-math {
+  scrollbar-width: thin;
+  scrollbar-color: var(--color-border) transparent;
+}
+
+.sym-math::-webkit-scrollbar {
+  height: 7px;
+}
+
+.sym-math::-webkit-scrollbar-thumb {
+  background: var(--color-border);
+  border-radius: 4px;
+}
+
+.sym-math-wrap {
+  position: relative;
+  min-width: 0;
+}
+
+.sym-math-wrap::after {
+  content: '';
+  position: absolute;
+  top: 0;
+  right: 0;
+  bottom: 0;
+  width: 2rem;
+  pointer-events: none;
+  background: linear-gradient(to right, transparent, var(--color-bg));
+  opacity: 0;
+  transition: opacity 140ms ease;
+}
+
+.sym-math-wrap.is-clipped::after {
+  opacity: 1;
+}
+
+/* ---------------------------------------------------------------- sidebar readout
+ *
+ * Its own class rather than `sym-readout`, which is the chart-hover strip and is display:flex.
+ * Borrowing that class put the heading beside the numbers and cut the last row off.
+ */
+
+.sym-side-readout {
+  display: block;
+}
+
+.sym-side-kpis {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 0.55rem 0.75rem;
+  margin-bottom: 0.7rem;
+}
+
+.sym-side-kpis > div {
+  display: flex;
+  flex-direction: column;
+  gap: 0.1rem;
+  min-width: 0;
+}
+
+.sym-side-kpis span {
+  font-size: 0.66rem;
+  letter-spacing: 0.05em;
+  text-transform: uppercase;
+  color: var(--color-fg-subtle);
+  line-height: 1.2;
+}
+
+.sym-side-kpis strong {
+  font-size: 1.05rem;
+  font-variant-numeric: tabular-nums;
+  line-height: 1.15;
+}
+
+.sym-side-readout .sym-readout-rates {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) auto;
+  gap: 0.3rem 0.6rem;
+  margin: 0 0 0.6rem;
+  padding-top: 0.6rem;
+  border-top: 1px solid var(--color-border);
+  font-size: 0.8rem;
+}
+
+.sym-side-readout .sym-readout-rates dt {
+  color: var(--color-fg-subtle);
+}
+
+.sym-side-readout .sym-readout-rates dd {
+  margin: 0;
+  text-align: right;
+  font-variant-numeric: tabular-nums;
+  font-weight: 600;
+}
+
+/* ---------------------------------------------------------------- tree labels and term maths */
+
+/* A label too wide for its circle is drawn BELOW the node. Inside the circle it clipped to `{amb`,
+   which reads as a rendering fault rather than as a variable name. Outside, it takes the normal
+   foreground colour: the fill that works against an accent-filled circle is invisible on the page
+   background. */
+.sym-node-label-outside {
+  fill: var(--color-fg);
+  font-size: 10px;
+  paint-order: stroke;
+  stroke: var(--color-bg);
+  stroke-width: 3px;
+  stroke-linejoin: round;
+}
+
+.sym-term-math {
+  display: inline-block;
+  max-width: 26rem;
+  overflow-x: auto;
+  overflow-y: hidden;
+  vertical-align: middle;
+  scrollbar-width: thin;
+}
+
+.sym-term-math .katex {
+  font-size: 0.95em;
+}
+
+/* The two half-width blocks under the components table share a baseline rather than each starting
+   wherever its own content happens to begin. */
+.sym-two-col {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(min(100%, 20rem), 1fr));
+  gap: 1.5rem 2rem;
+  align-items: start;
+}
+
+.sym-two-col > .sym-block + .sym-block {
+  margin-top: 0;
+  padding-top: 0;
+  border-top: none;
+}

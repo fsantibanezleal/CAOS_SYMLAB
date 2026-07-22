@@ -81,7 +81,8 @@ def run_case(case: Case, *, seed: int = 0, noise: float = 0.0, quick: bool = Fal
     features = features_stage.run(prepared)
     trained = train_stage.run(prepared, features, case, seed=seed)
     inferred = infer_stage.run(prepared, trained)
-    scores = evaluate_stage.run(prepared, trained, inferred, truth=None, seed=seed)
+    # The truth is used ONLY for scoring. The search never receives it.
+    scores = evaluate_stage.run(prepared, trained, inferred, truth=prepared.truth, seed=seed)
 
     certificate = None
     if not quick and prepared.n_inputs <= 3:
@@ -103,7 +104,7 @@ def run_case(case: Case, *, seed: int = 0, noise: float = 0.0, quick: bool = Fal
         }
 
     run = export_stage.build_run(case, prepared, features, trained, inferred, scores,
-                                 seed=seed, truth=None, certificate=certificate)
+                                 seed=seed, truth=prepared.truth, certificate=certificate)
     manifest = export_stage.build_manifest(case, prepared, features, scores, seed=seed,
                                            artifact_relative=f"{case.id}/run.json",
                                            artifact_bytes=0)

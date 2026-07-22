@@ -24,9 +24,22 @@ export interface InputDescriptor {
   std: number;
 }
 
+/** The full row accounting. `n_rows` alone is the TRAINING count and on its own contradicts the
+ *  case description, which quotes the size of the published dataset. */
+export interface RowAccounting {
+  /** Rows the source carried, before any subsample. Null for artifacts baked before this shipped. */
+  source: number | null;
+  used: number;
+  train: number;
+  test: number;
+  extrapolation: number;
+}
+
 export interface DatasetDescriptor {
   name: string;
+  /** The TRAINING row count. Prefer `rows` when present. */
   n_rows: number;
+  rows?: RowAccounting;
   n_inputs: number;
   real_or_synthetic: 'real' | 'synthetic';
   source: string | null;
@@ -286,6 +299,12 @@ export interface CaseNotes {
   summary_es: string;
   ground_truth_known: boolean;
   ground_truth_latex: string | null;
+  /** True when a machine-comparable law exists, so recovery is scoreable at all. Distinct from
+   *  `ground_truth_known`: a case can have a law we can print but not one we can compare against. */
+  ground_truth_available?: boolean;
+  /** "structure" when the physical parameters were given as input columns, so only the form was
+   *  unknown; "structure+constants" when the numbers had to be recovered too. */
+  regime?: string;
   real_or_synthetic: 'real' | 'synthetic';
   caveats: string[];
   split_note: string;

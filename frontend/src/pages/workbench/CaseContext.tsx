@@ -8,6 +8,7 @@
 import { Callout, Equation } from '@fasl-work/caos-app-shell';
 
 import type { RunPayload } from '../../lib/contract.types';
+import { groupDigits } from '../../lib/format';
 
 export function CaseContext({ run, lang }: { run: RunPayload; lang: 'en' | 'es' }) {
   const notes = run.notes;
@@ -141,8 +142,8 @@ export function CaseContext({ run, lang }: { run: RunPayload; lang: 'en' | 'es' 
           >
             <p>{notes.certificate.statement}</p>
             <p>
-              {es ? 'Enumeradas' : 'Enumerated'} {notes.certificate.n_enumerated.toLocaleString()},{' '}
-              {es ? 'admisibles' : 'admissible'} {notes.certificate.n_admissible.toLocaleString()}.
+              {es ? 'Enumeradas' : 'Enumerated'} {groupDigits(notes.certificate.n_enumerated)},{' '}
+              {es ? 'admisibles' : 'admissible'} {groupDigits(notes.certificate.n_admissible)}.
               {notes.certificate.best_infix && (
                 <>
                   {' '}

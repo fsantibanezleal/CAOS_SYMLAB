@@ -26,6 +26,7 @@ import numpy as np
 
 from .. import __version__
 from ..cases.registry import Case
+from ..model import latex as tex
 from ..core.contract import (
     SCHEMA_VERSION,
     dataset_descriptor,
@@ -96,6 +97,17 @@ def build_run(
         source=dataset.citation,
         license_note=dataset.licence,
     )
+    # `n_rows` above is the TRAINING row count, because the descriptor is built from X_train. On its
+    # own it contradicts the case description, which quotes the size of the published dataset. So the
+    # whole accounting ships and the app can state every number it shows.
+    descriptor["rows"] = {
+        "source": dataset.n_rows_source,
+        "used": int(prepared.X_train.shape[0] + prepared.X_test.shape[0]
+                    + (0 if prepared.X_extrap is None else prepared.X_extrap.shape[0])),
+        "train": int(prepared.X_train.shape[0]),
+        "test": int(prepared.X_test.shape[0]),
+        "extrapolation": 0 if prepared.X_extrap is None else int(prepared.X_extrap.shape[0]),
+    }
 
     variants_payload = []
     for entry, inference, score in zip(trained, inferred, scores):
@@ -193,7 +205,12 @@ def build_run(
             "summary_en": case.summary_en,
             "summary_es": case.summary_es,
             "ground_truth_known": case.ground_truth_known,
-            "ground_truth_latex": case.ground_truth_latex,
+            "ground_truth_latex": (
+                tex.to_latex(truth, display_names=dataset.input_display)
+                if truth is not None else case.ground_truth_latex
+            ),
+            "ground_truth_available": truth is not None,
+            "regime": prepared.regime,
             "real_or_synthetic": case.real_or_synthetic,
             "caveats": list(case.caveats),
             "split_note": prepared.split_note,

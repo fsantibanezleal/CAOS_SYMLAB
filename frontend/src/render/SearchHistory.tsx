@@ -9,6 +9,9 @@
  */
 import type { HistoryPayload, VariantScore } from '../lib/contract.types';
 import { UPlotChart } from './UPlotChart';
+import { groupDigits } from '../lib/format';
+
+
 
 export function SearchHistory({
   history,
@@ -63,11 +66,11 @@ export function SearchHistory({
           <dt>{lang === 'es' ? 'segundos' : 'seconds'}</dt>
           <dd>{score.seconds.toFixed(1)}</dd>
           <dt>{lang === 'es' ? 'evaluaciones' : 'evaluations'}</dt>
-          <dd>{score.evaluations.toLocaleString()}</dd>
+          <dd>{groupDigits(score.evaluations)}</dd>
           <dt>{lang === 'es' ? 'duplicados evitados' : 'duplicates avoided'}</dt>
-          <dd>{score.duplicates_avoided.toLocaleString()}</dd>
+          <dd>{groupDigits(score.duplicates_avoided)}</dd>
           <dt>{lang === 'es' ? 'candidatos invalidos' : 'invalid candidates'}</dt>
-          <dd>{score.invalid_rejected.toLocaleString()}</dd>
+          <dd>{groupDigits(score.invalid_rejected)}</dd>
           <dt>{lang === 'es' ? 'tamano del frente' : 'front size'}</dt>
           <dd>{score.front_size}</dd>
         </dl>

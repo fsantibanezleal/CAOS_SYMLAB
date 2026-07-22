@@ -63,6 +63,24 @@ function buildHierarchy(nodes: TreeNode[]): Datum | null {
   return root;
 }
 
+/**
+ * The label as it should READ, not as it is stored.
+ *
+ * Variable labels arrive as LaTeX (`T_{amb}`, `\mathrm{RH}`) because the same string feeds the
+ * equation renderer. Dropped into an SVG circle they render as raw markup and clip to `{amb`, which
+ * is unreadable and looks like a rendering fault. Braces and command prefixes are stripped, and
+ * anything still too wide for a circle is drawn BELOW the node instead of inside it.
+ */
+function readableLabel(raw: string): string {
+  return raw
+    .replace(/\\mathrm|\\text|\\operatorname/g, '')
+    .replace(/[{}\\]/g, '')
+    .replace(/\s+/g, '');
+}
+
+/** Labels up to this many characters fit inside a node circle; longer ones sit below it. */
+const INSIDE_MAX = 3;
+
 /** Class per node kind, so colour lives in CSS and follows the theme. */
 function kindClass(node: TreeNode): string {
   switch (node.kind) {
@@ -185,9 +203,21 @@ export function ExpressionTree({
                 onBlur={() => onHoverNode(null)}
               >
                 <circle r={radius(node.influence)} />
-                <text className="sym-node-label" dy="0.34em">
-                  {node.label}
-                </text>
+                {(() => {
+                  const label = readableLabel(node.label);
+                  return label.length <= INSIDE_MAX ? (
+                    <text className="sym-node-label" dy="0.34em">
+                      {label}
+                    </text>
+                  ) : (
+                    <text
+                      className="sym-node-label sym-node-label-outside"
+                      dy={radius(node.influence) + 13}
+                    >
+                      {label}
+                    </text>
+                  );
+                })()}
               </g>
             );
           })}
