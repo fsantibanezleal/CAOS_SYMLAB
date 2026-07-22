@@ -378,7 +378,10 @@ def load_concrete() -> LoadedDataset:
         target_key="strength", target_display="f_c", target_unit="MPa",
         source_id=source.id, citation=source.citation, licence=source.licence,
         redistribution=source.redistribution,
-        ground_truth_latex=r"f_c pprox rac{A}{B^{w/c}} \quad	ext{(Abrams), with a } \ln(t_{age}) 	ext{ maturity term}",
+        ground_truth_latex=(
+            r"f_c \approx \frac{A}{B^{w/c}} \quad \text{(Abrams), with a }"
+            r" \ln(t_{age}) \text{ maturity term}"
+        ),
         defects_applied=[
             "The workbook column names carry units inside the label; they are replaced by short "
             "machine keys and the units are recorded separately, so a discovered expression renders "

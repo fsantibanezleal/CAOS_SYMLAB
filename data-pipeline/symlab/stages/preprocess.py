@@ -23,6 +23,7 @@ from dataclasses import dataclass, field
 
 import numpy as np
 
+from ..cases import physics_truths
 from ..cases.generators import GENERATORS, make_dataset
 from ..cases.registry import Case
 from ..io.loaders import LOADERS, LoadedDataset, load_pmlb
@@ -235,6 +236,16 @@ def run(case: Case, *, noise: float = 0.0, seed: int = 0,
         generator = GENERATORS[case.loader.split(":", 1)[1]]
         truth = generator.truth_node() if generator.truth_node is not None else None
         regime = generator.regime
+    elif case.loader.startswith("pmlb-dataset:"):
+        # The expanded physics suites are the canonical recovery benchmark in this field, and they
+        # are loaded through PMLB rather than built by a generator. Without this branch every one of
+        # them reported recovery as "not checkable" while the case summary claimed a solution rate.
+        # The truth is bound by column NAME, so a change in source column order cannot rebind a
+        # variable to the wrong symbol.
+        truth = physics_truths.truth_for(case.loader.split(":", 1)[1], list(dataset.input_keys))
+        if truth is not None:
+            # The sampled columns ARE the physical parameters, so only the form is unknown.
+            regime = "structure"
 
     return PreparedCase(
         case_id=case.id,
