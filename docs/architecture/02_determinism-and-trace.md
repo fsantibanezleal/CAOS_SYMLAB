@@ -4,8 +4,9 @@
 `numpy.random.Generator` built from the declared seed, never a global or implicit RNG, and never the builtin
 `hash()`: string hashing is randomised per process, so a `hash()`-seeded generator drew different data from the
 same declared seed and made the deduplication rung's measured effect a property of interpreter startup. Both
-call sites in `stages/preprocess.py` construct `np.random.default_rng(seed)` directly. (`core/rng.py ::
-make_rng` offers the same factory but is left over from the archetype template and is called by nothing here.)
+call sites in `stages/preprocess.py` construct `np.random.default_rng(seed)` directly. (`core/rng.py`
+offered the same factory, claimed in its docstring to be the single one everything threads, and was called by
+nothing. It has been deleted.)
 
 Same inputs reproduce every scientific number exactly, asserted in `tests/test_rebake_reproduces_results.py`
 and, across process boundaries, in `tests/test_cross_process_determinism.py`. The latter also parses every
@@ -24,6 +25,6 @@ as `0.0`), non-finite values become `null` rather than crashing the encoder, and
 than applied silently. Its shape is mirrored by `frontend/src/lib/contract.types.ts` (CONTRACT 2), frozen at
 `schema_version 1.0.0`.
 
-`core/trace.py` (schema `example.trace/v1`, `build_trace()`, `MAX_POINTS`) is not part of this: it decimates an
-SIR trajectory and is template residue that nothing imports. It is named here only because an earlier version
-of this page described it as the product's artifact.
+`core/trace.py` (schema `example.trace/v1`, `build_trace()`, `MAX_POINTS`) was not part of this: it decimated
+an SIR trajectory and nothing imported it. It is named here only because an earlier version of this page
+described it as the product's artifact. It has been deleted.

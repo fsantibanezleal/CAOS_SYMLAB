@@ -25,9 +25,9 @@ dataset (rows dropped, folds ignored, aggregation applied, deterministic subsamp
 rejected) and are published in the artifact rather than tidied away. Full table:
 [`data/README.md`](../../data/README.md).
 
-Note that `data-pipeline/symlab/io/contract.py` is NOT this contract. It declares an SIR parameter table with a
-reject/clip/flag row policy and is template residue that nothing imports; the enforcement described above is
-the one that runs.
+Note that a file named `data-pipeline/symlab/io/contract.py` used to sit beside this one and was NOT this
+contract: it declared an SIR parameter table with a reject/clip/flag row policy and nothing imported it. It has
+been deleted, so the enforcement described above is the only one in the tree as well as the only one that runs.
 
 ## CONTRACT 2, artifact (`pipeline to web`)
 `data-pipeline/symlab/core/contract.py` declares the payload (frozen at `SCHEMA_VERSION = "1.0.0"`) and

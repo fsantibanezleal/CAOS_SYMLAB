@@ -1,8 +1,7 @@
 # Guide, bring your own data
 
 The product is **applicable to NEW data**, not just the baked cases, that is what makes it a tool. The door is
-**CONTRACT 1**, enforced in `data-pipeline/symlab/stages/preprocess.py :: _contract_check`. (The file named
-`symlab/io/contract.py` is template residue describing an SIR parameter table; nothing imports it.)
+**CONTRACT 1**, enforced in `data-pipeline/symlab/stages/preprocess.py :: _contract_check`.
 
 1. Put your data in the documented standard format (see [`data/README.md`](../../data/README.md)): one numeric
    column per input, one target column, and a unit per column where you know it. Raw files stay out of git; the

@@ -29,11 +29,17 @@ replays them.
 - **Rework (the only per-product surface):** the engine in `search/` + `model/` and the stage bodies (the
   science), the `frontend/` visualizations, and the cases + content + calibration.
 
-## Template residue still on disk
-Instantiation replaced the example lab but left six modules from it in the tree, and they are dead code rather
-than product: `core/trace.py`, `core/manifest.py`, `core/gate.py`, `core/rng.py`, `io/contract.py` and
-`io/schema.py` all describe an SIR epidemic example. Nothing in `pipeline.py`, the stages, the search or the
-frontend imports any of them; the only imports among them are internal to the group (`core/manifest.py` reads
-`core/trace.py`, which reads `io/schema.py`, and `io/contract.py` reads `io/schema.py`). They are named here so
-a reader who opens one does not mistake it for the pipeline; the pages that follow describe the modules that
-actually run.
+## Template residue, removed
+Instantiation replaced the example lab but left six modules from it in the tree, all describing an SIR
+epidemic example, none imported by `pipeline.py`, the stages, the search or the frontend. The only imports
+among them were internal to the group, which is how they survived: `core/manifest.py` read `core/trace.py`,
+which read `io/schema.py`, and `io/contract.py` read `io/schema.py` as well. Each carried a docstring
+asserting a role it did not have, `core/rng.py` claiming to be "the single RNG factory ... always thread one
+made here" while nothing threaded one.
+
+Five are deleted (`core/trace.py`, `core/manifest.py`, `core/rng.py`, `io/contract.py`, `io/schema.py`), along
+with four tracked directories containing nothing but `.gitkeep` that shadowed the real package layout
+(`data-pipeline/{cases,config,src,stages}/`). The sixth, `core/gate.py`, was rewritten around the criterion
+that actually applies here and wired into the manifest: see [the gate](03_the-gate.md).
+
+Everything under `symlab/` now runs. The pages that follow describe it.
