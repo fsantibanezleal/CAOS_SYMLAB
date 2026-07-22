@@ -1,4 +1,4 @@
-"""Make examplelab importable whether or not `pip install -e .` has run (belt-and-suspenders for CI/local)."""
+"""Make the `symlab` package importable whether or not an editable install has run."""
 import pathlib
 import sys
 

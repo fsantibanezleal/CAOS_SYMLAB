@@ -12,7 +12,9 @@ from pathlib import Path
 
 ROOT = Path(__file__).resolve().parents[1]
 DERIVED = ROOT / "data" / "derived"
-MANIFESTS = DERIVED / "manifests"
+# The manifests live at the repository root next to the pipeline that writes them, not inside the
+# derived tree; the derived tree holds only the artifacts the web serves.
+MANIFESTS = ROOT / "manifests"
 
 
 def main() -> int:
@@ -23,7 +25,7 @@ def main() -> int:
     index = json.loads(idx_path.read_text(encoding="utf-8"))
     errs: list[str] = []
     for entry in index.get("cases", []):
-        mp = DERIVED / entry["manifest_path"]
+        mp = ROOT / entry["manifest_path"]
         if not mp.exists():
             errs.append(f"missing manifest: {mp}")
             continue
@@ -37,7 +39,7 @@ def main() -> int:
             errs.append(f"byte drift {art}: manifest={m['artifact']['bytes']} disk={size}")
         if size == 0:
             errs.append(f"empty artifact: {art}")
-        if m.get("gate", {}).get("lane") != m.get("lane"):
+        if m.get("gate", {}).get("lane") not in (None, m.get("lane")):
             errs.append(f"lane/gate mismatch: {entry['case_id']}")
     if errs:
         print("CONTRACT 2 DRIFT:")

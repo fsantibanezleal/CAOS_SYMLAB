@@ -22,10 +22,12 @@ jobs:
       - uses: actions/setup-python@v5
         with:
           python-version: "3.12"
-      - name: Regenerate artifacts (fresh deterministic replay outputs)
-        run: |
-          pip install -r data-pipeline/requirements.txt -e .
-          python -m examplelab.pipeline all
+      # The artifacts are COMMITTED, not regenerated here. A full bake at published budgets is a
+      # multi-hour run on this case matrix, and a deploy job is the wrong place for it: a timeout
+      # would silently ship a partial index. CI verifies instead that what is committed is
+      # internally consistent, which is the property that actually matters for a replay viewer.
+      - name: Verify the committed artifacts against their manifests
+        run: python scripts/check_artifacts.py
       - uses: actions/setup-node@v4
         with:
           node-version: "20"
@@ -33,6 +35,8 @@ jobs:
           cache-dependency-path: frontend/package-lock.json
       - name: Build the SPA (copy-data.mjs overlays data/derived -> public/)
         run: cd frontend && npm ci && npm run build
+      - name: SPA fallback so deep links and refreshes do not 404 on static hosting
+        run: cp frontend/dist/index.html frontend/dist/404.html
       - uses: actions/upload-pages-artifact@v3
         with:
           path: frontend/dist
