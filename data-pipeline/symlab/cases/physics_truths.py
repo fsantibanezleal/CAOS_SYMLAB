@@ -116,6 +116,62 @@ FEYNMAN_TRUTHS: dict[str, Callable[[dict[str, int]], Node]] = {
     ),
 }
 
+#: Measured datasets that satisfy an EXACT identity, keyed by loader name.
+#:
+#: A measured case usually has no closed form to recover. A few do, because the recorded quantity is
+#: DEFINED as an arithmetic combination of other recorded columns rather than measured
+#: independently, and those are the most interesting recovery targets in the set: the law is exact,
+#: the data is real, and a failure to recover it is a failure of the method rather than of the
+#: physics.
+#:
+#: The tolerance is per case and is a property of the RECORDING, not of the law.
+MEASURED_TRUTHS: dict[str, tuple[Callable[[dict[str, int]], Node], float, str]] = {
+    "wwtp-removal-identity": (
+        # RD = 100 * (BOD_in - BOD_out) / BOD_in
+        lambda i: _op(
+            "mul",
+            _C(100.0),
+            _op("div", _op("sub", _V(i["DBO-E"]), _V(i["DBO-S"])), _V(i["DBO-E"])),
+        ),
+        2e-3,
+        "Percentage removal is DEFINED as this ratio, so the identity is exact. The residual of "
+        "1.2e-3 relative is the rounding in the published percentages, which are recorded to a "
+        "fixed number of decimals; it is not a deviation of the plant from the definition.",
+    ),
+}
+
+#: Measured datasets whose published formula is an IDEALISATION the data does not follow.
+#:
+#: These deliberately get no truth. The two-mineral stoichiometric line for iron against silica
+#: misses the measured rows by 6.5 percent at the median and 11.8 percent at worst, because the ore
+#: contains minerals the two-mineral assumption ignores. Scoring a search against it would report
+#: "not recovered" for expressions that describe the ore BETTER than the reference does, which
+#: inverts the meaning of the measurement. The size of that gap is the finding, and it belongs in
+#: the case notes rather than in a recovery rate.
+IDEALISED_NOT_RECOVERABLE: dict[str, str] = {
+    "ore-mineralogy-closure": (
+        "%Fe = 69.94 - 0.699 %SiO2 assumes the ore is hematite and quartz only. Measured rows "
+        "deviate by 6.5 percent at the median and 11.8 percent at worst, so the line is a "
+        "reference to compare against and not a law to recover. An expression that fits the ore "
+        "better than this line is a better description of the ore, and scoring it as a failed "
+        "recovery would invert that."
+    ),
+}
+
+
+def measured_truth_for(loader: str, input_keys: list[str]) -> Node | None:
+    """The exact identity for a measured case, or None when there is none to compare against."""
+    entry = MEASURED_TRUTHS.get(loader)
+    if entry is None:
+        return None
+    builder, _tolerance, _reason = entry
+    index = {key: position for position, key in enumerate(input_keys)}
+    try:
+        return builder(index)
+    except KeyError:
+        return None
+
+
 #: Datasets whose published law cannot be written in this operator set, with the reason. These are
 #: reported as not checkable, and the reason is surfaced rather than left as an unexplained gap.
 INEXPRESSIBLE: dict[str, str] = {

@@ -246,6 +246,14 @@ def run(case: Case, *, noise: float = 0.0, seed: int = 0,
         if truth is not None:
             # The sampled columns ARE the physical parameters, so only the form is unknown.
             regime = "structure"
+    else:
+        # A handful of MEASURED cases satisfy an exact identity, because the recorded quantity is
+        # defined as a combination of other recorded columns rather than measured independently.
+        # Those are the strongest recovery targets in the set: exact law, real data, and any
+        # failure is the method's rather than the physics'.
+        truth = physics_truths.measured_truth_for(case.loader, list(dataset.input_keys))
+        if truth is not None:
+            regime = "structure+constants"
 
     return PreparedCase(
         case_id=case.id,

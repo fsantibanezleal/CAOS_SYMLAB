@@ -17,7 +17,14 @@ import gzip
 import numpy as np
 import pytest
 
-from symlab.cases.physics_truths import FEYNMAN_TRUTHS, INEXPRESSIBLE, truth_for
+from symlab.cases.physics_truths import (
+    FEYNMAN_TRUTHS,
+    IDEALISED_NOT_RECOVERABLE,
+    INEXPRESSIBLE,
+    MEASURED_TRUTHS,
+    measured_truth_for,
+    truth_for,
+)
 from symlab.io.sources import FEYNMAN_SELECTION, SOURCES
 from symlab.model.expr import evaluate
 
@@ -93,3 +100,44 @@ def test_truth_binds_by_column_name_not_position() -> None:
 
     # A column set that does not carry the expected names must refuse rather than guess.
     assert truth_for("feynman_I_12_1", ["a", "b"]) is None
+
+
+# ---------------------------------------------------------------------------- measured identities
+
+
+@pytest.mark.parametrize("loader", sorted(MEASURED_TRUTHS))
+def test_measured_identity_holds_on_the_real_rows(loader: str) -> None:
+    """An exact identity claimed over MEASURED data must actually hold over that data.
+
+    The tolerance is per case and describes the RECORDING, not the law: published percentages are
+    given to a fixed number of decimals, so a definition that is exact in principle shows a small
+    residual in the file. The reason has to be written down, so "the identity is approximate" can
+    never be confused with "we widened the tolerance until it passed".
+    """
+    from symlab.io.loaders import LOADERS
+
+    builder, tolerance, reason = MEASURED_TRUTHS[loader]
+    assert len(reason.split()) > 20, f"{loader}: the tolerance needs a written justification"
+
+    dataset = LOADERS[loader]()
+    node = measured_truth_for(loader, list(dataset.input_keys))
+    assert node is not None
+
+    predicted = evaluate(node, dataset.X)
+    relative = np.abs(predicted - dataset.y) / np.maximum(np.abs(dataset.y), 1e-12)
+    worst = float(np.max(relative))
+    assert worst <= tolerance, (
+        f"{loader}: identity misses its own data by {worst:.3e}, above the stated {tolerance:.1e}"
+    )
+
+
+@pytest.mark.parametrize("loader", sorted(IDEALISED_NOT_RECOVERABLE))
+def test_an_idealised_reference_is_never_scored_as_a_truth(loader: str) -> None:
+    """A published line the data does not follow must not become a recovery target.
+
+    Scoring against it reports "not recovered" for expressions that describe the material BETTER
+    than the reference does, which inverts the meaning of the measurement.
+    """
+    assert loader not in MEASURED_TRUTHS
+    assert measured_truth_for(loader, ["anything"]) is None
+    assert len(IDEALISED_NOT_RECOVERABLE[loader].split()) > 25
