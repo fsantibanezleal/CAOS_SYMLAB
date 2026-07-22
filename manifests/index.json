@@ -1,7 +1,7 @@
 {
   "schema": "symlab.index/v1",
   "schema_version": "1.0.0",
-  "engine_version": "0.02.000",
+  "engine_version": "0.03.000",
   "generated_on": "2026-07-22",
   "n_cases": 12,
   "coverage": {
