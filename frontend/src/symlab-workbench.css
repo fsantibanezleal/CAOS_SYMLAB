@@ -744,3 +744,14 @@
   color: var(--color-fg-subtle);
   white-space: nowrap;
 }
+
+/* `hidden` is a presentation hint that ANY display rule overrides, and `.sym-live-controls label`
+   sets one. Without this the sparse family showed population and generation sliders that change
+   nothing, which is worse than not offering them. */
+.sym-live-controls label[hidden] {
+  display: none;
+}
+
+.sym-live-method select {
+  margin-top: 0.3rem;
+}

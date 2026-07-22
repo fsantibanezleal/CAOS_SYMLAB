@@ -40,6 +40,9 @@ export function LiveLane({ run, lang }: { run: RunPayload; lang: 'en' | 'es' }) 
   const [population, setPopulation] = useState(80);
   const [generations, setGenerations] = useState(12);
   const [seed, setSeed] = useState(0);
+  /** Which search FAMILY runs in the browser. The sparse arm has no population and no generations,
+   *  so those controls are hidden for it rather than shown doing nothing. */
+  const [method, setMethod] = useState<'gp' | 'sparse'>('gp');
   const workerRef = useRef<Worker | null>(null);
 
   const start = useCallback(() => {
@@ -73,8 +76,11 @@ export function LiveLane({ run, lang }: { run: RunPayload; lang: 'en' | 'es' }) 
       population,
       generations,
       seed,
+      method,
     });
-  }, [run.notes.case_id, population, generations, seed, es]);
+  }, [run.notes.case_id, population, generations, seed, method, es]);
+
+  const isSparse = method === 'sparse';
 
   const stop = useCallback(() => {
     workerRef.current?.terminate();
@@ -99,7 +105,21 @@ export function LiveLane({ run, lang }: { run: RunPayload; lang: 'en' | 'es' }) 
       </Callout>
 
       <div className="sym-live-controls">
-        <label>
+        <label className="sym-live-method">
+          {es ? 'familia' : 'family'}
+          <select
+            className="sym-select"
+            value={method}
+            onChange={(event) => setMethod(event.target.value as 'gp' | 'sparse')}
+            disabled={status === 'running' || status === 'loading'}
+          >
+            <option value="gp">{es ? 'programacion genetica' : 'genetic programming'}</option>
+            <option value="sparse">{es ? 'regresion dispersa' : 'sparse regression'}</option>
+          </select>
+        </label>
+        {/* The sparse arm has no population and no generations. Showing those sliders for it would
+            offer knobs that change nothing, which is worse than not offering them. */}
+        <label hidden={isSparse}>
           {es ? 'poblacion' : 'population'}
           <input
             type="range"
@@ -112,7 +132,7 @@ export function LiveLane({ run, lang }: { run: RunPayload; lang: 'en' | 'es' }) 
           />
           <output>{population}</output>
         </label>
-        <label>
+        <label hidden={isSparse}>
           {es ? 'generaciones' : 'generations'}
           <input
             type="range"

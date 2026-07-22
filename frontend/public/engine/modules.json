@@ -1,0 +1,22 @@
+{
+  "modules": [
+    "symlab/__init__.py",
+    "symlab/model/__init__.py",
+    "symlab/model/expr.py",
+    "symlab/model/units.py",
+    "symlab/model/intervals.py",
+    "symlab/model/scaling.py",
+    "symlab/model/complexity.py",
+    "symlab/model/latex.py",
+    "symlab/search/__init__.py",
+    "symlab/search/generate.py",
+    "symlab/search/variation.py",
+    "symlab/search/select.py",
+    "symlab/search/tune.py",
+    "symlab/search/engine.py",
+    "symlab/search/exhaustive.py",
+    "symlab/search/sparse.py",
+    "symlab/cases/__init__.py",
+    "symlab/cases/generators.py"
+  ]
+}

@@ -26,25 +26,33 @@ interface PyodideInterface {
 }
 
 /** The package modules the live lane needs. The offline-only stages are deliberately absent. */
-const MODULES = [
-  'symlab/__init__.py',
-  'symlab/model/__init__.py',
-  'symlab/model/expr.py',
-  'symlab/model/units.py',
-  'symlab/model/intervals.py',
-  'symlab/model/scaling.py',
-  'symlab/model/complexity.py',
-  'symlab/model/latex.py',
-  'symlab/search/__init__.py',
-  'symlab/search/generate.py',
-  'symlab/search/variation.py',
-  'symlab/search/select.py',
-  'symlab/search/tune.py',
-  'symlab/search/engine.py',
-  'symlab/search/exhaustive.py',
-  'symlab/cases/__init__.py',
-  'symlab/cases/generators.py',
-];
+/**
+ * The engine modules are NOT listed here.
+ *
+ * They used to be, in a hand-maintained array that had to agree with the one in `copy-data.mjs`.
+ * Adding the non-evolutionary arm to the copier and not to this file produced a browser that
+ * served `sparse.py` with HTTP 200 and still raised
+ * `ModuleNotFoundError: No module named 'symlab.search.sparse'`, because nothing fetched it into
+ * the Pyodide filesystem. Two lists that must agree eventually will not.
+ *
+ * The copier writes `engine/modules.json` describing what it actually put on disk, and this worker
+ * loads exactly that. The build step is the only party that knows what exists, so it is the one
+ * that gets to say.
+ */
+async function engineModules(base: string): Promise<string[]> {
+  const response = await fetch(`${base}modules.json`);
+  if (!response.ok) {
+    throw new Error(
+      `engine manifest returned ${response.status}. Run copy-data.mjs: the build did not stage the ` +
+        'package source into public/engine/.',
+    );
+  }
+  const parsed = (await response.json()) as { modules?: unknown };
+  if (!Array.isArray(parsed.modules) || parsed.modules.length === 0) {
+    throw new Error('engine manifest is empty or malformed');
+  }
+  return parsed.modules as string[];
+}
 
 let pyodide: PyodideInterface | null = null;
 
@@ -61,7 +69,7 @@ async function boot(post: (message: unknown) => void): Promise<PyodideInterface>
 
   post({ kind: 'status', text: 'loading the engine source' });
   const base = `${self.location.origin}/engine/`;
-  for (const module of MODULES) {
+  for (const module of await engineModules(base)) {
     const response = await fetch(`${base}${module}`);
     if (!response.ok) {
       throw new Error(
@@ -82,11 +90,13 @@ async function boot(post: (message: unknown) => void): Promise<PyodideInterface>
 
 self.onmessage = async (event: MessageEvent) => {
   const post = (message: unknown) => (self as unknown as Worker).postMessage(message);
-  const { generatorId, population, generations, seed } = event.data as {
+  const { generatorId, population, generations, seed, method = 'gp' } = event.data as {
     generatorId: string;
     population: number;
     generations: number;
     seed: number;
+    /** Which search family to run. "gp" is the ladder engine; "sparse" the non-evolutionary arm. */
+    method?: 'gp' | 'sparse';
   };
 
   try {
@@ -98,6 +108,7 @@ import json, time
 from dataclasses import replace
 from symlab.cases.generators import GENERATORS, make_dataset
 from symlab.search.engine import Engine, LADDER
+from symlab.search.sparse import SparseRegressionSearch
 from symlab.model.expr import to_infix
 from symlab.model.latex import to_latex
 
@@ -111,7 +122,12 @@ config = replace(
     primitive_set=generator.suggested_primitives,
 )
 started = time.perf_counter()
-result = Engine(config).run(X, y, seed=${seed})
+# The family is chosen by the caller. The sparse arm ignores population and generations, because it
+# has neither, and reporting the ladder's numbers for it would describe a search it never ran.
+if ${JSON.stringify(method)} == "sparse":
+    result = SparseRegressionSearch(config).run(X, y, seed=${seed})
+else:
+    result = Engine(config).run(X, y, seed=${seed})
 elapsed = time.perf_counter() - started
 best = result.best
 
@@ -125,8 +141,9 @@ json.dumps({
     "seconds": float(elapsed),
     "front_size": len(result.pareto),
     "evaluations": int(result.counters.get("evaluations", 0)),
-    "generations": ${generations},
-    "population": ${population},
+    "method": ${JSON.stringify(method)},
+    "generations": ${generations} if ${JSON.stringify(method)} != "sparse" else None,
+    "population": ${population} if ${JSON.stringify(method)} != "sparse" else None,
 })
 `;
     const raw = (await runtime.runPythonAsync(code)) as string;

@@ -19,7 +19,8 @@ from pathlib import Path
 
 import pytest
 
-WORKFLOWS = Path(__file__).resolve().parents[1] / ".github" / "workflows"
+ROOT = Path(__file__).resolve().parents[1]
+WORKFLOWS = ROOT / ".github" / "workflows"
 CI = WORKFLOWS / "ci.yml"
 DEPLOY = WORKFLOWS / "deploy-pages.yml"
 
@@ -74,4 +75,28 @@ def test_ci_and_deploy_build_on_the_same_node_major() -> None:
     assert ci_majors == deploy_majors, (
         f"CI builds the frontend on Node {sorted(ci_majors)} but the deploy ships from "
         f"Node {sorted(deploy_majors)}. A green CI would not mean a working deploy."
+    )
+
+
+def test_the_live_worker_does_not_keep_its_own_module_list() -> None:
+    """One list of engine modules, owned by the build step that copies them.
+
+    There were two: `copy-data.mjs` decided what to copy, and `search.worker.ts` decided what to
+    fetch into Pyodide. Adding the non-evolutionary arm to the first and not the second produced a
+    browser that served `sparse.py` with HTTP 200 and still raised
+    `ModuleNotFoundError: No module named 'symlab.search.sparse'`. Nothing failed at build time, and
+    the live lane looked wired because the file was genuinely there.
+
+    The copier writes `engine/modules.json` from what it actually put on disk; the worker loads
+    exactly that.
+    """
+    frontend = ROOT / "frontend"
+    worker = (frontend / "src" / "live" / "search.worker.ts").read_text(encoding="utf-8")
+    copier = (frontend / "copy-data.mjs").read_text(encoding="utf-8")
+
+    assert "modules.json" in copier, "copy-data.mjs must emit the engine manifest"
+    assert "modules.json" in worker, "the worker must read the engine manifest"
+    assert "symlab/search/engine.py" not in worker, (
+        "the worker names an engine module directly, which means a second list has come back. "
+        "The copier is the only party that knows what exists on disk."
     )
