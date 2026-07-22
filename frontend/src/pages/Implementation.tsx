@@ -37,8 +37,8 @@ export default function Implementation() {
             <li>
               <strong>train</strong>{' '}
               {es
-                ? 'ejecuta las variantes, registrando el tiempo medido de cada una porque el costo forma parte de su evaluacion.'
-                : 'runs the variants, recording each one measured wall-clock because the cost is part of its evaluation.'}
+                ? 'ejecuta las variantes y despacha por FAMILIA de busqueda: los escalones de la escalera van al motor de programacion genetica, el brazo disperso a un barrido determinista de dispersion sin poblacion ni generaciones. Registra el tiempo medido de cada una porque el costo forma parte de su evaluacion.'
+                : 'runs the variants, dispatching on the search FAMILY: the ladder rungs go to the genetic-programming engine, the sparse arm to a deterministic sparsity sweep with no population and no generations. It records each one measured wall clock, because the cost is part of its evaluation.'}
             </li>
             <li>
               <strong>infer</strong>{' '}

@@ -6,7 +6,7 @@
 |---|---|---|
 | preprocess | `stages/preprocess.py` | read raw to apply **CONTRACT 1** (validate + outlier policy) |
 | feature_extraction | `stages/feature_extraction.py` | validated params to feature rows |
-| train | `stages/train.py` | run the search: the ladder of configurations, each adding ONE mechanism |
+| train | `stages/train.py` | run the search, dispatching on the FAMILY: the GP ladder, where each rung adds ONE mechanism, and the non-evolutionary sparse arm |
 | infer | `stages/infer.py` | render each front member: LaTeX with node ids, tree, terms, influence |
 | evaluate | `stages/evaluate.py` | held-out, leakage-safe metrics (R²/RMSE) |
 | export | `stages/export.py` | **CONTRACT 2**, compact artifact + manifest |
