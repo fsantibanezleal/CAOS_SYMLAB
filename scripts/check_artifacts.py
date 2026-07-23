@@ -1,4 +1,4 @@
-"""Validate CONTRACT 2 on disk (the pipeline -> web artifact contract): the index references every case; each
+"""Validate CONTRACT 2 on disk (the pipeline -> web artifact contract): the index COVERS the derived tree; each
 manifest exists; each artifact exists, is non-empty, and its byte size matches the manifest; the lane matches the
 gate verdict. Stdlib only (runs in CI WITHOUT installing the package). Exit non-zero on any drift.
 
@@ -41,12 +41,33 @@ def main() -> int:
             errs.append(f"empty artifact: {art}")
         if m.get("gate", {}).get("lane") not in (None, m.get("lane")):
             errs.append(f"lane/gate mismatch: {entry['case_id']}")
+    # COVERAGE, not just consistency. Everything above walks the INDEX, so a truncated index makes
+    # this script pass while most of the tree goes unchecked: it once printed "OK: 1 cases" with 24
+    # baked artifacts on disk, because a --quick run had rewritten the index with a single entry.
+    # Silent truncation reading as full coverage is exactly what this file exists to prevent.
+    indexed = {entry["case_id"] for entry in index.get("cases", [])}
+    on_disk = {path.parent.name for path in DERIVED.glob("*/run.json")}
+
+    missing_from_index = sorted(on_disk - indexed)
+    if missing_from_index:
+        errs.append(
+            f"{len(missing_from_index)} artifact(s) on disk are absent from the index and were "
+            f"never checked: {missing_from_index[:6]}. Run scripts/rebuild_index.py"
+        )
+
+    missing_on_disk = sorted(indexed - on_disk)
+    if missing_on_disk:
+        errs.append(f"index references cases with no artifact: {missing_on_disk[:6]}")
+
     if errs:
         print("CONTRACT 2 DRIFT:")
         for e in errs:
             print("  -", e)
         return 1
-    print(f"CONTRACT 2 OK: {len(index.get('cases', []))} cases, manifests <-> artifacts consistent.")
+    print(
+        f"CONTRACT 2 OK: {len(indexed)} cases indexed, {len(on_disk)} artifacts on disk, "
+        "manifests and artifacts consistent, index covers the tree."
+    )
     return 0
 
 

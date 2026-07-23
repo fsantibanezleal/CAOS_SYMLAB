@@ -1,0 +1,140 @@
+# 06. Wastewater treatment: an exact identity hiding in real data
+
+| | |
+|---|---|
+| Case id | `wwtp-removal-identity` |
+| Category | I, industrial process |
+| Data | REAL, daily records from an urban wastewater plant |
+| Ground truth known | YES, exact by the definition of the column |
+| Machine-comparable truth | YES, an exact identity over measured rows, verified to 2e-03 relative. Percentage removal is DEFINED as this ratio, so the identity is exact. The residual of 1.2e-3 relative is the rounding in the published percentages, which are recorded to a fixed number of decimals; it is not a deviation of the plant from the definition. |
+| Recovery regime | `structure+constants` |
+| Loader | `wwtp-removal-identity`, `load_water_treatment` |
+| Rows | 380 retained of 527 shipped |
+
+## What the quantity is
+
+Global biological oxygen demand removal, the percentage of the incoming organic load that the plant
+destroyed before discharging. BOD is the oxygen a microbial population consumes while metabolising
+the organic matter in a water sample, so it is the standard proxy for how much treatable pollution
+the water carries; the removal figure is the plant's headline performance number and is what a
+discharge permit is written against.
+
+Why this case exists is not that anybody needs a closed form for it. Everybody already has one. The
+removal column in this file is DEFINED as
+
+$$\mathrm{RD} = 100\,\frac{\mathrm{BOD}_{in} - \mathrm{BOD}_{out}}{\mathrm{BOD}_{in}}$$
+
+computed from two other columns in the same file. A search handed only the inlet and outlet
+concentrations should recover that expression exactly, on real daily plant data with real sensor
+noise and real missingness.
+
+**A method that cannot recover an exact identity present in its own inputs will not recover a
+physical law from noisy data.** That makes this the cheapest honest sanity check in the whole set,
+and the first case to run when an engine change is suspected of having broken something.
+
+## Inputs
+
+| Column | Symbol | Meaning | Unit as declared | Range |
+|---|---|---|---|---|
+| `DBO-E` | $\mathrm{BOD}_{in}$ | biological oxygen demand at plant entry | mg/L | 48 to 438 over the retained rows |
+| `DBO-S` | $\mathrm{BOD}_{out}$ | biological oxygen demand at plant outlet | mg/L | 5 to 152 |
+| `RD-DBO-G` | $\mathrm{RD}_{\mathrm{BOD}}$ | global BOD removal (target) | % | bounded to 0 and 100 by the definition; 19.6 to 97.0 observed |
+
+Ranges measured from the loader output on 2026-07-22, after the missing-value rows are dropped.
+
+The Spanish column abbreviations are the source's own: DBO is biological oxygen demand, DQO chemical
+oxygen demand, SS suspended solids, SSV volatile suspended solids, SED sediments, COND conductivity.
+The suffixes are positional: `-E` entry, `-P` primary settler, `-D` secondary settler input, `-S`
+output, `-G` global, and `RD-` marks a removal column.
+
+**The unit is inferred, not stated.** The research phase verified from `water-treatment.names` that
+the source gives NO units for any column. The loader labels the two BOD columns mg/L because that is
+the universal unit for the quantity; treat the label as UNVERIFIED against the source. It does not
+affect the identity, which is scale-invariant in the numerator and denominator.
+
+The full file has 38 attributes across the entry, primary settler, secondary settler, output and
+performance blocks. This case uses three of them and ignores the rest, deliberately: handing the
+search the other eight removal columns would let it recover the identity from a sibling rather than
+from the concentrations.
+
+## The published law
+
+Yes, and it is exact:
+
+$$\mathrm{RD} = 100\,\frac{\mathrm{BOD}_{in} - \mathrm{BOD}_{out}}{\mathrm{BOD}_{in}}$$
+
+It is not a law of nature; it is the definition of the column, which is exactly what makes it
+verifiable to the digit. `ground_truth_known` is true.
+
+**It IS machine-comparable, and the two generated rows at the top of this page do not say so.** That
+needs stating plainly, because the rows are the mechanical part of the page and a reader is entitled
+to trust them.
+
+- `preprocess.run` has a branch for measured cases: a loader present in `MEASURED_TRUTHS` in
+  [`physics_truths.py`](../../data-pipeline/symlab/cases/physics_truths.py) is bound to its exact
+  identity and the regime is set to `structure+constants`. `wwtp-removal-identity` is the only
+  loader in that table today, and the builder resolves against the loaded column names `DBO-E` and
+  `DBO-S`, so the truth is constructed and the equivalence test does run.
+- The tolerance is declared per case and is a property of the RECORDING rather than of the law:
+  2e-3 relative here. The recorded reason is that percentage removal is DEFINED as this ratio, so
+  the identity is exact, and the residual of 1.2e-3 relative is the rounding in the published
+  percentages, which are recorded to a fixed number of decimals. It is not a deviation of the plant
+  from the definition.
+- The rows above are generated by `scripts/sync_case_doc_truth_rows.py`, whose `truth_state()`
+  consults generator truth nodes and the Feynman table and does NOT consult `MEASURED_TRUTHS`. So it
+  reports `NO` and `unknown` for a case the pipeline scores. The rows are left as the script emits
+  them, because a test gates them; the divergence is a defect in the documentation generator and is
+  recorded here and in [`docs/cases.md`](../cases.md) rather than hidden by editing a generated cell.
+
+## Recovery regime
+
+The two generated rows say `unknown`; the pipeline records `structure+constants`, for the reason
+above. In substance this is a structure-only task with one constant, the factor 100, that has to come
+out right, and the pipeline's label is the conservative one.
+
+## Provenance
+
+| | |
+|---|---|
+| Source | UCI Machine Learning Repository, dataset 106, `water+treatment+plant.zip`, about 38.5 kB |
+| Licence | CC BY 4.0 |
+| Redistribution | `mirror` |
+| Citation | Water Treatment Plant. UCI Machine Learning Repository, doi:10.24432/C5854H. 527 days |
+| Verified on | 2026-07-21 |
+
+## What the loader actually does
+
+`load_water_treatment` reads the `.data` member from the zip, splits on commas, discards the first
+field (a date label), and applies the fixed 38-column attribute order from the documentation, because
+the file has no header row.
+
+**The recorded defect, carried verbatim and counted at load time:**
+
+> The UCI landing page states there are no missing values. The shipped file contains 591 occurrences
+> of `?`. Rows containing any are DROPPED, not imputed: imputing into an exact identity would
+> manufacture the relationship this case exists to recover.
+
+The research phase confirmed both halves independently: the landing page says "Has Missing Values:
+No", while the shipped `water-treatment.names` says "There are some missing values, all are unknown
+information", and a direct count of the `?` sentinel gives 591 cells.
+
+The count of retained rows is computed at load time and written into the defect string, so the
+manifest records the real number rather than a number copied from a page. In
+`manifests/wwtp-removal-identity.json` the baked value is 380 of 527 rows retained, with 243 train,
+81 test and 56 extrapolation rows. Dropping 147 of 527 rows is a 28 percent loss, which is a large
+correction to apply silently, and it is not applied silently.
+
+The reason for dropping rather than imputing is worth stating plainly. Any imputation of a missing
+inlet or outlet concentration would have to come from a model, and the most natural model available
+is the identity itself; the case would then be scoring an engine's ability to rediscover a
+relationship the pipeline had just written into the data.
+
+Note also the repeat structure the manifest records: 134 distinct target values across the 380
+retained rows, a repeat ratio of 2.836, because the source rounds the removal percentages to one
+decimal. That is a property of the file, recorded as a contract statistic, not a defect the loader
+introduced, and it sits below the ratio of 3.0 at which the ingestion contract raises its leakage
+warning, so this case carries no contract warning.
+
+## References
+
+- Water Treatment Plant. UCI Machine Learning Repository, doi:10.24432/C5854H.

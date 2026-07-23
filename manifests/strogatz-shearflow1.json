@@ -1,0 +1,180 @@
+{
+  "schema": "symlab.manifest/v1",
+  "case_id": "strogatz-shearflow1",
+  "category": "P",
+  "engine": {
+    "package": "symlab",
+    "version": "0.04.000"
+  },
+  "seed": 0,
+  "artifact": {
+    "path": "strogatz-shearflow1/run.json",
+    "format": "json",
+    "schema_version": "1.0.0",
+    "bytes": 476521
+  },
+  "gate": {
+    "lane": "precompute",
+    "has_generator": false,
+    "wheels": [
+      "numpy"
+    ],
+    "reasons": [
+      "no first-principles generator: the browser cannot reproduce this data without the source file, which is not shipped"
+    ]
+  },
+  "lane": "precompute",
+  "data": {
+    "source_id": "pmlb-strogatz_shearflow1",
+    "citation": "Romano, J. D. et al. PMLB v1.0: an open source dataset collection for benchmarking machine learning methods. arXiv:2012.00058. MIT licensed.",
+    "licence": "MIT (EpistasisLab/pmlb)",
+    "redistribution": "mirror",
+    "real_or_synthetic": "real",
+    "defects_applied": []
+  },
+  "contract": {
+    "n_rows": 400,
+    "n_inputs": 2,
+    "input_keys": [
+      "x",
+      "y"
+    ],
+    "target_key": "target",
+    "distinct_target_values": 400,
+    "target_repeat_ratio": 1.0,
+    "constant_inputs": [],
+    "warnings": [],
+    "defects_applied": [],
+    "licence": "MIT (EpistasisLab/pmlb)",
+    "redistribution": "mirror",
+    "citation": "Romano, J. D. et al. PMLB v1.0: an open source dataset collection for benchmarking machine learning methods. arXiv:2012.00058. MIT licensed.",
+    "n_train": 255,
+    "n_test": 85,
+    "n_extrapolation": 60
+  },
+  "units_declared": false,
+  "split_note": "extrapolation split holds out the lowest and highest 30 rows of 'x', so the training region is an interior box and the extrapolation rows lie outside the support the search ever saw",
+  "variants": [
+    {
+      "id": "r1-koza-baseline",
+      "seconds": 0.531,
+      "evaluations": 9000,
+      "front_size": 8,
+      "selected_complexity": 10,
+      "test_r2": 0.5076333965,
+      "accuracy_solution": false,
+      "exact_recovery": null,
+      "symbolic_test_decided": null,
+      "irrelevant_features": 0
+    },
+    {
+      "id": "r2-linear-scaling",
+      "seconds": 0.711,
+      "evaluations": 9000,
+      "front_size": 10,
+      "selected_complexity": 8,
+      "test_r2": 0.5265073666,
+      "accuracy_solution": false,
+      "exact_recovery": null,
+      "symbolic_test_decided": null,
+      "irrelevant_features": 0
+    },
+    {
+      "id": "r3-constant-tuning",
+      "seconds": 0.713,
+      "evaluations": 9180,
+      "front_size": 10,
+      "selected_complexity": 8,
+      "test_r2": 0.5265073666,
+      "accuracy_solution": false,
+      "exact_recovery": null,
+      "symbolic_test_decided": null,
+      "irrelevant_features": 0
+    },
+    {
+      "id": "r4-multi-objective",
+      "seconds": 0.773,
+      "evaluations": 9180,
+      "front_size": 2,
+      "selected_complexity": 6,
+      "test_r2": 0.2523763962,
+      "accuracy_solution": false,
+      "exact_recovery": null,
+      "symbolic_test_decided": null,
+      "irrelevant_features": 0
+    },
+    {
+      "id": "r5-epsilon-lexicase",
+      "seconds": 22.447,
+      "evaluations": 9180,
+      "front_size": 2,
+      "selected_complexity": 6,
+      "test_r2": 0.2523763962,
+      "accuracy_solution": false,
+      "exact_recovery": null,
+      "symbolic_test_decided": null,
+      "irrelevant_features": 0
+    },
+    {
+      "id": "r6-age-fitness-islands",
+      "seconds": 13.538,
+      "evaluations": 9720,
+      "front_size": 2,
+      "selected_complexity": 6,
+      "test_r2": 0.2523763962,
+      "accuracy_solution": false,
+      "exact_recovery": null,
+      "symbolic_test_decided": null,
+      "irrelevant_features": 0
+    },
+    {
+      "id": "r7-deduplication",
+      "seconds": 90.593,
+      "evaluations": 9720,
+      "front_size": 2,
+      "selected_complexity": 6,
+      "test_r2": 0.2523763962,
+      "accuracy_solution": false,
+      "exact_recovery": null,
+      "symbolic_test_decided": null,
+      "irrelevant_features": 0
+    },
+    {
+      "id": "parsimony-arm",
+      "seconds": 0.55,
+      "evaluations": 9180,
+      "front_size": 10,
+      "selected_complexity": 8,
+      "test_r2": 0.5265073666,
+      "accuracy_solution": false,
+      "exact_recovery": null,
+      "symbolic_test_decided": null,
+      "irrelevant_features": 0
+    },
+    {
+      "id": "sparse-regression",
+      "seconds": 0.001,
+      "evaluations": 0,
+      "front_size": 3,
+      "selected_complexity": 20,
+      "test_r2": 0.6582597108,
+      "accuracy_solution": false,
+      "exact_recovery": null,
+      "symbolic_test_decided": null,
+      "irrelevant_features": 0
+    }
+  ],
+  "summary": {
+    "n_variants": 9,
+    "accuracy_solutions": 0,
+    "accuracy_solution_rate": 0.0,
+    "exact_recoveries": 0,
+    "exact_recovery_rate": null,
+    "mean_structural_distance": null,
+    "symbolic_test_failure_rate": null,
+    "test_disagreement_count": 0,
+    "total_seconds": 129.86,
+    "total_evaluations": 74160,
+    "variants_with_irrelevant_features": 0
+  }
+}

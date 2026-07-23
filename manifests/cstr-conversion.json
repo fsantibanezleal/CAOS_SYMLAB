@@ -1,0 +1,178 @@
+{
+  "schema": "symlab.manifest/v1",
+  "case_id": "cstr-conversion",
+  "category": "I",
+  "engine": {
+    "package": "symlab",
+    "version": "0.04.000"
+  },
+  "seed": 0,
+  "artifact": {
+    "path": "cstr-conversion/run.json",
+    "format": "json",
+    "schema_version": "1.0.0",
+    "bytes": 634523
+  },
+  "gate": {
+    "lane": "live",
+    "has_generator": true,
+    "wheels": [
+      "numpy"
+    ],
+    "reasons": []
+  },
+  "lane": "live",
+  "data": {
+    "source_id": "cstr-conversion",
+    "citation": "Continuous stirred-tank reactor, first-order kinetics, verified (research dossier 7.2.3)",
+    "licence": "MIT (generator authored in this repository)",
+    "redistribution": "mirror",
+    "real_or_synthetic": "synthetic",
+    "defects_applied": []
+  },
+  "contract": {
+    "n_rows": 400,
+    "n_inputs": 2,
+    "input_keys": [
+      "tau",
+      "T"
+    ],
+    "target_key": "X",
+    "distinct_target_values": 400,
+    "target_repeat_ratio": 1.0,
+    "constant_inputs": [],
+    "warnings": [],
+    "defects_applied": [],
+    "licence": "MIT (generator authored in this repository)",
+    "redistribution": "mirror",
+    "citation": "Continuous stirred-tank reactor, first-order kinetics, verified (research dossier 7.2.3)",
+    "n_train": 255,
+    "n_test": 85,
+    "n_extrapolation": 60
+  },
+  "units_declared": true,
+  "split_note": "extrapolation split holds out the lowest and highest 30 rows of 'T', so the training region is an interior box and the extrapolation rows lie outside the support the search ever saw",
+  "variants": [
+    {
+      "id": "r1-koza-baseline",
+      "seconds": 2.121,
+      "evaluations": 12000,
+      "front_size": 13,
+      "selected_complexity": 4,
+      "test_r2": 0.4603479458,
+      "accuracy_solution": false,
+      "exact_recovery": false,
+      "symbolic_test_decided": true,
+      "irrelevant_features": 0
+    },
+    {
+      "id": "r2-linear-scaling",
+      "seconds": 1.658,
+      "evaluations": 12000,
+      "front_size": 21,
+      "selected_complexity": 32,
+      "test_r2": 0.8779968274,
+      "accuracy_solution": false,
+      "exact_recovery": false,
+      "symbolic_test_decided": true,
+      "irrelevant_features": 0
+    },
+    {
+      "id": "r3-constant-tuning",
+      "seconds": 1.568,
+      "evaluations": 12240,
+      "front_size": 18,
+      "selected_complexity": 9,
+      "test_r2": 0.7927731247,
+      "accuracy_solution": false,
+      "exact_recovery": false,
+      "symbolic_test_decided": true,
+      "irrelevant_features": 0
+    },
+    {
+      "id": "r4-multi-objective",
+      "seconds": 1.082,
+      "evaluations": 12240,
+      "front_size": 3,
+      "selected_complexity": 8,
+      "test_r2": 0.7635844446,
+      "accuracy_solution": false,
+      "exact_recovery": false,
+      "symbolic_test_decided": true,
+      "irrelevant_features": 0
+    },
+    {
+      "id": "r5-epsilon-lexicase",
+      "seconds": 29.472,
+      "evaluations": 12240,
+      "front_size": 3,
+      "selected_complexity": 8,
+      "test_r2": 0.7635844446,
+      "accuracy_solution": false,
+      "exact_recovery": false,
+      "symbolic_test_decided": true,
+      "irrelevant_features": 0
+    },
+    {
+      "id": "r6-age-fitness-islands",
+      "seconds": 23.691,
+      "evaluations": 12960,
+      "front_size": 3,
+      "selected_complexity": 8,
+      "test_r2": 0.7635844446,
+      "accuracy_solution": false,
+      "exact_recovery": false,
+      "symbolic_test_decided": true,
+      "irrelevant_features": 0
+    },
+    {
+      "id": "r7-deduplication",
+      "seconds": 145.275,
+      "evaluations": 12960,
+      "front_size": 3,
+      "selected_complexity": 8,
+      "test_r2": 0.7635844446,
+      "accuracy_solution": false,
+      "exact_recovery": false,
+      "symbolic_test_decided": true,
+      "irrelevant_features": 0
+    },
+    {
+      "id": "r8-unit-typed",
+      "seconds": 194.509,
+      "evaluations": 12960,
+      "front_size": 2,
+      "selected_complexity": 7,
+      "test_r2": 0.6136502888,
+      "accuracy_solution": false,
+      "exact_recovery": false,
+      "symbolic_test_decided": true,
+      "irrelevant_features": 0
+    },
+    {
+      "id": "sparse-regression",
+      "seconds": 0.001,
+      "evaluations": 0,
+      "front_size": 3,
+      "selected_complexity": 40,
+      "test_r2": 0.9244840795,
+      "accuracy_solution": false,
+      "exact_recovery": false,
+      "symbolic_test_decided": true,
+      "irrelevant_features": 0
+    }
+  ],
+  "summary": {
+    "n_variants": 9,
+    "accuracy_solutions": 0,
+    "accuracy_solution_rate": 0.0,
+    "exact_recoveries": 0,
+    "exact_recovery_rate": 0.0,
+    "mean_structural_distance": 0.7954,
+    "symbolic_test_failure_rate": 0.0,
+    "test_disagreement_count": 0,
+    "total_seconds": 399.38,
+    "total_evaluations": 99600,
+    "variants_with_irrelevant_features": 0
+  }
+}

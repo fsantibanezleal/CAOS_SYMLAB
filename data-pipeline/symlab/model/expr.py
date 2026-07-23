@@ -32,6 +32,7 @@ References transcribed from the persisted research dossiers:
 """
 from __future__ import annotations
 
+import hashlib
 import math
 from dataclasses import dataclass, replace
 from typing import Callable, Iterator, Sequence
@@ -305,11 +306,18 @@ def semantic_key(values: np.ndarray, *, digits: int = 8) -> str:
     """Hash of the evaluated output vector, for semantic deduplication.
 
     Non-finite candidates all collapse to one key so they are discarded together.
+
+    STABLE hashing, not the builtin. `hash(bytes)` is randomised per process in Python, so this key
+    changed on every run: the same two candidates would deduplicate against each other in one
+    process and not in the next, which makes the deduplication rung's measured effect a property of
+    the interpreter's startup rather than of the mechanism. blake2b is deterministic across
+    processes, machines and Python versions, and at 16 bytes the collision probability over a
+    population of a few thousand is negligible.
     """
     if not is_valid(values):
         return "invalid"
     rounded = np.round(values, digits)
-    return str(hash(rounded.tobytes()))
+    return hashlib.blake2b(rounded.tobytes(), digest_size=16).hexdigest()
 
 
 # --------------------------------------------------------------------------------------------

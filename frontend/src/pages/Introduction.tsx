@@ -21,17 +21,19 @@ export default function Introduction() {
             <>
               La regresion simbolica busca una expresion explicita <InlineMath tex="f(\mathbf{x})" /> que
               explique los datos, en lugar de ajustar una funcion cuyo interior nadie puede leer. Este
-              laboratorio recorre toda la escalera de metodos sobre los mismos casos abiertos con el mismo
-              protocolo, y reporta un frente de Pareto de leyes candidatas en vez de un ganador. No afirma
-              que la regresion simbolica descubra leyes naturales: esa distincion es el tema de esta pagina.
+              laboratorio recorre dos familias de busqueda sobre los mismos casos abiertos con el mismo
+              protocolo, una escalera de programacion genetica y un brazo disperso no evolutivo, y reporta un
+              frente de Pareto de leyes candidatas en vez de un ganador. No afirma que la regresion simbolica
+              descubra leyes naturales: esa distincion es el tema de esta pagina.
             </>
           ) : (
             <>
               Symbolic regression searches for an explicit expression <InlineMath tex="f(\mathbf{x})" /> that
               explains the data, rather than fitting a function whose internals nobody can read. This lab runs
-              the full method ladder over the same open cases with the same protocol, and reports a Pareto
-              front of candidate laws rather than a winner. It does not claim that symbolic regression
-              discovers natural laws, and that distinction is what this page is about.
+              two search families over the same open cases with the same protocol, a genetic-programming
+              ladder and a non-evolutionary sparse arm, and reports a Pareto front of candidate laws rather
+              than a winner. It does not claim that symbolic regression discovers natural laws, and that
+              distinction is what this page is about.
             </>
           )}
         </p>
@@ -77,8 +79,8 @@ export default function Introduction() {
         <h2>{es ? 'Por que es dificil' : 'Why it is hard'}</h2>
         <p>
           {es
-            ? 'El espacio de busqueda es discreto y crece de forma catastrofica. El numero de arboles binarios distintos con n nodos internos es el numero de Catalan, y multiplicado por las elecciones de operador y de variable en cada posicion llega al orden de 10^18 alrededor de los veinte nodos. Ningun metodo enumera eso; todos hacen un compromiso.'
-            : 'The search space is discrete and grows catastrophically. The number of distinct binary trees with n internal nodes is the Catalan number, and multiplied by the operator and variable choices at each position it reaches the order of 10^18 by about twenty nodes. No method enumerates that; every method makes a compromise.'}
+            ? 'El espacio de busqueda es discreto y crece de forma catastrofica. El numero de arboles binarios distintos con n nodos internos es el numero de Catalan, y multiplicado por las elecciones de operador y de terminal en cada posicion crece muy rapido: con los cuatro operadores aritmeticos y cuatro variables de entrada, un arbol de veintiun nodos ya admite del orden de 10^18 formas distintas. La cota depende del conjunto de primitivas y del numero de variables, asi que ambos se declaran aqui en lugar de dejarlos implicitos. Ningun metodo enumera eso; todos hacen un compromiso.'
+            : 'The search space is discrete and grows catastrophically. The number of distinct binary trees with n internal nodes is the Catalan number, and multiplied by the operator and terminal choices at each position it grows very fast: with the four arithmetic operators and four input variables, a twenty-one node tree already admits of the order of 10^18 distinct forms. The bound depends on the primitive set and on the number of variables, so both are stated here rather than left implicit. No method enumerates that; every method makes a compromise.'}
         </p>
         <Equation
           tex="|\mathcal{G}_n| \;\sim\; C_n \cdot |\mathcal{O}|^{n} \cdot (|\mathcal{V}|+1)^{n+1}, \qquad C_n = \frac{1}{n+1}\binom{2n}{n}"
@@ -100,15 +102,16 @@ export default function Introduction() {
         <h2>{es ? 'Lo que la evidencia dice hoy' : 'What the evidence says today'}</h2>
         <p>
           {es
-            ? 'La evaluacion mas amplia disponible comparo doce metodos modernos y concluyo que NO existe un metodo dominante. La recuperacion exacta solo ocurrio en los niveles de dificultad mas faciles. La extrapolacion fue, en sus palabras, particularmente dificil, con la mayoria de los modelos mostrando exactitud deficiente. Y ningun algoritmo recupero la expresion correcta libre de caracteristicas irrelevantes.'
-            : 'The broadest available evaluation compared twelve modern methods and concluded there is NO dominant method. Exact recovery happened only at the easiest difficulty levels. Extrapolation was, in its words, particularly challenging, with most models showing subpar accuracy. And not one algorithm recovered the correct expression free of irrelevant features.'}{' '}
+            ? 'La evaluacion mas amplia disponible comparo doce metodos modernos y concluyo que NO existe un algoritmo dominante que devuelva el mejor modelo en todos los criterios. La recuperacion exacta solo ocurrio en los niveles de dificultad mas faciles. La tarea de extrapolacion resulto, en sus palabras, muy dificil, y la exactitud obtenida por la mayoria de los modelos fue deficiente, a menudo con R2 negativo. Y ningun algoritmo recupero la expresion correcta con ausencia completa de caracteristicas irrelevantes.'
+            : 'The broadest available evaluation compared twelve modern methods and concluded there is NO dominating algorithm returning the best model on every criterion. Exact recovery happened only at the easiest difficulty levels. The extrapolation task proved, in its words, very challenging, and the accuracy most models obtained was subpar, often with a negative R-squared. And no algorithm recovered the correct expression with a complete absence of irrelevant features.'}{' '}
           <Cite id="defranca2024" paren />
         </p>
         <Callout variant="honest" title={es ? 'El numero que fundamenta este laboratorio' : 'The number this lab is built on'}>
           <p>
             {es
-              ? 'Sobre un conjunto de descubrimiento cientifico, un transformador preentrenado alcanzo 26,7 por ciento de problemas con R2 por encima de 0,999, con una tasa de solucion de 0,00 por ciento y una distancia de edicion normalizada de 1,00. Es decir: ajuste practicamente perfecto, estructura completamente equivocada, en cada caso.'
-              : 'On a scientific-discovery benchmark, a pretrained transformer reached 26.7 percent of problems at R-squared above 0.999, with a 0.00 percent solution rate and a normalised edit distance of 1.00. That is: a practically perfect fit, the completely wrong structure, every time.'}
+              ? 'En el nivel FACIL del conjunto SRSD-Feynman, el transformador preentrenado de extremo a extremo alcanzo 26,7 por ciento de problemas con R2 por encima de 0,999, con una tasa de solucion de 0,00 por ciento y una distancia de edicion normalizada de 1,00. Los tres numeros salen de la misma columna de la misma tabla. Es decir: ajuste practicamente perfecto, estructura completamente equivocada, en los problemas mas faciles del conjunto.'
+              : 'On the EASY tier of the SRSD-Feynman set, the end-to-end pretrained transformer reached 26.7 percent of problems at R-squared above 0.999, with a 0.00 percent solution rate and a normalised edit distance of 1.00. All three numbers come from the same column of the same table. That is: a practically perfect fit, the completely wrong structure, on the easiest problems in the set.'}{' '}
+            <Cite id="matsubara2022" paren />
           </p>
           <p>
             {es

@@ -1,0 +1,18 @@
+# GPU lane: intentionally empty, and this file exists to say so rather than leave a dangling
+# reference in the guides.
+#
+# SymLab has no GPU step. The search evaluates a population of small expression trees against at
+# most a few thousand rows, which is memory-bandwidth bound on arrays far too small to repay a
+# device transfer. The measured cost that dominates is SELECTION, not evaluation throughput:
+# Measured across all 55 committed artifacts, taking each case Koza baseline as 1, the median
+# wall-clock ratios are about 24x for epsilon-lexicase, 20x for age-fitness with islands and 122x for
+# deduplication. None of that is arithmetic a GPU would accelerate: it is selection and hashing, not
+# throughput.
+#
+# Note that age-fitness comes out CHEAPER than the rung below it despite adding two mechanisms,
+# because islands split the population four ways and epsilon-lexicase then filters a quarter-sized
+# pool. Cumulative in mechanisms is not monotone in wall clock.
+#
+# If a future rung reaches for a differentiable or neural component (a transformer prior over
+# expressions, for instance), pin it here and reclassify the case in the live/precompute gate:
+# the gate is enforced rather than assumed, so a heavy model cannot be silently shipped as "live".

@@ -72,9 +72,27 @@ def run(prepared: PreparedCase, *, interval_margin: float = 0.25) -> Features:
             f"{format_dims(dataset.target_dims)}."
         )
     else:
+        # Saying only "no dimensions declared" reads as an oversight, and on the measured plant
+        # cases it is not one. Two distinct reasons a column set is left untyped, both real:
+        #
+        #   1. An OFFSET scale. Degrees Celsius is not a ratio scale, so multiplying or dividing by
+        #      it is not a dimensionally meaningful operation. Typing it as a temperature would let
+        #      the rung accept expressions that are unit-consistent on paper and meaningless in fact.
+        #   2. Columns that do not SPAN the target. The combined cycle plant records two pressures,
+        #      a temperature and a relative humidity, and the target is electrical power. No product
+        #      of pressures and dimensionless numbers has the dimensions of power, because the flow
+        #      rate that would supply them is not a recorded column. Typing this case would leave
+        #      the rung with an empty admissible set, which reads as a failed method rather than as
+        #      an incomplete instrument list.
+        #
+        # So the rung is omitted and the omission is explained, rather than shown as a chip that
+        # does nothing or, worse, as a rung that rejects every candidate.
         note = (
             "Inputs carry no declared physical dimensions, so the unit-typed rung is omitted from "
-            "this case rather than shown as a chip that does nothing."
+            "this case rather than shown as a chip that does nothing. That is a property of the "
+            "instrument list rather than an oversight: a plant records what its sensors report, "
+            "which here includes an offset temperature scale and no flow rate, so the recorded "
+            "columns cannot be combined into the dimensions of the target at all."
         )
 
     return Features(

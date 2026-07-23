@@ -24,9 +24,22 @@ export interface InputDescriptor {
   std: number;
 }
 
+/** The full row accounting. `n_rows` alone is the TRAINING count and on its own contradicts the
+ *  case description, which quotes the size of the published dataset. */
+export interface RowAccounting {
+  /** Rows the source carried, before any subsample. Null for artifacts baked before this shipped. */
+  source: number | null;
+  used: number;
+  train: number;
+  test: number;
+  extrapolation: number;
+}
+
 export interface DatasetDescriptor {
   name: string;
+  /** The TRAINING row count. Prefer `rows` when present. */
   n_rows: number;
+  rows?: RowAccounting;
   n_inputs: number;
   real_or_synthetic: 'real' | 'synthetic';
   source: string | null;
@@ -143,6 +156,20 @@ export interface HistoryPayload {
   }[];
 }
 
+/**
+ * The input columns behind every variant's parity arrays, exported once per case.
+ *
+ * A data column does not depend on which expression is being scored, so carrying it inside each
+ * variant multiplied it by the number of rungs. `stride` and row order match the per-variant parity
+ * arrays by construction: the exporter derives both from one function.
+ */
+export interface ParityInputs {
+  stride: number;
+  n_shown: number;
+  n_total: number;
+  columns: Record<string, number[]>;
+}
+
 export interface ValidationPayload {
   parity?: {
     y_true: number[];
@@ -152,7 +179,6 @@ export interface ValidationPayload {
     n_shown: number;
     n_total: number;
   };
-  residuals_by_input?: Record<string, { x: number[]; residual: number[] }>;
   pdp?: { var: string; grid: number[]; mean: (number | null)[]; support: [number, number] }[];
   extrapolation?: {
     var: string;
@@ -187,7 +213,15 @@ export interface VariantScore {
   selected_complexity: number;
   selected_description_length: number;
   n_irrelevant_features: number;
+  /** The selected member's position in the FULL front, before the export cap. `selected_index`
+   *  elsewhere is its position in what actually shipped, and the two differ whenever selection
+   *  landed past the cap. They were both called `selected_index` and different readers picked
+   *  different ones, so the app rendered one model's formula beside another model's numbers. */
+  selected_index_full_front?: number;
   equivalence: {
+    /** The lab's verdict: the symbolic test where it decided, the numerical one where it did not.
+     *  Exported rather than re-derived, because a rule implemented twice is a rule that drifts. */
+    recovered?: boolean;
     symbolic: boolean | null;
     symbolic_error: string;
     numerical: boolean | null;
@@ -200,8 +234,11 @@ export interface VariantScore {
 }
 
 export interface VariantConfig {
-  population: number;
-  generations: number;
+  /** Null for a non-GP family, which has neither. Exporting the ladder's numbers for an arm that
+   *  never ran a population would put figures in the audit record describing a search that did not
+   *  happen. */
+  population: number | null;
+  generations: number | null;
   primitive_set: string;
   linear_scaling: boolean;
   interval_guard: boolean;
@@ -213,10 +250,25 @@ export interface VariantConfig {
   dedup: boolean;
   unit_typed: boolean;
   parsimony_coefficient: number;
+  /** What the unit-typed initialisation ACTUALLY did. `unit_typed` above is the REQUEST; a run can
+   *  carry `unit_typed: true` and still have searched untyped, when the case declares no dimensions
+   *  or no expression over its inputs can reach the target dimension. */
+  unit_typed_status?: string;
+  tuning_every?: number;
+  tuning_top_k?: number;
+  tuning_iterations?: number;
+  /** Null means lexicase judged every training case. Two runs at different rates were not solving
+   *  the same problem, which is why it ships rather than living only in the engine defaults. */
+  lexicase_down_sample?: number | null;
+  tournament_k?: number;
 }
 
 export interface VariantPayload {
   id: string;
+  /** Which search FAMILY this variant belongs to. "gp" is a rung of the genetic-programming
+   *  ladder, where each entry adds one mechanism to the one above it. Anything else is a separate
+   *  family and must not be presented as a further step along that ladder. */
+  method?: string;
   label_en: string;
   label_es: string;
   note_en: string;
@@ -230,6 +282,18 @@ export interface VariantPayload {
   history: HistoryPayload;
   validation: ValidationPayload;
   score: VariantScore;
+  /** What the search counted about itself. `unidentifiable_tunings` is the one worth reading: a
+   *  rank-deficient Jacobian means those constants are not jointly recoverable from this data, so
+   *  the fitted values are one of many equally good sets rather than the parameters of the law. */
+  counters?: {
+    archive_size: number;
+    front_size: number;
+    evaluations: number;
+    max_depth_seen: number;
+    max_size_seen: number;
+    tuned_candidates: number;
+    unidentifiable_tunings: number;
+  };
   seconds: number;
 }
 
@@ -251,6 +315,13 @@ export interface SamplingEntry {
 export interface Certificate {
   statement: string;
   caveats: string[];
+  /** The ingestion contract's own warnings, carried into the web payload rather than only into the
+   *  audit manifest. A leakage warning the pipeline raised is useless to the one reader who most
+   *  needs it if it only exists in a file the app never opens. */
+  contract_warnings?: string[];
+  /** What the loader had to do to the data on the way in: rows dropped, folds ignored, aggregation
+   *  applied. Recorded verbatim rather than tidied away. */
+  defects_applied?: string[];
   /** False means the enumeration was truncated and the completeness claim does NOT hold. */
   complete: boolean;
   n_enumerated: number;
@@ -280,15 +351,37 @@ export interface CaseNotes {
   case_id: string;
   category: string;
   category_name: string;
+  /** The Spanish category name, produced by the registry so the taxonomy is bilingual at source. */
+  category_name_es?: string;
   name_en: string;
   name_es: string;
   summary_en: string;
   summary_es: string;
   ground_truth_known: boolean;
   ground_truth_latex: string | null;
+  /** True when a machine-comparable law exists, so recovery is scoreable at all. Distinct from
+   *  `ground_truth_known`: a case can have a law we can print but not one we can compare against. */
+  ground_truth_available?: boolean;
+  /** WHY recovery cannot be scored, empty when it can. "nobody wrote the truth down", "the law is
+   *  outside the search space" and "the published formula does not describe this data" mean
+   *  entirely different things about the result on screen, and "not checkable" alone says none of
+   *  them. */
+  not_checkable_reason?: string;
+  /** "structure" when the physical parameters were given as input columns, so only the form was
+   *  unknown; "structure+constants" when the numbers had to be recovered too. */
+  regime?: string;
   real_or_synthetic: 'real' | 'synthetic';
   caveats: string[];
+  /** The ingestion contract's own warnings, carried into the web payload rather than only into the
+   *  audit manifest. A leakage warning the pipeline raised is useless to the one reader who most
+   *  needs it if it only exists in a file the app never opens. */
+  contract_warnings?: string[];
+  /** What the loader had to do to the data on the way in: rows dropped, folds ignored, aggregation
+   *  applied. Recorded verbatim rather than tidied away. */
+  defects_applied?: string[];
   split_note: string;
+  /** The input columns behind every variant's parity arrays, on one shared stride. */
+  parity_inputs?: ParityInputs;
   features_note: string;
   sampling: SamplingEntry[];
   variants: VariantPayload[];
@@ -316,6 +409,9 @@ export interface IndexEntry {
   category: string;
   /** The human category name. The sidebar must never render the raw single-letter code. */
   category_name: string;
+  /** The Spanish category name. The taxonomy is a property of the registry, so both languages are
+   *  produced there rather than translated in the frontend, where a second copy would drift. */
+  category_name_es?: string;
   name_en: string;
   name_es: string;
   ground_truth_known: boolean;
@@ -334,6 +430,10 @@ export interface CaseIndex {
   generated_on: string;
   n_cases: number;
   coverage: {
+    /** Registry ENTRIES. Two of them are suites that expand to one artifact per problem, so this is
+     *  smaller than `cases.length` and subtracting one from the other is meaningless. */
+    n_registry_entries?: number;
+    n_cases_expanded?: number;
     n_cases: number;
     n_categories: number;
     categories: Record<string, number>;

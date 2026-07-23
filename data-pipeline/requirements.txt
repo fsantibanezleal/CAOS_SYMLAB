@@ -1,6 +1,9 @@
-# PRECOMPUTE lane, the heavy, research-chosen SOTA engines, in the .venv-pipeline (local-only, never deployed).
-# THIS is where the deep research becomes binding: every engine pinned here is documented in docs/frameworks/<tool>/
-# and actually used by data-pipeline/symlab/stages/. The EXAMPLE engine (SIR) is numpy-only on purpose so the
-# template installs instantly with no native build; a real product adds e.g. yade / pychrono / ortools / mintpy /
-# torch here, each PINNED to the version it installs+verifies.
-numpy==2.4.6
+# This file is a pointer, not a second manifest.
+#
+# The template shipped it as the "precompute lane" list, describing an EXAMPLE SIR engine that does
+# not exist in this repo. Two files claiming the same lane is how a pin drifts: one gets updated and
+# the other quietly does not.
+#
+# The real precompute manifest is ../requirements-precompute.txt. Install with:
+#     pip install -r requirements-precompute.txt
+-r ../requirements-precompute.txt

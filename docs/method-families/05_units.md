@@ -42,9 +42,17 @@ evaluation protocol at all: a plausible-looking fit is not a discovery.
 ## When the rung is omitted
 
 A case whose inputs carry no declared physical dimensions omits this rung from its variant list
-entirely, rather than showing a control that silently does nothing. Where the declared inputs
-genuinely cannot reach the target dimension, the generator reports that rather than falling back to
-unconstrained search: it is a real answer about the problem, not a failure of the generator.
+entirely, rather than showing a control that silently does nothing. That omission is real: the train
+stage skips any variant whose config sets `unit_typed` when the case declares no units, and the
+feature stage writes the reason into the case payload.
+
+The other failure mode is NOT handled that way today, and the page says so rather than describing an
+intention. When the declared inputs cannot reach the target dimension, `typed_population` returns an
+empty list, and the engine falls back to unconstrained `ramped_half_and_half` initialisation and
+carries on. Nothing in the result, the counters or the exported config records that the fallback
+happened, so a run labelled "unit-typed" can be an unconstrained run. `grow_typed`'s own docstring
+says the caller reports it instead of falling back; the caller does the opposite. Until that is
+fixed, treat a unit-typed chip on a case whose inputs cannot span the target as unverified.
 
 ## References
 

@@ -1,39 +1,65 @@
-"""The measured live-vs-precompute GATE (ADR-0054). A case runs LIVE in the browser (Pyodide) iff it is
-pure-Python AND its wheels are a subset of the Pyodide-safe set AND it is small+fast enough; otherwise it is
-PRECOMPUTE and the SPA replays the committed artifact. The verdict + the measured numbers go into the manifest,
-and CI fails on mislabeling. This is a MEASUREMENT, never a hand-wave."""
+"""Which lane a case can run in, decided by measurement rather than by assertion.
+
+The app offers two ways to see a search: REPLAY, which renders a committed artifact, and LIVE, which
+runs the engine in the reader's browser through Pyodide and shows the result of a search that has
+never been run before. Every case can be replayed. Not every case can be run live, and the honest
+version of the Live tab has to say which and why.
+
+What actually decides it here is narrower than it looks, and it is not performance:
+
+  **The browser must be able to produce the data.** The live lane ships the `symlab` modules and
+  regenerates the inputs in-process from a first-principles generator. A case loaded from a file
+  cannot run live, because the file is not shipped: the flotation ARFF alone is 737,453 rows, and
+  publishing the raw sources beside the app to enable an in-browser re-fit would multiply the
+  download by orders of magnitude for a feature nobody asked for. So a case runs live if and only if
+  it has a generator.
+
+That is the whole rule, and it is stated that way because the previous version of this module was
+not. It scored `pure_python`, a Pyodide-safe wheel set, a 1500 ms runtime budget and a 256 KiB trace
+budget, and declared in its own docstring that the verdict "goes into the manifest, and CI fails on
+mislabeling. This is a MEASUREMENT, never a hand-wave." None of that was true. The function had zero
+callers anywhere in the repository, `build_manifest` hardcoded `"lane": "precompute"` for every case,
+and the CI check compared `manifest["gate"]["lane"]` against `manifest["lane"]` where `gate` was
+never written, so the comparison passed vacuously on all 39 artifacts. Every number in it was also
+wrong for this product: numpy is the only wheel and every lane uses it, and the smallest committed
+artifact is several times the 256 KiB budget it would have failed everything against.
+
+The runtime budget is gone rather than corrected. The live lane deliberately runs a REDUCED
+configuration (240 rows, a small population, few generations) precisely so it returns inside an
+interaction budget, so gating cases on the wall-clock of the full offline bake would have measured
+the wrong search and excluded cases that run live perfectly well.
+"""
 from __future__ import annotations
 
-LIVE_WHEELS: set[str] = {"numpy"}   # the Pyodide-safe wheel set the live lane is allowed to import
-RUN_MS_GATE = 1500.0                 # a live run must complete well within an interaction budget
-TRACE_BYTES_GATE = 256 * 1024        # a live/replay artifact must stay small
+#: The wheel set the live lane may import. Recorded because it is a real constraint on what the
+#: engine may ever depend on, not because any case has yet come close to violating it.
+LIVE_WHEELS: set[str] = {"numpy"}
 
 
-def classify_lane(*, pure_python: bool, wheels: set[str], run_ms: float, trace_bytes: int) -> dict:
+def classify_lane(*, has_generator: bool, wheels: set[str] | None = None) -> dict:
+    """The lane verdict for one case, with the reasons that produced it.
+
+    `has_generator` is the question that decides it: can the browser build this case's inputs from
+    code that ships, without downloading the source data.
+    """
     reasons: list[str] = []
     live = True
-    if not pure_python:
+
+    if not has_generator:
         live = False
-        reasons.append("not pure-python")
-    extra = set(wheels) - LIVE_WHEELS
+        reasons.append(
+            "no first-principles generator: the browser cannot reproduce this data without the "
+            "source file, which is not shipped"
+        )
+
+    extra = sorted(set(wheels or set()) - LIVE_WHEELS)
     if extra:
         live = False
-        reasons.append(f"wheels not Pyodide-safe: {sorted(extra)}")
-    if run_ms > RUN_MS_GATE:
-        live = False
-        reasons.append(f"runtime exceeds the {RUN_MS_GATE:.0f}ms budget")
-    if trace_bytes > TRACE_BYTES_GATE:
-        live = False
-        reasons.append(f"trace_bytes {trace_bytes} > {TRACE_BYTES_GATE}")
-    # NOTE: the raw measured run_ms is used for the DECISION but deliberately NOT stored, the committed manifest
-    # must be a pure function of (params, seed); wall-clock would dirty git on every re-run. We record the verdict
-    # + the (deterministic) budgets instead. The live runtime is measured separately, live, in the browser.
+        reasons.append(f"wheels outside the Pyodide-safe set: {extra}")
+
     return {
         "lane": "live" if live else "precompute",
-        "pure_python": pure_python,
-        "wheels": sorted(wheels),
-        "trace_bytes": trace_bytes,
-        "run_ms_budget": RUN_MS_GATE,
-        "trace_bytes_budget": TRACE_BYTES_GATE,
+        "has_generator": has_generator,
+        "wheels": sorted(wheels or LIVE_WHEELS),
         "reasons": reasons,
     }

@@ -15,9 +15,12 @@ Four of them have a real-data twin in the case list, which is the strongest arra
 calibrate the engine where the answer is known, then test it where it is not.
 
 - `friction-factor` pairs with the Nikuradse 362-point measured dataset.
-- `flotation-kinetics` and `comminution-bond` pair with the mining cases.
-- `monod-saturation` pairs with the penicillin fermentation case.
-- `wind-power-curve` pairs with the Kelmarsh reserve case.
+- `flotation-kinetics` pairs with the flotation plant case.
+
+Two more were listed here and are not shipped: `comminution-bond` named a `geomet-bond` case and
+`monod-saturation` a penicillin case, neither of which exists in the registry or the source table,
+and `wind-power-curve` named a Kelmarsh reserve case that was never added. Those `real_data_twin`
+fields are now `None`; this list is the prose that repeated them.
 
 Honesty rules applied throughout: a generator whose validity range is finite carries that range and a
 variant that DELIBERATELY leaves it, because showing a law break down outside its domain is the most
@@ -26,11 +29,13 @@ size-specific-energy refinement), it is not shipped as a scored target.
 """
 from __future__ import annotations
 
+import zlib
 from dataclasses import dataclass
 from typing import Callable
 
 import numpy as np
 
+from ..model.expr import Node
 from ..model.units import COMMON, DIMENSIONLESS, Dims, dims
 
 #: Gas constant, J/(mol K). CODATA value.
@@ -40,6 +45,31 @@ R_DRY_AIR = 287.058
 #: Standard gravity, m/s^2.
 G0 = 9.80665
 
+
+
+def _pow_const(base: Node, exponent: float) -> Node:
+    """`base ** exponent` as exp(exponent * log(base)), for a strictly positive base.
+
+    The operator set has no general power primitive, deliberately: an unrestricted power is the
+    fastest way for a search to manufacture an unphysical expression that fits. Every use below is
+    on a quantity its generator samples strictly positive (a Reynolds number, a Prandtl number, a
+    population ratio), so the identity holds across the sampled domain. It is not a general
+    substitute for a power operator and must not be used as one.
+    """
+    return Node.call("exp", Node.call("mul", Node.const(exponent), Node.call("log", base)))
+
+
+def _pow_var(base: Node, exponent: Node) -> Node:
+    """`base ** exponent` where the exponent is itself an input column."""
+    return Node.call("exp", Node.call("mul", exponent, Node.call("log", base)))
+
+
+def _log10(value: Node) -> Node:
+    return Node.call("div", Node.call("log", value), Node.const(_LN10))
+
+
+_LN10 = 2.302585092994046
+_R_GAS = 8.314462618
 
 @dataclass(frozen=True)
 class InputSpec:
@@ -74,6 +104,16 @@ class Generator:
     caveats: tuple[str, ...] = ()
     suggested_primitives: str = "physics"
     real_data_twin: str | None = None
+    #: The truth as a machine-comparable expression tree, or None where the law cannot be written in
+    #: this operator set. ONLY generators carrying one contribute to a recovery rate; the rest
+    #: contribute to error metrics only, and the app says "not checkable" rather than reporting zero.
+    truth_node: Callable[[], Node] | None = None
+    #: How hard the recovery task actually is, stated rather than left implicit.
+    #:   "structure"           the physical parameters are input COLUMNS, so only the FORM is unknown.
+    #:                         This is the convention the published physics benchmarks use.
+    #:   "structure+constants" the parameters are baked into the generator, so the NUMBERS must be
+    #:                         recovered as well, which is a materially harder task.
+    regime: str = "structure"
 
     @property
     def input_keys(self) -> list[str]:
@@ -141,7 +181,10 @@ MICHAELIS_MENTEN = Generator(
         "A Lineweaver-Burk linearisation fits this exactly but distorts the error structure; the lab "
         "shows that as a worked example of a transformation that helps a human and hurts a fit.",
     ),
-    real_data_twin="penicillin-monod",
+    real_data_twin=None,
+    truth_node=lambda: Node.call("div", Node.call("mul", Node.var(1), Node.var(0)),
+                                Node.call("add", Node.var(2), Node.var(0))),
+    regime="structure",
 )
 
 
@@ -179,6 +222,9 @@ ARRHENIUS = Generator(
         "primitive set can express the answer at all. An engine without division inside an exponent "
         "cannot recover it, and reporting that as a search failure would be a category error.",
     ),
+    truth_node=lambda: Node.call("mul", Node.var(2), Node.call("exp", Node.call("neg",
+        Node.call("div", Node.var(1), Node.call("mul", Node.const(R_GAS), Node.var(0)))))),
+    regime="structure",
 )
 
 
@@ -218,6 +264,17 @@ CSTR = Generator(
         "target is a function of two inputs. Sampling them too would make the problem trivially "
         "separable and remove the point of the case.",
     ),
+    truth_node=lambda: (
+        lambda damkohler: Node.call("div", damkohler, Node.call("add", Node.const(1.0), damkohler))
+    )(
+        Node.call(
+            "mul",
+            Node.call("mul", Node.var(0), Node.const(1e7)),
+            Node.call("exp", Node.call("neg", Node.call(
+                "div", Node.const(60000.0), Node.call("mul", Node.const(_R_GAS), Node.var(1))))),
+        )
+    ),
+    regime="structure+constants",
 )
 
 
@@ -258,7 +315,11 @@ COMMINUTION_BOND = Generator(
         "The Morrell size-specific-energy refinement is a known extension whose exact coefficient form "
         "the research could not verify, so it is deliberately NOT shipped as a scored target.",
     ),
-    real_data_twin="geomet-bond",
+    real_data_twin=None,
+    truth_node=lambda: Node.call("mul", Node.call("mul", Node.const(10.0), Node.var(2)),
+        Node.call("sub", Node.call("inv", Node.call("sqrt", Node.var(1))),
+                          Node.call("inv", Node.call("sqrt", Node.var(0))))),
+    regime="structure",
 )
 
 
@@ -281,7 +342,10 @@ COMMINUTION_KICK = Generator(
     sample=_kick,
     recovery_target="the logarithmic ratio form, distinguished from Bond's inverse-square-root",
     caveats=("Shipped so the model-selection question in the Bond case has a real alternative to select.",),
-    real_data_twin="geomet-bond",
+    real_data_twin=None,
+    truth_node=lambda: Node.call("mul", Node.var(2),
+        Node.call("log", Node.call("div", Node.var(0), Node.var(1)))),
+    regime="structure",
 )
 
 
@@ -325,6 +389,9 @@ FLOTATION_KINETICS = Generator(
         "complexity-versus-accuracy Pareto demonstration on a real industrial problem.",
     ),
     real_data_twin="flotation-silica",
+    truth_node=lambda: Node.call("mul", Node.var(1), Node.call("sub", Node.const(1.0),
+        Node.call("exp", Node.call("neg", Node.call("mul", Node.var(2), Node.var(0)))))),
+    regime="structure",
 )
 
 
@@ -362,6 +429,11 @@ TWO_PRODUCT = Generator(
         "search spaces reach only with a competent simplification stage, so a failure here is "
         "informative about the engine rather than about the data.",
     ),
+    truth_node=lambda: Node.call("mul", Node.call("mul", Node.const(100.0),
+        Node.call("div", Node.var(1), Node.var(0))),
+        Node.call("div", Node.call("sub", Node.var(0), Node.var(2)),
+                          Node.call("sub", Node.var(1), Node.var(2)))),
+    regime="structure",
 )
 
 
@@ -392,13 +464,22 @@ NTU_COUNTERFLOW = Generator(
     truth_infix="(1 - exp(-NTU*(1 - Cr))) / (1 - Cr*exp(-NTU*(1 - Cr)))",
     source="Effectiveness-NTU method, counter-current arrangement, verified (research dossier 7.2.7)",
     sample=_ntu,
-    recovery_target="both branches, plus the Cr = 1 limit eps = NTU/(1 + NTU)",
+    recovery_target="the effectiveness expression over the sampled Cr range",
     validity="Steady state, constant properties, no phase change, no losses to surroundings.",
     caveats=(
         "There is a REMOVABLE SINGULARITY at Cr = 1 where the expression degenerates to NTU/(1+NTU). "
-        "That is the point of the case: a fitted result that blows up at Cr = 1 is wrong in a way a "
-        "plain error metric hides completely, and the extrapolation view is what exposes it.",
+        "A fitted result that blows up there is wrong in a way a plain error metric hides completely, "
+        "and the extrapolation view is what exposes it. NOTE that the sampling does not currently "
+        "place points at Cr = 1, so this is a property of the law to watch for in the extrapolation "
+        "panel rather than a configuration the case selector offers.",
     ),
+    truth_node=lambda: Node.call("div",
+        Node.call("sub", Node.const(1.0), Node.call("exp", Node.call("neg",
+            Node.call("mul", Node.var(0), Node.call("sub", Node.const(1.0), Node.var(1)))))),
+        Node.call("sub", Node.const(1.0), Node.call("mul", Node.var(1),
+            Node.call("exp", Node.call("neg",
+                Node.call("mul", Node.var(0), Node.call("sub", Node.const(1.0), Node.var(1)))))))),
+    regime="structure+constants",
 )
 
 
@@ -437,6 +518,11 @@ DITTUS_BOELTER = Generator(
         "from it cannot be fitted by one at low Reynolds number, which the lab ships as a clean "
         "demonstration of model misspecification.",
     ),
+    truth_node=lambda: Node.call(
+        "mul", Node.const(0.023),
+        Node.call("mul", _pow_const(Node.var(0), 0.8), _pow_const(Node.var(1), 0.4)),
+    ),
+    regime="structure+constants",
 )
 
 
@@ -467,6 +553,22 @@ GNIELINSKI = Generator(
         "This case is designed to be UNRECOVERABLE by the obvious hypothesis. Reporting a good "
         "power-law fit here and stopping is exactly the failure the lab exists to demonstrate.",
     ),
+    truth_node=lambda: (
+        lambda f8: Node.call(
+            "div",
+            Node.call("mul", Node.call("mul", f8, Node.call("sub", Node.var(0), Node.const(1000.0))),
+                      Node.var(1)),
+            Node.call("add", Node.const(1.0), Node.call(
+                "mul",
+                Node.call("mul", Node.const(12.7), Node.call("sqrt", f8)),
+                Node.call("sub", _pow_const(Node.var(1), 2.0 / 3.0), Node.const(1.0)))),
+        )
+    )(
+        Node.call("div", Node.call("inv", Node.call("square", Node.call(
+            "sub", Node.call("mul", Node.const(0.79), Node.call("log", Node.var(0))),
+            Node.const(1.64)))), Node.const(8.0))
+    ),
+    regime="structure+constants",
 )
 
 
@@ -506,6 +608,14 @@ FRICTION_FACTOR = Generator(
         "calibrate the engine, real data to expose what the correlation misses.",
     ),
     real_data_twin="nikuradse-friction",
+    truth_node=lambda: Node.call(
+        "div", Node.const(0.25),
+        Node.call("square", _log10(Node.call(
+            "add",
+            Node.call("div", Node.var(1), Node.const(3.7)),
+            Node.call("div", Node.const(5.74), _pow_const(Node.var(0), 0.9))))),
+    ),
+    regime="structure+constants",
 )
 
 
@@ -544,11 +654,17 @@ STOKES = Generator(
         "The density difference matters: a fit that finds rho_p alone can look excellent on a sample "
         "where rho_f barely varies, and is wrong. This is the clearest small example of a correct-looking "
         "fit that is the wrong law.",
-        "A variant deliberately samples beyond Re = 1 so the lab can show a law BREAKING DOWN outside "
-        "its validity range, which is the single most useful honest lesson available here.",
+        "The validity range ends near Re = 1, and sampling deliberately beyond it would let the lab "
+        "show a law BREAKING DOWN outside its domain, which is the most useful honest lesson "
+        "available here. That sampling is NOT implemented: the generator stays inside the range, and "
+        "this caveat previously described it as a shipped variant.",
         "No open tabulated sphere-drag experimental dataset was found in the research, so this case "
         "stays synthetic rather than claiming a real twin.",
     ),
+    truth_node=lambda: Node.call("mul", Node.call("mul", Node.const(2.0 / 9.0 * G0),
+        Node.call("div", Node.call("sub", Node.var(1), Node.var(2)), Node.var(3))),
+        Node.call("square", Node.var(0))),
+    regime="structure+constants",
 )
 
 
@@ -578,11 +694,19 @@ ANTOINE = Generator(
     recovery_target="the B/(C + T) reciprocal-shifted form",
     validity="-20 to 100 degC for these constants; a DIFFERENT verified set covers 99 to 374 degC.",
     caveats=(
-        "A single constant set cannot cover the whole liquid range. The two-window variant asks the "
-        "search to detect that, which is a change-point question dressed as a fitting question.",
+        "A single constant set cannot cover the whole liquid range, and a second window would turn "
+        "this into a change-point question dressed as a fitting question. Only ONE window is "
+        "generated; the second is not implemented, and this caveat previously called it a variant.",
         "Real-data twin: the batch distillation dataset names its three chemical systems, so the true "
         "Antoine constants of every component are independently obtainable rather than assumed.",
     ),
+    truth_node=lambda: Node.call(
+        "exp", Node.call("mul", Node.const(_LN10), Node.call(
+            "sub", Node.const(8.07131),
+            Node.call("div", Node.const(1730.63),
+                      Node.call("add", Node.const(233.426), Node.var(0))))),
+    ),
+    regime="structure+constants",
 )
 
 
@@ -626,6 +750,13 @@ AFFINITY_POWER = Generator(
         "unit-typed rung: with units enforced the exponents are forced, without units they must be "
         "found. Running both configurations on this one case is the whole argument for rung 8.",
     ),
+    truth_node=lambda: Node.call("mul", Node.call("mul",
+        Node.call("div", Node.var(4), Node.var(5)),
+        Node.call("mul", Node.call("div", Node.var(0), Node.var(1)),
+            Node.call("square", Node.call("div", Node.var(0), Node.var(1))))),
+        Node.call("mul", Node.call("square", Node.call("square", Node.call("div", Node.var(2), Node.var(3)))),
+                          Node.call("div", Node.var(2), Node.var(3)))),
+    regime="structure",
 )
 
 
@@ -669,8 +800,15 @@ WIND_POWER = Generator(
         "PIECEWISE by construction: zero below cut-in, cubic, a rated plateau, then zero above cut-out. "
         "A single smooth expression cannot represent it, so this case tests whether the search reports "
         "an honest partial fit or an overconfident smooth one.",
-        "Real-data twin: the Kelmarsh farm, using the same swept area and rated power.",
+        "No real-data twin ships with this case. The Kelmarsh farm would be the natural one, and the "
+        "geometry used here is taken from it, but the measured series is not among the sources.",
     ),
+    #: NO truth node. The curve is piecewise: zero below cut-in, zero above cut-out, and capped at
+    #: rated power in between. The operator set has no comparison, no minimum and no indicator, so
+    #: the law cannot be written in the language the search uses. An approximation would let the app
+    #: show a recovery verdict that describes the primitive set rather than the method, so recovery
+    #: is reported as not checkable and the reason is published.
+    regime="structure+constants",
 )
 
 
@@ -708,15 +846,23 @@ THETA_LOGISTIC = Generator(
         "Real-data twin: GPDD ships 5,156 series WITH published theta fits, so a recovered exponent "
         "can be compared against a published one rather than only against the residual.",
     ),
-    real_data_twin="gpdd-density-dependence",
+    real_data_twin=None,
+    truth_node=lambda: Node.call(
+        "mul",
+        Node.call("mul", Node.var(1), Node.var(0)),
+        Node.call("sub", Node.const(1.0),
+                  _pow_var(Node.call("div", Node.var(0), Node.var(2)), Node.var(3))),
+    ),
+    regime="structure",
 )
 
 
 def _lotka_volterra(rng: np.random.Generator, n: int) -> tuple[np.ndarray, np.ndarray]:
     # Parameters chosen to reproduce roughly the ten-year lynx-hare cycle.
     # Only the prey right-hand side is generated here, so only alpha and beta are used. The
-    # predator parameters gamma and delta belong to the second equation of the system and to
-    # the conserved quantity, both of which ship as their own variants.
+    # predator equation and the conserved quantity are the other two formulations of this system
+    # and NEITHER is implemented: this comment used to say "both of which ship as their own
+    # variants", and no such generator is registered.
     alpha, beta = 0.55, 0.028
     hares = rng.uniform(5.0, 90.0, size=n)
     lynx = rng.uniform(5.0, 60.0, size=n)
@@ -737,14 +883,19 @@ LOTKA_VOLTERRA = Generator(
     truth_infix="0.55*H - 0.028*H*L",
     source="Lotka-Volterra predator-prey model, lynx-hare parameterisation (research dossier 7.2.14)",
     sample=_lotka_volterra,
-    recovery_target="the bilinear interaction term, and separately the conserved quantity",
+    recovery_target="the bilinear interaction term",
     caveats=(
-        "The conserved quantity V = delta*H - gamma*ln(H) + beta*L - alpha*ln(L) is a DIFFERENT and "
-        "harder symbolic regression formulation on the same system, and it ships as its own variant. "
-        "Recovering an invariant is not the same task as recovering a derivative.",
-        "Real-data twin: the lynx-hare series, 21 points, 1900 to 1920.",
+        "Only the PREY right-hand side is posed here. The conserved quantity "
+        "V = delta*H - gamma*ln(H) + beta*L - alpha*ln(L) is a different and harder formulation on "
+        "the same system, and recovering an invariant is not the same task as recovering a "
+        "derivative. It is not implemented, and this caveat used to claim it shipped as its own "
+        "variant.",
+        "There is no real-data twin in this repository. The lynx-hare series would be the natural one, but it is not among the shipped sources.",
     ),
-    real_data_twin="lynx-hare-lotka-volterra",
+    real_data_twin=None,
+    truth_node=lambda: Node.call("sub", Node.call("mul", Node.const(0.55), Node.var(0)),
+        Node.call("mul", Node.const(0.028), Node.call("mul", Node.var(0), Node.var(1)))),
+    regime="structure+constants",
 )
 
 
@@ -784,6 +935,11 @@ ASM1_GROWTH = Generator(
         "The BSM1 model is published but its reference implementation is not, so this lab implements "
         "and owns its own simulator rather than claiming compatibility with one it cannot inspect.",
     ),
+    truth_node=lambda: Node.call("mul", Node.call("mul", Node.const(4.0),
+        Node.call("div", Node.var(0), Node.call("add", Node.const(10.0), Node.var(0)))),
+        Node.call("mul", Node.call("div", Node.var(1), Node.call("add", Node.const(0.2), Node.var(1))),
+                          Node.var(2))),
+    regime="structure+constants",
 )
 
 
@@ -825,8 +981,18 @@ def make_dataset(
 
     Deterministic in `(generator.id, n_rows, seed, noise)`, so a committed artifact regenerates
     byte for byte.
+
+    The seed is derived with a STABLE hash. This line used `hash(generator.id)`, and Python
+    randomises string hashing per process, so the docstring above was false in the most damaging way
+    available: every run drew DIFFERENT data from the same declared seed. Artifacts were not
+    reproducible, "a seeded offline run" was not one, and the live lane disagreeing with the offline
+    lane had nothing to do with Pyodide's numpy, which turns out to produce bit-identical streams.
+
+    CRC32 is deterministic across processes, machines and Python versions. It is not a
+    cryptographic hash and does not need to be: it is spreading case ids across seed space, not
+    resisting an adversary.
     """
-    rng = np.random.default_rng(abs(hash(generator.id)) % (2**32) + seed)
+    rng = np.random.default_rng(zlib.crc32(generator.id.encode("utf-8")) + seed)
     X, y = generator.sample(rng, n_rows)
     y = add_noise(rng, y, noise, multiplicative=multiplicative_noise)
     return X, y

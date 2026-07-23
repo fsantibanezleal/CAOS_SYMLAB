@@ -19,6 +19,7 @@ import { scaleLinear, scaleLog } from 'd3-scale';
 import { useMemo, useState } from 'react';
 
 import type { ParetoMember } from '../lib/contract.types';
+import { formatR2 } from '../lib/format';
 
 export interface ParetoFrontProps {
   members: ParetoMember[];
@@ -86,7 +87,11 @@ export function ParetoFront({
     .map((m, i) => `${i === 0 ? 'M' : 'L'}${x(m.complexity)},${y(Math.max(m.loss_train as number, 1e-300))}`)
     .join(' ');
 
-  const yTicks = y.ticks(5);
+  // `scaleLog.ticks(n)` treats n as a hint and returns every minor step when the domain spans
+  // several decades, which overlapped into an unreadable smear down the axis. Decades only, and if
+  // there are still too many, every other one.
+  const decades = y.ticks(5).filter((t) => Number.isInteger(Math.round(Math.log10(t) * 1e6) / 1e6));
+  const yTicks = decades.length > 6 ? decades.filter((_, i) => i % 2 === 0) : decades;
   const xTicks = x.ticks(Math.min(8, usable.length + 2)).filter((t) => Number.isInteger(t));
 
   return (
@@ -172,7 +177,7 @@ export function ParetoFront({
         </div>
         <div>
           <span>R2 {lang === 'es' ? 'prueba' : 'test'}</span>
-          <strong>{shown.r2_test === null ? 'n/a' : shown.r2_test.toFixed(5)}</strong>
+          <strong>{formatR2(shown.r2_test)}</strong>
         </div>
         <div>
           <span>{lang === 'es' ? 'long. descripcion' : 'description length'}</span>

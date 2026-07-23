@@ -37,8 +37,8 @@ export default function Implementation() {
             <li>
               <strong>train</strong>{' '}
               {es
-                ? 'ejecuta las variantes, registrando el tiempo medido de cada una porque el costo forma parte de su evaluacion.'
-                : 'runs the variants, recording each one measured wall-clock because the cost is part of its evaluation.'}
+                ? 'ejecuta las variantes y despacha por FAMILIA de busqueda: los escalones de la escalera van al motor de programacion genetica, el brazo disperso a un barrido determinista de dispersion sin poblacion ni generaciones. Registra el tiempo medido de cada una porque el costo forma parte de su evaluacion.'
+                : 'runs the variants, dispatching on the search FAMILY: the ladder rungs go to the genetic-programming engine, the sparse arm to a deterministic sparsity sweep with no population and no generations. It records each one measured wall clock, because the cost is part of its evaluation.'}
             </li>
             <li>
               <strong>infer</strong>{' '}
@@ -63,8 +63,8 @@ export default function Implementation() {
           <Callout variant="note" title={es ? 'Determinismo como requisito, no como detalle' : 'Determinism as a requirement, not a detail'}>
             <p>
               {es
-                ? 'Una ejecucion es una funcion pura del caso, la configuracion, la semilla y los datos. Nada escribe el reloj dentro de un artefacto, de modo que regenerar un caso produce una salida identica byte a byte y volver a hornear nunca ensucia el repositorio sin un cambio real detras.'
-                : 'A run is a pure function of the case, the configuration, the seed and the data. Nothing writes the clock into an artifact, so regenerating a case produces byte-identical output and a re-bake never dirties the repository without a real change behind it.'}
+                ? 'Una ejecucion es una funcion pura del caso, la configuracion, la semilla y los datos. Regenerar un caso reproduce exactamente cada numero cientifico: las mismas expresiones, las mismas perdidas, los mismos veredictos. El tiempo medido SI se registra y si cambia entre corridas, a proposito, porque lo que cuesta un escalon forma parte de su evaluacion y comparar metodos a igual numero de generaciones en vez de a igual presupuesto es un problema de justicia que este laboratorio discute. Asi que volver a hornear muestra una diferencia de tiempos y nunca una diferencia de resultados.'
+                : 'A run is a pure function of the case, the configuration, the seed and the data. Regenerating a case reproduces every scientific number exactly: the same expressions, the same losses, the same verdicts. The measured wall clock IS recorded and does move between runs, deliberately, because what a rung costs is part of its evaluation and comparing methods at equal generation count rather than equal budget is a fairness problem this lab argues about. So a re-bake shows a timing diff and never a result diff.'}
             </p>
           </Callout>
         </section>
@@ -132,8 +132,8 @@ export default function Implementation() {
           <h3>{es ? 'La trampa de la difusion del objetivo' : 'The target-broadcast trap'}</h3>
           <p>
             {es
-              ? 'El conjunto de flotacion registra variables de proceso cada veinte segundos, pero los ensayos de concentrado son mediciones de laboratorio HORARIAS repetidas en cada fila, unas 13,5 veces por valor distinto. Ajustar a nivel de fila filtra el objetivo esa misma cantidad de veces.'
-              : 'The flotation dataset records process variables every twenty seconds, but the concentrate assays are HOURLY laboratory measurements repeated across every row, about 13.5 times per distinct value. Fitting at row level leaks the target that many times over.'}
+              ? 'El conjunto de flotacion registra variables de proceso cada veinte segundos, unas 180 filas por hora, pero los ensayos de concentrado son mediciones de laboratorio HORARIAS. Re-derivado del archivo crudo durante esta auditoria: 737.453 filas frente a 55.569 valores distintos de silica en concentrado, es decir 13,3 filas por valor distinto. Ajustar a nivel de fila filtra el objetivo esa misma cantidad de veces.'
+              : 'The flotation dataset records process variables every twenty seconds, about 180 rows per hour, but the concentrate assays are HOURLY laboratory measurements. Re-derived from the raw file during this audit: 737,453 rows against 55,569 distinct concentrate-silica values, that is 13.3 rows per distinct value. Fitting at row level leaks the target that many times over.'}
           </p>
           <p>
             {es
@@ -151,8 +151,8 @@ export default function Implementation() {
           />
           <p>
             {es
-              ? 'Verificacion independiente durante esta construccion, sobre el archivo crudo: la recta de planta es Fe = 67,08 - 0,736 Si con correlacion -0,9718, frente a la prediccion estequiometrica de dos minerales 69,94 - 0,699 Si. Se reportan ambas rectas; la diferencia entre ellas dice algo sobre los demas minerales presentes.'
-              : 'Independently verified during this build, from the raw file: the plant line is Fe = 67.08 - 0.736 Si with correlation -0.9718, against the two-mineral stoichiometric prediction 69.94 - 0.699 Si. Both lines are reported; the difference between them says something about the other minerals present.'}
+              ? 'Verificacion independiente sobre el archivo crudo, por minimos cuadrados sobre las 4.097 filas horarias: la recta de planta es Fe = 67,08 - 0,736 Si con correlacion -0,9718, frente a la prediccion estequiometrica de dos minerales 69,94 - 0,699 Si. Se reportan ambas rectas; la diferencia entre ellas dice algo sobre los demas minerales presentes.'
+              : 'Independently verified from the raw file, by ordinary least squares over the 4,097 hourly rows: the plant line is Fe = 67.08 - 0.736 Si with correlation -0.9718, against the two-mineral stoichiometric prediction 69.94 - 0.699 Si. Both lines are reported; the difference between them says something about the other minerals present.'}
           </p>
         </section>
       ),

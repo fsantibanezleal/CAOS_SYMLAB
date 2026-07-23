@@ -1,34 +1,43 @@
 /**
  * The App: the workbench, one case at a time.
  *
- * The two-zone shape is the house standard and is not re-derived here: a CONTROL SIDEBAR carrying
- * every selector, the global configuration and a live readout, and a MAIN AREA that carries only the
- * tabs and their views. Selection and configuration never sit in the content area, and the content
- * area never has to give up width to a list.
+ * Two zones. A CONTROL SIDEBAR carrying every selector, the global configuration and a live
+ * readout, and a MAIN AREA carrying only the tabs and their views. Selection and configuration
+ * never sit in the content area, and the content area never gives up width to a list.
  *
  * The sidebar, top to bottom:
- *   1. Data source and case, through the shared shell `CaseSelector` (grouped by category, with the
- *      synthetic-versus-measured lane control and `?case=` deep linking).
+ *   1. Source lane, category, case: three dropdowns, not a chip deck. The published cases across
+ *      six categories do not fit a deck in a sidebar column, and the count is read from the
+ *      index rather than written here, where it went stale the moment a suite was expanded.
  *   2. Search configuration: the ablation. Each entry differs from its neighbour by exactly ONE
  *      mechanism, so moving down the list attributes a measured difference to a named change.
- *   3. View controls: the global rendering knobs for the panes on the right.
- *   4. The live readout, refreshed by every selection above it.
+ *   3. View controls for the panes on the right.
+ *   4. The readout, refreshed by every selection above it.
  *
- * The main area is the four sub-tabs and nothing else.
+ * The tabs follow the order a reader actually needs:
+ *   1. Expression   what the search found, next to the relationship we expected, with the verdict
+ *   2. Structure    the tree, and the components the expression is built from
+ *   3. Validation   parity, residuals per input, extrapolation, partial dependence
+ *   4. Live         the same engine run in the browser, on demand
+ *   5. Front        accuracy against complexity, and the search that earned it
+ *   6. Context      provenance, sampling, caveats, certificate
  */
-import { Callout, CaseSelector, SubTabs, type CaseDef, type CaseKind } from '@fasl-work/caos-app-shell';
+import { Callout, SubTabs } from '@fasl-work/caos-app-shell';
 import { useEffect, useMemo, useState } from 'react';
 
 import type { CaseIndex, RunPayload, VariantPayload } from '../lib/contract.types';
 import { loadIndex, loadRun } from '../lib/data';
 import { useLang } from '../lib/useLang';
-import { EquationView } from '../render/EquationView';
-import { ExpressionTree } from '../render/ExpressionTree';
-import { ExtrapolationPlot, ParityPlot, PartialDependence } from '../render/ModelValidation';
+import { CaseNavigator, type SourceLane } from '../render/CaseNavigator';
+import { ExpressionPanel } from '../render/ExpressionPanel';
 import { ParetoFront } from '../render/ParetoFront';
 import { SearchHistory } from '../render/SearchHistory';
+import { StructurePanel } from '../render/StructurePanel';
+import { ValidationPanel } from '../render/ValidationPanel';
 import { CaseContext } from './workbench/CaseContext';
 import { LiveLane } from './workbench/LiveLane';
+import { formatR2, groupDigits } from '../lib/format';
+
 
 export default function AppPage() {
   const lang = useLang();
@@ -36,7 +45,7 @@ export default function AppPage() {
 
   const [index, setIndex] = useState<CaseIndex | null>(null);
   const [error, setError] = useState<string | null>(null);
-  const [source, setSource] = useState<CaseKind>('real');
+  const [source, setSource] = useState<SourceLane>('real');
   const [caseId, setCaseId] = useState<string>('');
   const [run, setRun] = useState<RunPayload | null>(null);
   const [variantIndex, setVariantIndex] = useState(0);
@@ -50,12 +59,17 @@ export default function AppPage() {
     loadIndex()
       .then((loaded) => {
         setIndex(loaded);
-        // Open on a REAL measured case when one is published: a harder and more honest starting
-        // point than a generator whose answer is known in advance.
-        const first = loaded.cases.find((c) => c.real_or_synthetic === 'real') ?? loaded.cases[0];
-        if (first) {
-          setCaseId(first.case_id);
-          setSource(first.real_or_synthetic === 'real' ? 'real' : 'synthetic');
+        // Honour a ?case= deep link over the default, so a shared URL opens what was shared.
+        const requested = new URLSearchParams(window.location.search).get('case');
+        const target =
+          loaded.cases.find((c) => c.case_id === requested) ??
+          // Otherwise open on a REAL measured case: a harder and more honest starting point than a
+          // generator whose answer is known in advance.
+          loaded.cases.find((c) => c.real_or_synthetic === 'real') ??
+          loaded.cases[0];
+        if (target) {
+          setCaseId(target.case_id);
+          setSource(target.real_or_synthetic === 'real' ? 'real' : 'synthetic');
         }
       })
       .catch((err) => setError(String(err)));
@@ -66,30 +80,11 @@ export default function AppPage() {
     setRun(null);
     setMemberIndex(null);
     setVariantIndex(0);
+    setActiveNodeId(null);
     loadRun(caseId)
       .then(setRun)
       .catch((err) => setError(String(err)));
   }, [caseId]);
-
-  /** The published cases in the shell's own case shape. The single-letter category code is an
-   *  internal key and never reaches the screen: the human name goes on the group label. */
-  const cases: CaseDef[] = useMemo(() => {
-    if (!index) return [];
-    return index.cases.map((entry) => ({
-      id: entry.case_id,
-      name: es ? entry.name_es : entry.name_en,
-      category: entry.category_name ?? entry.category,
-      kind: entry.real_or_synthetic === 'real' ? 'real' : 'synthetic',
-      anchor: entry.ground_truth_known
-        ? es
-          ? 'la ley verdadera se conoce, asi que la recuperacion es comprobable'
-          : 'the true law is known, so recovery is checkable'
-        : es
-          ? 'sin forma cerrada publicada: contribuye solo a las metricas de error'
-          : 'no published closed form: contributes to error metrics only',
-      expectedBand: `${entry.n_variants} ${es ? 'configuraciones' : 'configurations'}`,
-    }));
-  }, [index, es]);
 
   const variant: VariantPayload | null = useMemo(() => {
     if (!run || run.notes.variants.length === 0) return null;
@@ -104,6 +99,18 @@ export default function AppPage() {
       .map((v) => v.score.best_test_r2)
       .filter((v): v is number => v !== null && Number.isFinite(v));
     return values.length > 0 ? Math.max(...values) : null;
+  }, [run]);
+
+  /** The row accounting, with a fallback for artifacts baked before it shipped. Falling back keeps
+   *  an older artifact readable instead of rendering blanks where numbers belong. */
+  const rows = useMemo(() => {
+    const published = run?.dataset.rows;
+    if (published) return { ...published, published: true as const };
+    const train = run?.dataset.n_rows ?? 0;
+    // An artifact baked before the accounting shipped knows its training rows and NOTHING else.
+    // Printing "test rows 0" for it would be a false statement, so those fields are withheld
+    // rather than filled with a zero that reads as a measurement.
+    return { source: null, used: train, train, test: 0, extrapolation: 0, published: false as const };
   }, [run]);
 
   const member = useMemo(() => {
@@ -146,43 +153,50 @@ export default function AppPage() {
       label: es ? 'Expresion' : 'Expression',
       content:
         member && variant && run ? (
-          <div className="sym-field">
-            <EquationView
-              member={member}
-              targetSymbol={run.dataset.target.display}
-              activeNodeId={activeNodeId}
-              onHoverNode={setActiveNodeId}
-              longForm={longForm}
-              showRaw={showRaw}
-              lang={lang}
-            />
-
-            <h3>{es ? 'La estructura detras de la formula' : 'The structure behind the formula'}</h3>
-            <ExpressionTree
-              payload={member.tree}
-              activeNodeId={activeNodeId}
-              onHoverNode={setActiveNodeId}
-              collapseBelowInfluence={collapse}
-              lang={lang}
-            />
-
-            <div className="sym-two-col">
-              <section>
-                <h3>{es ? 'Paridad y residuos' : 'Parity and residuals'}</h3>
-                <ParityPlot validation={variant.validation} lang={lang} />
-              </section>
-              <section>
-                <h3>{es ? 'Fuera del soporte' : 'Outside the support'}</h3>
-                <ExtrapolationPlot validation={variant.validation} lang={lang} />
-              </section>
-            </div>
-
-            <h3>{es ? 'Dependencia parcial' : 'Partial dependence'}</h3>
-            <PartialDependence validation={variant.validation} lang={lang} />
-          </div>
+          <ExpressionPanel
+            member={member}
+            targetSymbol={run.dataset.target.display}
+            truthLatex={run.notes.ground_truth_latex}
+            truthAvailable={Boolean(run.notes.ground_truth_available ?? run.notes.ground_truth_latex)}
+            notCheckableReason={run.notes.not_checkable_reason ?? ''}
+            regime={run.notes.regime ?? 'unknown'}
+            score={variant.score}
+            variantLabel={es ? variant.label_es : variant.label_en}
+            longForm={longForm}
+            showRaw={showRaw}
+            onHoverNode={setActiveNodeId}
+            lang={lang}
+          />
         ) : (
           <p className="sym-empty">{es ? 'Sin expresion seleccionada.' : 'No expression selected.'}</p>
         ),
+    },
+    {
+      id: 'structure',
+      label: es ? 'Estructura' : 'Structure',
+      content:
+        member && variant ? (
+          <StructurePanel
+            member={member}
+            validation={variant.validation}
+            activeNodeId={activeNodeId}
+            onHoverNode={setActiveNodeId}
+            collapseBelowInfluence={collapse}
+            lang={lang}
+          />
+        ) : null,
+    },
+    {
+      id: 'validation',
+      label: es ? 'Paridad y residuos' : 'Parity and residuals',
+      content:
+        variant && run ? (
+          <ValidationPanel
+            validation={variant.validation}
+            parityInputs={run.notes.parity_inputs}
+            lang={lang}
+          />
+        ) : null,
     },
     {
       id: 'live',
@@ -195,18 +209,27 @@ export default function AppPage() {
       content:
         variant && member ? (
           <div className="sym-charts">
-            <h3>{es ? 'Exactitud frente a complejidad' : 'Accuracy against complexity'}</h3>
-            <ParetoFront
-              members={variant.pareto}
-              selectedIndex={variant.selected_index}
-              activeIndex={member.index}
-              onSelect={setMemberIndex}
-              exported={variant.pareto_exported}
-              total={variant.pareto_total}
-              lang={lang}
-            />
-            <h3>{es ? 'Progreso de la busqueda' : 'Search progress'}</h3>
-            <SearchHistory history={variant.history} score={variant.score} lang={lang} />
+            <section className="sym-block">
+              <h3>{es ? 'Exactitud frente a complejidad' : 'Accuracy against complexity'}</h3>
+              <p className="sym-block-lede">
+                {es
+                  ? 'Cada punto es una expresion del frente. Haz clic en uno y las demas pestanas cargan esa expresion.'
+                  : 'Each point is one expression on the front. Click one and every other tab loads that expression.'}
+              </p>
+              <ParetoFront
+                members={variant.pareto}
+                selectedIndex={variant.selected_index}
+                activeIndex={member.index}
+                onSelect={setMemberIndex}
+                exported={variant.pareto_exported}
+                total={variant.pareto_total}
+                lang={lang}
+              />
+            </section>
+            <section className="sym-block">
+              <h3>{es ? 'Progreso de la busqueda' : 'Search progress'}</h3>
+              <SearchHistory history={variant.history} score={variant.score} lang={lang} />
+            </section>
           </div>
         ) : null,
     },
@@ -217,59 +240,76 @@ export default function AppPage() {
     },
   ];
 
-  const pending = index.coverage.n_cases - index.cases.length;
+  // NOT a subtraction. `coverage.n_cases` counts REGISTRY ENTRIES, two of which are suites that
+  // expand into one artifact per problem, while `index.cases` counts the artifacts that shipped.
+  // Subtracting one from the other gave -13 and the sentence below was only invisible because it
+  // was guarded on being positive.
+  const registryEntries = index.coverage.n_registry_entries ?? index.coverage.n_cases;
 
   return (
     <div className="page-body symlab-layout">
       {/* ---------------------------------------------------------------- CONTROL SIDEBAR */}
       <aside className="symlab-side">
-        <CaseSelector
-          cases={cases}
+        <CaseNavigator
+          entries={index.cases}
           selectedId={caseId}
           onSelect={setCaseId}
           source={source}
           onSourceChange={setSource}
-          deepLink
           lang={lang}
-          ariaLabel={es ? 'Seleccion de caso' : 'Case selection'}
-          text={{
-            source: es ? 'Origen de los datos' : 'Data source',
-            synthetic: es ? 'Generador' : 'Generator',
-            real: es ? 'Datos medidos' : 'Measured data',
-            lockedNote: es
-              ? 'Los casos medidos vienen de una planta o instrumento real: no hay parametros que ajustar, solo lo que se registro.'
-              : 'Measured cases come from a real plant or instrument: there are no knobs to turn, only what was recorded.',
-          }}
         />
 
         {run && (
           <>
             <section className="sym-control">
               <h3>{es ? 'Configuracion de busqueda' : 'Search configuration'}</h3>
+              {/* Grouped by FAMILY. The sparse arm is not a further step along the ladder, and
+                  listing it as one would imply it adds a mechanism to the rung above it, which is
+                  the single claim the ladder design exists to make. */}
+              <label className="sym-nav-field">
+                <span className="sym-nav-label">
+                  {es ? 'Metodo' : 'Method'}
+                </span>
+                <select
+                  className="sym-select"
+                  value={variantIndex}
+                  onChange={(event) => {
+                    setVariantIndex(Number(event.target.value));
+                    setMemberIndex(null);
+                  }}
+                >
+                  <optgroup label={es ? 'Escalera de programacion genetica' : 'Genetic-programming ladder'}>
+                    {run.notes.variants.map((v, i) =>
+                      (v.method ?? 'gp') === 'gp' ? (
+                        <option key={v.id} value={i}>
+                          {es ? v.label_es : v.label_en}
+                        </option>
+                      ) : null,
+                    )}
+                  </optgroup>
+                  {run.notes.variants.some((v) => (v.method ?? 'gp') !== 'gp') && (
+                    <optgroup label={es ? 'Otras familias' : 'Other families'}>
+                      {run.notes.variants.map((v, i) =>
+                        (v.method ?? 'gp') !== 'gp' ? (
+                          <option key={v.id} value={i}>
+                            {es ? v.label_es : v.label_en}
+                          </option>
+                        ) : null,
+                      )}
+                    </optgroup>
+                  )}
+                </select>
+              </label>
+              {variant && <p className="sym-control-note">{es ? variant.note_es : variant.note_en}</p>}
               <p className="sym-control-note">
-                {es
-                  ? 'Cada entrada anade UN mecanismo a la anterior, asi que la diferencia medida es atribuible.'
-                  : 'Each entry adds ONE mechanism to the one above it, so a measured difference is attributable.'}
+                {(variant?.method ?? 'gp') === 'gp'
+                  ? es
+                    ? 'La mayoria de los escalones anade exactamente UN mecanismo al anterior, asi que la diferencia medida es atribuible a ese cambio concreto. Tres no lo hacen, y decirlo es justamente el sentido de una ablacion: r2 enciende el escalado lineal Y la guarda de intervalos a la vez, porque la aportacion de Keijzer son ambos; r6 activa la supervivencia edad-aptitud Y las islas, que son un mecanismo con dos interruptores; r7 activa los dos interruptores de deduplicacion. Ningun escalon APAGA nunca un mecanismo: antes r6 quitaba la supervivencia multiobjetivo y r7 la reponia, lo que dejaba sin atribucion la diferencia medida en r6, y ahora una prueba falla si eso vuelve. Lee esos tres como pasos compuestos.'
+                    : 'Most rungs add exactly ONE mechanism to the one above them, so a measured difference is attributable to that named change. Three do not, and saying so is the point of an ablation: r2 turns on linear scaling AND the interval guard together, because Keijzer\'s contribution is both; r6 turns on age-fitness survival AND islands, which are one mechanism behind two switches; r7 turns on both deduplication switches. No rung ever turns a mechanism OFF: r6 used to drop multi-objective survival and r7 to restore it, which made the difference measured at r6 unattributable, and a test now fails if that returns. Read those three as compound steps.'
+                  : es
+                    ? 'Esta no es un escalon de la escalera sino OTRA familia de busqueda. Comparala con la escalera completa, no con el escalon de arriba: no anade un mecanismo a nada.'
+                    : 'This is not a rung of the ladder but a DIFFERENT search family. Compare it against the ladder as a whole rather than against the entry above it: it does not add a mechanism to anything.'}
               </p>
-              <ul className="sym-variant-list">
-                {run.notes.variants.map((v, i) => (
-                  <li key={v.id}>
-                    <button
-                      type="button"
-                      className={`sym-variant-button${i === variantIndex ? ' on' : ''}`}
-                      onClick={() => {
-                        setVariantIndex(i);
-                        setMemberIndex(null);
-                      }}
-                    >
-                      {es ? v.label_es : v.label_en}
-                    </button>
-                  </li>
-                ))}
-              </ul>
-              {variant && (
-                <p className="sym-control-note">{es ? variant.note_es : variant.note_en}</p>
-              )}
             </section>
 
             <section className="sym-control">
@@ -304,18 +344,47 @@ export default function AppPage() {
               </label>
             </section>
 
-            <section className="sym-control sym-readout">
+            {/* `sym-readout` is the chart-hover strip and is display:flex. This block must not
+                borrow that class or the heading lands beside the numbers. */}
+            <section className="sym-control sym-side-readout">
               <h3>{es ? 'Lectura' : 'Readout'}</h3>
-              <dl>
-                <dt>{es ? 'filas' : 'rows'}</dt>
-                <dd>{run.dataset.n_rows.toLocaleString()}</dd>
-                <dt>{es ? 'entradas' : 'inputs'}</dt>
-                <dd>{run.dataset.n_inputs}</dd>
-                <dt>{es ? 'configuraciones' : 'configurations'}</dt>
-                <dd>{run.notes.variants.length}</dd>
-                <dt>{es ? 'mejor R2 prueba' : 'best test R2'}</dt>
-                <dd>{bestTestR2 === null ? '-' : bestTestR2.toFixed(4)}</dd>
-              </dl>
+              <div className="sym-side-kpis">
+                <div>
+                  <span>{es ? 'filas de entrenamiento' : 'training rows'}</span>
+                  <strong>{groupDigits(rows.train)}</strong>
+                </div>
+                {rows.published && (
+                  <div>
+                    <span>{es ? 'filas de prueba' : 'test rows'}</span>
+                    <strong>{groupDigits(rows.test)}</strong>
+                  </div>
+                )}
+                <div>
+                  <span>{es ? 'entradas' : 'inputs'}</span>
+                  <strong>{run.dataset.n_inputs}</strong>
+                </div>
+                <div>
+                  <span>{es ? 'escalones' : 'rungs'}</span>
+                  <strong>{run.notes.variants.length}</strong>
+                </div>
+                <div>
+                  <span>{es ? 'mejor R2' : 'best R2'}</span>
+                  <strong>{bestTestR2 === null ? '-' : formatR2(bestTestR2, 4)}</strong>
+                </div>
+              </div>
+              <p className="sym-control-note">
+                {!rows.published
+                  ? es
+                    ? `${groupDigits(rows.train)} filas de entrenamiento. Este artefacto se horneo antes de que se publicara el desglose completo de filas; se volvera a hornear.`
+                    : `${groupDigits(rows.train)} training rows. This artifact was baked before the full row accounting shipped; it is being re-baked.`
+                  : rows.source !== null && rows.source > rows.used
+                  ? es
+                    ? `${groupDigits(rows.used)} filas usadas de las ${groupDigits(rows.source)} que trae la fuente, submuestreadas de forma determinista. ${groupDigits(rows.extrapolation)} se reservan fuera del soporte.`
+                    : `${groupDigits(rows.used)} rows used of the ${groupDigits(rows.source)} the source ships, subsampled deterministically. ${groupDigits(rows.extrapolation)} are held out beyond the support.`
+                  : es
+                    ? `${groupDigits(rows.used)} filas en total, de las cuales ${groupDigits(rows.extrapolation)} se reservan fuera del soporte de entrenamiento.`
+                    : `${groupDigits(rows.used)} rows in total, of which ${groupDigits(rows.extrapolation)} are held out beyond the training support.`}
+              </p>
               <dl className="sym-readout-rates">
                 <dt>{es ? 'sobre R2 > 0,999' : 'above R2 > 0.999'}</dt>
                 <dd>
@@ -345,14 +414,10 @@ export default function AppPage() {
           {es
             ? `${index.cases.length} casos publicados, ${index.cases.filter((c) => c.real_or_synthetic === 'real').length} sobre datos reales medidos.`
             : `${index.cases.length} published cases, ${index.cases.filter((c) => c.real_or_synthetic === 'real').length} on real measured data.`}
-          {pending > 0 && (
-            <>
-              {' '}
-              {es
-                ? `El registro define ${index.coverage.n_cases}; los ${pending} restantes se hornean sin conexion.`
-                : `The registry defines ${index.coverage.n_cases}; the remaining ${pending} bake offline.`}
-            </>
-          )}
+          {' '}
+          {es
+            ? `Provienen de ${registryEntries} entradas del registro: las suites de referencia se expanden a un artefacto por problema.`
+            : `They come from ${registryEntries} registry entries: the benchmark suites expand to one artifact per problem.`}
         </p>
       </aside>
 
