@@ -2,7 +2,7 @@
   "schema": "symlab.index/v1",
   "schema_version": "1.0.0",
   "engine_version": "0.04.000",
-  "generated_on": "2026-07-22",
+  "generated_on": "2026-07-23",
   "n_cases": 55,
   "coverage": {
     "n_cases": 25,
@@ -36,7 +36,7 @@
       "real_or_synthetic": "synthetic",
       "manifest_path": "manifests/lotka-volterra-rhs.json",
       "artifact_path": "lotka-volterra-rhs/run.json",
-      "bytes": 500349,
+      "bytes": 500510,
       "n_variants": 9,
       "summary": {
         "n_variants": 9,
@@ -47,7 +47,7 @@
         "mean_structural_distance": 0.5365,
         "symbolic_test_failure_rate": 0.0,
         "test_disagreement_count": 1,
-        "total_seconds": 427.38,
+        "total_seconds": 705.42,
         "total_evaluations": 99600,
         "variants_with_irrelevant_features": 0
       }
@@ -63,7 +63,7 @@
       "real_or_synthetic": "synthetic",
       "manifest_path": "manifests/monod-saturation.json",
       "artifact_path": "monod-saturation/run.json",
-      "bytes": 616168,
+      "bytes": 507292,
       "n_variants": 8,
       "summary": {
         "n_variants": 8,
@@ -74,7 +74,7 @@
         "mean_structural_distance": 0.7354,
         "symbolic_test_failure_rate": 0.0,
         "test_disagreement_count": 0,
-        "total_seconds": 173.61,
+        "total_seconds": 228.53,
         "total_evaluations": 86640,
         "variants_with_irrelevant_features": 0
       }
@@ -90,7 +90,7 @@
       "real_or_synthetic": "synthetic",
       "manifest_path": "manifests/theta-logistic-growth.json",
       "artifact_path": "theta-logistic-growth/run.json",
-      "bytes": 829246,
+      "bytes": 640990,
       "n_variants": 9,
       "summary": {
         "n_variants": 9,
@@ -98,10 +98,10 @@
         "accuracy_solution_rate": 0.0,
         "exact_recoveries": 0,
         "exact_recovery_rate": 0.0,
-        "mean_structural_distance": 0.7434,
+        "mean_structural_distance": 0.7372,
         "symbolic_test_failure_rate": 0.0,
         "test_disagreement_count": 0,
-        "total_seconds": 278.74,
+        "total_seconds": 668.17,
         "total_evaluations": 99600,
         "variants_with_irrelevant_features": 0
       }
@@ -117,7 +117,7 @@
       "real_or_synthetic": "synthetic",
       "manifest_path": "manifests/asm1-aerobic-growth.json",
       "artifact_path": "asm1-aerobic-growth/run.json",
-      "bytes": 670545,
+      "bytes": 565015,
       "n_variants": 8,
       "summary": {
         "n_variants": 8,
@@ -125,10 +125,10 @@
         "accuracy_solution_rate": 0.0,
         "exact_recoveries": 0,
         "exact_recovery_rate": 0.0,
-        "mean_structural_distance": 0.7064,
+        "mean_structural_distance": 0.7042,
         "symbolic_test_failure_rate": 0.0,
         "test_disagreement_count": 0,
-        "total_seconds": 157.05,
+        "total_seconds": 183.75,
         "total_evaluations": 86640,
         "variants_with_irrelevant_features": 0
       }
@@ -144,7 +144,7 @@
       "real_or_synthetic": "synthetic",
       "manifest_path": "manifests/wind-power-curve.json",
       "artifact_path": "wind-power-curve/run.json",
-      "bytes": 745830,
+      "bytes": 636678,
       "n_variants": 9,
       "summary": {
         "n_variants": 9,
@@ -155,7 +155,7 @@
         "mean_structural_distance": null,
         "symbolic_test_failure_rate": null,
         "test_disagreement_count": 0,
-        "total_seconds": 427.05,
+        "total_seconds": 617.05,
         "total_evaluations": 99600,
         "variants_with_irrelevant_features": 0
       }
@@ -171,7 +171,7 @@
       "real_or_synthetic": "synthetic",
       "manifest_path": "manifests/antoine-vapour-pressure.json",
       "artifact_path": "antoine-vapour-pressure/run.json",
-      "bytes": 433734,
+      "bytes": 433880,
       "n_variants": 8,
       "summary": {
         "n_variants": 8,
@@ -182,7 +182,7 @@
         "mean_structural_distance": 0.6841,
         "symbolic_test_failure_rate": 0.0,
         "test_disagreement_count": 0,
-        "total_seconds": 228.14,
+        "total_seconds": 438.82,
         "total_evaluations": 86640,
         "variants_with_irrelevant_features": 0
       }
@@ -198,7 +198,7 @@
       "real_or_synthetic": "real",
       "manifest_path": "manifests/ccpp-derating.json",
       "artifact_path": "ccpp-derating/run.json",
-      "bytes": 3107914,
+      "bytes": 2517678,
       "n_variants": 9,
       "summary": {
         "n_variants": 9,
@@ -209,7 +209,7 @@
         "mean_structural_distance": null,
         "symbolic_test_failure_rate": null,
         "test_disagreement_count": 0,
-        "total_seconds": 158.14,
+        "total_seconds": 173.69,
         "total_evaluations": 98880,
         "variants_with_irrelevant_features": 0
       }
@@ -225,7 +225,7 @@
       "real_or_synthetic": "real",
       "manifest_path": "manifests/concrete-abrams.json",
       "artifact_path": "concrete-abrams/run.json",
-      "bytes": 1927089,
+      "bytes": 1059566,
       "n_variants": 9,
       "summary": {
         "n_variants": 9,
@@ -236,7 +236,7 @@
         "mean_structural_distance": null,
         "symbolic_test_failure_rate": null,
         "test_disagreement_count": 0,
-        "total_seconds": 157.81,
+        "total_seconds": 185.99,
         "total_evaluations": 98880,
         "variants_with_irrelevant_features": 0
       }
@@ -252,7 +252,7 @@
       "real_or_synthetic": "synthetic",
       "manifest_path": "manifests/cstr-conversion.json",
       "artifact_path": "cstr-conversion/run.json",
-      "bytes": 634523,
+      "bytes": 631229,
       "n_variants": 9,
       "summary": {
         "n_variants": 9,
@@ -263,7 +263,7 @@
         "mean_structural_distance": 0.7954,
         "symbolic_test_failure_rate": 0.0,
         "test_disagreement_count": 0,
-        "total_seconds": 399.38,
+        "total_seconds": 885.2,
         "total_evaluations": 99600,
         "variants_with_irrelevant_features": 0
       }
@@ -279,7 +279,7 @@
       "real_or_synthetic": "real",
       "manifest_path": "manifests/gasturbine-nox.json",
       "artifact_path": "gasturbine-nox/run.json",
-      "bytes": 6013926,
+      "bytes": 2617339,
       "n_variants": 9,
       "summary": {
         "n_variants": 9,
@@ -290,7 +290,7 @@
         "mean_structural_distance": null,
         "symbolic_test_failure_rate": null,
         "test_disagreement_count": 0,
-        "total_seconds": 69.65,
+        "total_seconds": 75.82,
         "total_evaluations": 62040,
         "variants_with_irrelevant_features": 0
       }
@@ -306,7 +306,7 @@
       "real_or_synthetic": "real",
       "manifest_path": "manifests/wwtp-removal-identity.json",
       "artifact_path": "wwtp-removal-identity/run.json",
-      "bytes": 321404,
+      "bytes": 299725,
       "n_variants": 6,
       "summary": {
         "n_variants": 6,
@@ -317,7 +317,7 @@
         "mean_structural_distance": 0.6488,
         "symbolic_test_failure_rate": 0.0,
         "test_disagreement_count": 0,
-        "total_seconds": 71.56,
+        "total_seconds": 73.94,
         "total_evaluations": 25900,
         "variants_with_irrelevant_features": 0
       }
@@ -333,7 +333,7 @@
       "real_or_synthetic": "synthetic",
       "manifest_path": "manifests/comminution-bond.json",
       "artifact_path": "comminution-bond/run.json",
-      "bytes": 676902,
+      "bytes": 599190,
       "n_variants": 9,
       "summary": {
         "n_variants": 9,
@@ -341,10 +341,10 @@
         "accuracy_solution_rate": 0.0,
         "exact_recoveries": 0,
         "exact_recovery_rate": 0.0,
-        "mean_structural_distance": 0.7056,
+        "mean_structural_distance": 0.7043,
         "symbolic_test_failure_rate": 0.0,
         "test_disagreement_count": 0,
-        "total_seconds": 392.69,
+        "total_seconds": 355.05,
         "total_evaluations": 99600,
         "variants_with_irrelevant_features": 0
       }
@@ -360,7 +360,7 @@
       "real_or_synthetic": "synthetic",
       "manifest_path": "manifests/flotation-kinetics.json",
       "artifact_path": "flotation-kinetics/run.json",
-      "bytes": 661062,
+      "bytes": 600034,
       "n_variants": 9,
       "summary": {
         "n_variants": 9,
@@ -368,10 +368,10 @@
         "accuracy_solution_rate": 0.1111,
         "exact_recoveries": 0,
         "exact_recovery_rate": 0.0,
-        "mean_structural_distance": 0.849,
+        "mean_structural_distance": 0.8481,
         "symbolic_test_failure_rate": 0.0,
         "test_disagreement_count": 0,
-        "total_seconds": 435.54,
+        "total_seconds": 462.5,
         "total_evaluations": 99600,
         "variants_with_irrelevant_features": 0
       }
@@ -387,7 +387,7 @@
       "real_or_synthetic": "real",
       "manifest_path": "manifests/flotation-silica.json",
       "artifact_path": "flotation-silica/run.json",
-      "bytes": 17860278,
+      "bytes": 3539579,
       "n_variants": 9,
       "summary": {
         "n_variants": 9,
@@ -398,7 +398,7 @@
         "mean_structural_distance": null,
         "symbolic_test_failure_rate": null,
         "test_disagreement_count": 0,
-        "total_seconds": 73.19,
+        "total_seconds": 91.09,
         "total_evaluations": 62040,
         "variants_with_irrelevant_features": 0
       }
@@ -414,7 +414,7 @@
       "real_or_synthetic": "real",
       "manifest_path": "manifests/ore-mineralogy-closure.json",
       "artifact_path": "ore-mineralogy-closure/run.json",
-      "bytes": 1161747,
+      "bytes": 1161746,
       "n_variants": 5,
       "summary": {
         "n_variants": 5,
@@ -425,7 +425,7 @@
         "mean_structural_distance": null,
         "symbolic_test_failure_rate": null,
         "test_disagreement_count": 0,
-        "total_seconds": 1.97,
+        "total_seconds": 1.8,
         "total_evaluations": 16240,
         "variants_with_irrelevant_features": 0
       }
@@ -441,7 +441,7 @@
       "real_or_synthetic": "synthetic",
       "manifest_path": "manifests/two-product-recovery.json",
       "artifact_path": "two-product-recovery/run.json",
-      "bytes": 617607,
+      "bytes": 519147,
       "n_variants": 8,
       "summary": {
         "n_variants": 8,
@@ -449,10 +449,10 @@
         "accuracy_solution_rate": 0.0,
         "exact_recoveries": 0,
         "exact_recovery_rate": 0.0,
-        "mean_structural_distance": 0.7937,
+        "mean_structural_distance": 0.7898,
         "symbolic_test_failure_rate": 0.0,
         "test_disagreement_count": 0,
-        "total_seconds": 158.07,
+        "total_seconds": 170.18,
         "total_evaluations": 86640,
         "variants_with_irrelevant_features": 0
       }
@@ -468,18 +468,18 @@
       "real_or_synthetic": "synthetic",
       "manifest_path": "manifests/feynman-i_12_1.json",
       "artifact_path": "feynman-i_12_1/run.json",
-      "bytes": 1513606,
+      "bytes": 1513531,
       "n_variants": 9,
       "summary": {
         "n_variants": 9,
         "accuracy_solutions": 9,
         "accuracy_solution_rate": 1.0,
-        "exact_recoveries": 8,
-        "exact_recovery_rate": 0.8889,
+        "exact_recoveries": 9,
+        "exact_recovery_rate": 1.0,
         "mean_structural_distance": 0.0444,
         "symbolic_test_failure_rate": 0.0,
-        "test_disagreement_count": 1,
-        "total_seconds": 609.59,
+        "test_disagreement_count": 0,
+        "total_seconds": 458.63,
         "total_evaluations": 74160,
         "variants_with_irrelevant_features": 0
       }
@@ -495,18 +495,18 @@
       "real_or_synthetic": "synthetic",
       "manifest_path": "manifests/feynman-i_12_5.json",
       "artifact_path": "feynman-i_12_5/run.json",
-      "bytes": 1552761,
+      "bytes": 1552690,
       "n_variants": 9,
       "summary": {
         "n_variants": 9,
         "accuracy_solutions": 9,
         "accuracy_solution_rate": 1.0,
-        "exact_recoveries": 8,
-        "exact_recovery_rate": 0.8889,
+        "exact_recoveries": 9,
+        "exact_recovery_rate": 1.0,
         "mean_structural_distance": 0.0444,
         "symbolic_test_failure_rate": 0.0,
-        "test_disagreement_count": 1,
-        "total_seconds": 552.32,
+        "test_disagreement_count": 0,
+        "total_seconds": 314.57,
         "total_evaluations": 74160,
         "variants_with_irrelevant_features": 0
       }
@@ -522,7 +522,7 @@
       "real_or_synthetic": "synthetic",
       "manifest_path": "manifests/feynman-i_14_3.json",
       "artifact_path": "feynman-i_14_3/run.json",
-      "bytes": 2565365,
+      "bytes": 2270537,
       "n_variants": 9,
       "summary": {
         "n_variants": 9,
@@ -530,10 +530,10 @@
         "accuracy_solution_rate": 0.4444,
         "exact_recoveries": 4,
         "exact_recovery_rate": 0.4444,
-        "mean_structural_distance": 0.6488,
+        "mean_structural_distance": 0.6448,
         "symbolic_test_failure_rate": 0.0,
         "test_disagreement_count": 0,
-        "total_seconds": 231.27,
+        "total_seconds": 166.75,
         "total_evaluations": 74160,
         "variants_with_irrelevant_features": 0
       }
@@ -549,7 +549,7 @@
       "real_or_synthetic": "synthetic",
       "manifest_path": "manifests/feynman-i_25_13.json",
       "artifact_path": "feynman-i_25_13/run.json",
-      "bytes": 1995559,
+      "bytes": 1993695,
       "n_variants": 9,
       "summary": {
         "n_variants": 9,
@@ -560,7 +560,7 @@
         "mean_structural_distance": 0.1065,
         "symbolic_test_failure_rate": 0.0,
         "test_disagreement_count": 0,
-        "total_seconds": 520.47,
+        "total_seconds": 311.47,
         "total_evaluations": 74160,
         "variants_with_irrelevant_features": 0
       }
@@ -576,7 +576,7 @@
       "real_or_synthetic": "synthetic",
       "manifest_path": "manifests/feynman-i_26_2.json",
       "artifact_path": "feynman-i_26_2/run.json",
-      "bytes": 2557625,
+      "bytes": 2537195,
       "n_variants": 9,
       "summary": {
         "n_variants": 9,
@@ -587,7 +587,7 @@
         "mean_structural_distance": null,
         "symbolic_test_failure_rate": null,
         "test_disagreement_count": 0,
-        "total_seconds": 374.74,
+        "total_seconds": 320.89,
         "total_evaluations": 74160,
         "variants_with_irrelevant_features": 0
       }
@@ -603,7 +603,7 @@
       "real_or_synthetic": "synthetic",
       "manifest_path": "manifests/feynman-i_29_4.json",
       "artifact_path": "feynman-i_29_4/run.json",
-      "bytes": 2417282,
+      "bytes": 2397067,
       "n_variants": 9,
       "summary": {
         "n_variants": 9,
@@ -614,7 +614,7 @@
         "mean_structural_distance": 0.7098,
         "symbolic_test_failure_rate": 0.0,
         "test_disagreement_count": 0,
-        "total_seconds": 310.67,
+        "total_seconds": 428.39,
         "total_evaluations": 74160,
         "variants_with_irrelevant_features": 0
       }
@@ -630,18 +630,18 @@
       "real_or_synthetic": "synthetic",
       "manifest_path": "manifests/feynman-i_34_27.json",
       "artifact_path": "feynman-i_34_27/run.json",
-      "bytes": 1565291,
+      "bytes": 1565225,
       "n_variants": 9,
       "summary": {
         "n_variants": 9,
         "accuracy_solutions": 8,
         "accuracy_solution_rate": 0.8889,
-        "exact_recoveries": 7,
-        "exact_recovery_rate": 0.7778,
+        "exact_recoveries": 8,
+        "exact_recovery_rate": 0.8889,
         "mean_structural_distance": 0.8,
         "symbolic_test_failure_rate": 0.0,
-        "test_disagreement_count": 1,
-        "total_seconds": 441.9,
+        "test_disagreement_count": 0,
+        "total_seconds": 529.34,
         "total_evaluations": 74160,
         "variants_with_irrelevant_features": 0
       }
@@ -657,18 +657,18 @@
       "real_or_synthetic": "synthetic",
       "manifest_path": "manifests/feynman-i_39_1.json",
       "artifact_path": "feynman-i_39_1/run.json",
-      "bytes": 1552699,
+      "bytes": 1551073,
       "n_variants": 9,
       "summary": {
         "n_variants": 9,
         "accuracy_solutions": 9,
         "accuracy_solution_rate": 1.0,
-        "exact_recoveries": 0,
-        "exact_recovery_rate": 0.0,
+        "exact_recoveries": 8,
+        "exact_recovery_rate": 0.8889,
         "mean_structural_distance": 0.0444,
         "symbolic_test_failure_rate": 0.0,
-        "test_disagreement_count": 8,
-        "total_seconds": 327.04,
+        "test_disagreement_count": 0,
+        "total_seconds": 301.9,
         "total_evaluations": 74160,
         "variants_with_irrelevant_features": 0
       }
@@ -684,7 +684,7 @@
       "real_or_synthetic": "synthetic",
       "manifest_path": "manifests/feynman-i_43_31.json",
       "artifact_path": "feynman-i_43_31/run.json",
-      "bytes": 2488853,
+      "bytes": 2281506,
       "n_variants": 9,
       "summary": {
         "n_variants": 9,
@@ -692,10 +692,10 @@
         "accuracy_solution_rate": 0.4444,
         "exact_recoveries": 4,
         "exact_recovery_rate": 0.4444,
-        "mean_structural_distance": 0.6703,
+        "mean_structural_distance": 0.6676,
         "symbolic_test_failure_rate": 0.0,
         "test_disagreement_count": 0,
-        "total_seconds": 217.82,
+        "total_seconds": 207.8,
         "total_evaluations": 74160,
         "variants_with_irrelevant_features": 0
       }
@@ -711,7 +711,7 @@
       "real_or_synthetic": "synthetic",
       "manifest_path": "manifests/feynman-i_6_2a.json",
       "artifact_path": "feynman-i_6_2a/run.json",
-      "bytes": 2311680,
+      "bytes": 2311836,
       "n_variants": 9,
       "summary": {
         "n_variants": 9,
@@ -722,7 +722,7 @@
         "mean_structural_distance": 0.7965,
         "symbolic_test_failure_rate": 0.0,
         "test_disagreement_count": 0,
-        "total_seconds": 411.26,
+        "total_seconds": 340.68,
         "total_evaluations": 74160,
         "variants_with_irrelevant_features": 0
       }
@@ -738,18 +738,18 @@
       "real_or_synthetic": "synthetic",
       "manifest_path": "manifests/feynman-ii_10_9.json",
       "artifact_path": "feynman-ii_10_9/run.json",
-      "bytes": 2911504,
+      "bytes": 2540714,
       "n_variants": 9,
       "summary": {
         "n_variants": 9,
         "accuracy_solutions": 2,
         "accuracy_solution_rate": 0.2222,
-        "exact_recoveries": 1,
-        "exact_recovery_rate": 0.1111,
-        "mean_structural_distance": 0.7011,
+        "exact_recoveries": 2,
+        "exact_recovery_rate": 0.2222,
+        "mean_structural_distance": 0.6976,
         "symbolic_test_failure_rate": 0.0,
-        "test_disagreement_count": 1,
-        "total_seconds": 252.39,
+        "test_disagreement_count": 0,
+        "total_seconds": 142.01,
         "total_evaluations": 74160,
         "variants_with_irrelevant_features": 0
       }
@@ -765,7 +765,7 @@
       "real_or_synthetic": "synthetic",
       "manifest_path": "manifests/feynman-ii_27_18.json",
       "artifact_path": "feynman-ii_27_18/run.json",
-      "bytes": 2293440,
+      "bytes": 2239674,
       "n_variants": 9,
       "summary": {
         "n_variants": 9,
@@ -773,10 +773,10 @@
         "accuracy_solution_rate": 0.4444,
         "exact_recoveries": 4,
         "exact_recovery_rate": 0.4444,
-        "mean_structural_distance": 0.5936,
+        "mean_structural_distance": 0.5929,
         "symbolic_test_failure_rate": 0.0,
         "test_disagreement_count": 0,
-        "total_seconds": 275.8,
+        "total_seconds": 159.97,
         "total_evaluations": 74160,
         "variants_with_irrelevant_features": 0
       }
@@ -792,7 +792,7 @@
       "real_or_synthetic": "synthetic",
       "manifest_path": "manifests/feynman-ii_38_14.json",
       "artifact_path": "feynman-ii_38_14/run.json",
-      "bytes": 2619238,
+      "bytes": 2562579,
       "n_variants": 9,
       "summary": {
         "n_variants": 9,
@@ -800,10 +800,10 @@
         "accuracy_solution_rate": 0.1111,
         "exact_recoveries": 0,
         "exact_recovery_rate": 0.0,
-        "mean_structural_distance": 0.8304,
+        "mean_structural_distance": 0.8296,
         "symbolic_test_failure_rate": 0.0,
         "test_disagreement_count": 0,
-        "total_seconds": 319.88,
+        "total_seconds": 174.18,
         "total_evaluations": 74160,
         "variants_with_irrelevant_features": 0
       }
@@ -819,18 +819,18 @@
       "real_or_synthetic": "synthetic",
       "manifest_path": "manifests/feynman-ii_3_24.json",
       "artifact_path": "feynman-ii_3_24/run.json",
-      "bytes": 2654671,
+      "bytes": 2587773,
       "n_variants": 9,
       "summary": {
         "n_variants": 9,
         "accuracy_solutions": 2,
         "accuracy_solution_rate": 0.2222,
-        "exact_recoveries": 0,
-        "exact_recovery_rate": 0.0,
-        "mean_structural_distance": 0.7788,
+        "exact_recoveries": 2,
+        "exact_recovery_rate": 0.2222,
+        "mean_structural_distance": 0.7779,
         "symbolic_test_failure_rate": 0.0,
-        "test_disagreement_count": 2,
-        "total_seconds": 286.13,
+        "test_disagreement_count": 0,
+        "total_seconds": 172.49,
         "total_evaluations": 74160,
         "variants_with_irrelevant_features": 0
       }
@@ -846,7 +846,7 @@
       "real_or_synthetic": "synthetic",
       "manifest_path": "manifests/feynman-ii_8_31.json",
       "artifact_path": "feynman-ii_8_31/run.json",
-      "bytes": 2152529,
+      "bytes": 2132364,
       "n_variants": 9,
       "summary": {
         "n_variants": 9,
@@ -857,7 +857,7 @@
         "mean_structural_distance": 0.6893,
         "symbolic_test_failure_rate": 0.0,
         "test_disagreement_count": 0,
-        "total_seconds": 266.11,
+        "total_seconds": 188.83,
         "total_evaluations": 74160,
         "variants_with_irrelevant_features": 0
       }
@@ -873,18 +873,18 @@
       "real_or_synthetic": "synthetic",
       "manifest_path": "manifests/feynman-iii_12_43.json",
       "artifact_path": "feynman-iii_12_43/run.json",
-      "bytes": 1575565,
+      "bytes": 1574166,
       "n_variants": 9,
       "summary": {
         "n_variants": 9,
         "accuracy_solutions": 8,
         "accuracy_solution_rate": 0.8889,
-        "exact_recoveries": 1,
-        "exact_recovery_rate": 0.1111,
+        "exact_recoveries": 8,
+        "exact_recovery_rate": 0.8889,
         "mean_structural_distance": 0.7587,
         "symbolic_test_failure_rate": 0.0,
-        "test_disagreement_count": 7,
-        "total_seconds": 419.58,
+        "test_disagreement_count": 0,
+        "total_seconds": 246.86,
         "total_evaluations": 74160,
         "variants_with_irrelevant_features": 0
       }
@@ -900,18 +900,18 @@
       "real_or_synthetic": "synthetic",
       "manifest_path": "manifests/feynman-iii_15_14.json",
       "artifact_path": "feynman-iii_15_14/run.json",
-      "bytes": 3170273,
+      "bytes": 2692257,
       "n_variants": 9,
       "summary": {
         "n_variants": 9,
         "accuracy_solutions": 2,
         "accuracy_solution_rate": 0.2222,
-        "exact_recoveries": 0,
-        "exact_recovery_rate": 0.0,
-        "mean_structural_distance": 0.8435,
+        "exact_recoveries": 2,
+        "exact_recovery_rate": 0.2222,
+        "mean_structural_distance": 0.8372,
         "symbolic_test_failure_rate": 0.0,
-        "test_disagreement_count": 2,
-        "total_seconds": 285.25,
+        "test_disagreement_count": 0,
+        "total_seconds": 161.81,
         "total_evaluations": 74160,
         "variants_with_irrelevant_features": 0
       }
@@ -927,18 +927,18 @@
       "real_or_synthetic": "synthetic",
       "manifest_path": "manifests/feynman-iii_17_37.json",
       "artifact_path": "feynman-iii_17_37/run.json",
-      "bytes": 2950287,
+      "bytes": 2503855,
       "n_variants": 9,
       "summary": {
         "n_variants": 9,
         "accuracy_solutions": 3,
         "accuracy_solution_rate": 0.3333,
-        "exact_recoveries": 2,
-        "exact_recovery_rate": 0.2222,
-        "mean_structural_distance": 0.708,
+        "exact_recoveries": 3,
+        "exact_recovery_rate": 0.3333,
+        "mean_structural_distance": 0.7017,
         "symbolic_test_failure_rate": 0.0,
-        "test_disagreement_count": 1,
-        "total_seconds": 223.5,
+        "test_disagreement_count": 0,
+        "total_seconds": 167.45,
         "total_evaluations": 74160,
         "variants_with_irrelevant_features": 0
       }
@@ -954,7 +954,7 @@
       "real_or_synthetic": "real",
       "manifest_path": "manifests/nikuradse-friction.json",
       "artifact_path": "nikuradse-friction/run.json",
-      "bytes": 500535,
+      "bytes": 491520,
       "n_variants": 9,
       "summary": {
         "n_variants": 9,
@@ -965,7 +965,7 @@
         "mean_structural_distance": null,
         "symbolic_test_failure_rate": null,
         "test_disagreement_count": 0,
-        "total_seconds": 183.05,
+        "total_seconds": 207.87,
         "total_evaluations": 98880,
         "variants_with_irrelevant_features": 0
       }
@@ -981,7 +981,7 @@
       "real_or_synthetic": "synthetic",
       "manifest_path": "manifests/strogatz-bacres1.json",
       "artifact_path": "strogatz-bacres1/run.json",
-      "bytes": 600396,
+      "bytes": 553057,
       "n_variants": 9,
       "summary": {
         "n_variants": 9,
@@ -992,7 +992,7 @@
         "mean_structural_distance": null,
         "symbolic_test_failure_rate": null,
         "test_disagreement_count": 0,
-        "total_seconds": 323.84,
+        "total_seconds": 182.79,
         "total_evaluations": 74160,
         "variants_with_irrelevant_features": 0
       }
@@ -1008,7 +1008,7 @@
       "real_or_synthetic": "synthetic",
       "manifest_path": "manifests/strogatz-bacres2.json",
       "artifact_path": "strogatz-bacres2/run.json",
-      "bytes": 555247,
+      "bytes": 507863,
       "n_variants": 9,
       "summary": {
         "n_variants": 9,
@@ -1019,7 +1019,7 @@
         "mean_structural_distance": null,
         "symbolic_test_failure_rate": null,
         "test_disagreement_count": 0,
-        "total_seconds": 400.14,
+        "total_seconds": 230.19,
         "total_evaluations": 74160,
         "variants_with_irrelevant_features": 0
       }
@@ -1035,7 +1035,7 @@
       "real_or_synthetic": "synthetic",
       "manifest_path": "manifests/strogatz-barmag1.json",
       "artifact_path": "strogatz-barmag1/run.json",
-      "bytes": 534745,
+      "bytes": 522387,
       "n_variants": 9,
       "summary": {
         "n_variants": 9,
@@ -1046,7 +1046,7 @@
         "mean_structural_distance": null,
         "symbolic_test_failure_rate": null,
         "test_disagreement_count": 0,
-        "total_seconds": 251.12,
+        "total_seconds": 124.04,
         "total_evaluations": 74160,
         "variants_with_irrelevant_features": 0
       }
@@ -1062,7 +1062,7 @@
       "real_or_synthetic": "synthetic",
       "manifest_path": "manifests/strogatz-barmag2.json",
       "artifact_path": "strogatz-barmag2/run.json",
-      "bytes": 588567,
+      "bytes": 563901,
       "n_variants": 9,
       "summary": {
         "n_variants": 9,
@@ -1073,7 +1073,7 @@
         "mean_structural_distance": null,
         "symbolic_test_failure_rate": null,
         "test_disagreement_count": 0,
-        "total_seconds": 336.84,
+        "total_seconds": 186.33,
         "total_evaluations": 74160,
         "variants_with_irrelevant_features": 0
       }
@@ -1089,7 +1089,7 @@
       "real_or_synthetic": "synthetic",
       "manifest_path": "manifests/strogatz-glider1.json",
       "artifact_path": "strogatz-glider1/run.json",
-      "bytes": 476720,
+      "bytes": 451467,
       "n_variants": 9,
       "summary": {
         "n_variants": 9,
@@ -1100,7 +1100,7 @@
         "mean_structural_distance": null,
         "symbolic_test_failure_rate": null,
         "test_disagreement_count": 0,
-        "total_seconds": 372.85,
+        "total_seconds": 208.92,
         "total_evaluations": 74160,
         "variants_with_irrelevant_features": 0
       }
@@ -1116,7 +1116,7 @@
       "real_or_synthetic": "synthetic",
       "manifest_path": "manifests/strogatz-glider2.json",
       "artifact_path": "strogatz-glider2/run.json",
-      "bytes": 515693,
+      "bytes": 489622,
       "n_variants": 9,
       "summary": {
         "n_variants": 9,
@@ -1127,7 +1127,7 @@
         "mean_structural_distance": null,
         "symbolic_test_failure_rate": null,
         "test_disagreement_count": 0,
-        "total_seconds": 227.7,
+        "total_seconds": 173.27,
         "total_evaluations": 74160,
         "variants_with_irrelevant_features": 0
       }
@@ -1143,7 +1143,7 @@
       "real_or_synthetic": "synthetic",
       "manifest_path": "manifests/strogatz-lv1.json",
       "artifact_path": "strogatz-lv1/run.json",
-      "bytes": 473006,
+      "bytes": 473012,
       "n_variants": 9,
       "summary": {
         "n_variants": 9,
@@ -1154,7 +1154,7 @@
         "mean_structural_distance": null,
         "symbolic_test_failure_rate": null,
         "test_disagreement_count": 0,
-        "total_seconds": 140.66,
+        "total_seconds": 118.11,
         "total_evaluations": 74160,
         "variants_with_irrelevant_features": 0
       }
@@ -1181,7 +1181,7 @@
         "mean_structural_distance": null,
         "symbolic_test_failure_rate": null,
         "test_disagreement_count": 0,
-        "total_seconds": 151.93,
+        "total_seconds": 111.36,
         "total_evaluations": 74160,
         "variants_with_irrelevant_features": 0
       }
@@ -1197,7 +1197,7 @@
       "real_or_synthetic": "synthetic",
       "manifest_path": "manifests/strogatz-predprey1.json",
       "artifact_path": "strogatz-predprey1/run.json",
-      "bytes": 594820,
+      "bytes": 583065,
       "n_variants": 9,
       "summary": {
         "n_variants": 9,
@@ -1208,7 +1208,7 @@
         "mean_structural_distance": null,
         "symbolic_test_failure_rate": null,
         "test_disagreement_count": 0,
-        "total_seconds": 170.97,
+        "total_seconds": 140.56,
         "total_evaluations": 74160,
         "variants_with_irrelevant_features": 0
       }
@@ -1224,7 +1224,7 @@
       "real_or_synthetic": "synthetic",
       "manifest_path": "manifests/strogatz-predprey2.json",
       "artifact_path": "strogatz-predprey2/run.json",
-      "bytes": 571674,
+      "bytes": 568825,
       "n_variants": 9,
       "summary": {
         "n_variants": 9,
@@ -1235,7 +1235,7 @@
         "mean_structural_distance": null,
         "symbolic_test_failure_rate": null,
         "test_disagreement_count": 0,
-        "total_seconds": 141.8,
+        "total_seconds": 132.19,
         "total_evaluations": 74160,
         "variants_with_irrelevant_features": 0
       }
@@ -1251,7 +1251,7 @@
       "real_or_synthetic": "synthetic",
       "manifest_path": "manifests/strogatz-shearflow1.json",
       "artifact_path": "strogatz-shearflow1/run.json",
-      "bytes": 476521,
+      "bytes": 476525,
       "n_variants": 9,
       "summary": {
         "n_variants": 9,
@@ -1262,7 +1262,7 @@
         "mean_structural_distance": null,
         "symbolic_test_failure_rate": null,
         "test_disagreement_count": 0,
-        "total_seconds": 129.86,
+        "total_seconds": 166.52,
         "total_evaluations": 74160,
         "variants_with_irrelevant_features": 0
       }
@@ -1278,7 +1278,7 @@
       "real_or_synthetic": "synthetic",
       "manifest_path": "manifests/strogatz-shearflow2.json",
       "artifact_path": "strogatz-shearflow2/run.json",
-      "bytes": 539616,
+      "bytes": 539614,
       "n_variants": 9,
       "summary": {
         "n_variants": 9,
@@ -1289,7 +1289,7 @@
         "mean_structural_distance": null,
         "symbolic_test_failure_rate": null,
         "test_disagreement_count": 0,
-        "total_seconds": 138.35,
+        "total_seconds": 159.59,
         "total_evaluations": 74160,
         "variants_with_irrelevant_features": 0
       }
@@ -1305,7 +1305,7 @@
       "real_or_synthetic": "synthetic",
       "manifest_path": "manifests/strogatz-vdp1.json",
       "artifact_path": "strogatz-vdp1/run.json",
-      "bytes": 536668,
+      "bytes": 536669,
       "n_variants": 9,
       "summary": {
         "n_variants": 9,
@@ -1316,7 +1316,7 @@
         "mean_structural_distance": null,
         "symbolic_test_failure_rate": null,
         "test_disagreement_count": 0,
-        "total_seconds": 155.0,
+        "total_seconds": 188.35,
         "total_evaluations": 74160,
         "variants_with_irrelevant_features": 0
       }
@@ -1332,7 +1332,7 @@
       "real_or_synthetic": "synthetic",
       "manifest_path": "manifests/strogatz-vdp2.json",
       "artifact_path": "strogatz-vdp2/run.json",
-      "bytes": 317685,
+      "bytes": 317687,
       "n_variants": 9,
       "summary": {
         "n_variants": 9,
@@ -1343,7 +1343,7 @@
         "mean_structural_distance": null,
         "symbolic_test_failure_rate": null,
         "test_disagreement_count": 0,
-        "total_seconds": 190.68,
+        "total_seconds": 199.16,
         "total_evaluations": 74160,
         "variants_with_irrelevant_features": 0
       }
@@ -1359,7 +1359,7 @@
       "real_or_synthetic": "synthetic",
       "manifest_path": "manifests/arrhenius-rate.json",
       "artifact_path": "arrhenius-rate/run.json",
-      "bytes": 797827,
+      "bytes": 682055,
       "n_variants": 9,
       "summary": {
         "n_variants": 9,
@@ -1367,10 +1367,10 @@
         "accuracy_solution_rate": 0.0,
         "exact_recoveries": 0,
         "exact_recovery_rate": 0.0,
-        "mean_structural_distance": 0.8257,
+        "mean_structural_distance": 0.827,
         "symbolic_test_failure_rate": 0.0,
         "test_disagreement_count": 0,
-        "total_seconds": 357.51,
+        "total_seconds": 620.38,
         "total_evaluations": 99600,
         "variants_with_irrelevant_features": 0
       }
@@ -1386,7 +1386,7 @@
       "real_or_synthetic": "synthetic",
       "manifest_path": "manifests/friction-factor.json",
       "artifact_path": "friction-factor/run.json",
-      "bytes": 554376,
+      "bytes": 535978,
       "n_variants": 8,
       "summary": {
         "n_variants": 8,
@@ -1397,7 +1397,7 @@
         "mean_structural_distance": 0.7629,
         "symbolic_test_failure_rate": 0.0,
         "test_disagreement_count": 0,
-        "total_seconds": 221.67,
+        "total_seconds": 433.15,
         "total_evaluations": 86640,
         "variants_with_irrelevant_features": 0
       }
@@ -1413,7 +1413,7 @@
       "real_or_synthetic": "synthetic",
       "manifest_path": "manifests/heat-exchanger-ntu.json",
       "artifact_path": "heat-exchanger-ntu/run.json",
-      "bytes": 519011,
+      "bytes": 498524,
       "n_variants": 8,
       "summary": {
         "n_variants": 8,
@@ -1424,7 +1424,7 @@
         "mean_structural_distance": 0.7885,
         "symbolic_test_failure_rate": 0.0,
         "test_disagreement_count": 0,
-        "total_seconds": 207.32,
+        "total_seconds": 370.23,
         "total_evaluations": 86640,
         "variants_with_irrelevant_features": 0
       }
@@ -1440,7 +1440,7 @@
       "real_or_synthetic": "synthetic",
       "manifest_path": "manifests/nusselt-gnielinski.json",
       "artifact_path": "nusselt-gnielinski/run.json",
-      "bytes": 532676,
+      "bytes": 531267,
       "n_variants": 8,
       "summary": {
         "n_variants": 8,
@@ -1451,7 +1451,7 @@
         "mean_structural_distance": 0.8156,
         "symbolic_test_failure_rate": 0.0,
         "test_disagreement_count": 0,
-        "total_seconds": 184.89,
+        "total_seconds": 421.75,
         "total_evaluations": 86640,
         "variants_with_irrelevant_features": 0
       }
@@ -1467,7 +1467,7 @@
       "real_or_synthetic": "synthetic",
       "manifest_path": "manifests/pump-affinity-power.json",
       "artifact_path": "pump-affinity-power/run.json",
-      "bytes": 1017128,
+      "bytes": 665785,
       "n_variants": 9,
       "summary": {
         "n_variants": 9,
@@ -1475,10 +1475,10 @@
         "accuracy_solution_rate": 0.0,
         "exact_recoveries": 0,
         "exact_recovery_rate": 0.0,
-        "mean_structural_distance": 0.8749,
+        "mean_structural_distance": 0.8697,
         "symbolic_test_failure_rate": 0.0,
         "test_disagreement_count": 0,
-        "total_seconds": 264.47,
+        "total_seconds": 641.08,
         "total_evaluations": 99600,
         "variants_with_irrelevant_features": 0
       }
@@ -1494,7 +1494,7 @@
       "real_or_synthetic": "synthetic",
       "manifest_path": "manifests/stokes-settling.json",
       "artifact_path": "stokes-settling/run.json",
-      "bytes": 838072,
+      "bytes": 688635,
       "n_variants": 9,
       "summary": {
         "n_variants": 9,
@@ -1502,10 +1502,10 @@
         "accuracy_solution_rate": 0.0,
         "exact_recoveries": 0,
         "exact_recovery_rate": 0.0,
-        "mean_structural_distance": 0.7706,
+        "mean_structural_distance": 0.7645,
         "symbolic_test_failure_rate": 0.0,
         "test_disagreement_count": 0,
-        "total_seconds": 386.16,
+        "total_seconds": 858.92,
         "total_evaluations": 99600,
         "variants_with_irrelevant_features": 0
       }

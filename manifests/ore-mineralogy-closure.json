@@ -11,7 +11,7 @@
     "path": "ore-mineralogy-closure/run.json",
     "format": "json",
     "schema_version": "1.0.0",
-    "bytes": 1161747
+    "bytes": 1161746
   },
   "gate": {
     "lane": "precompute",
@@ -70,7 +70,7 @@
   "variants": [
     {
       "id": "r1-koza-baseline",
-      "seconds": 0.508,
+      "seconds": 0.509,
       "evaluations": 4000,
       "front_size": 7,
       "selected_complexity": 8,
@@ -82,7 +82,7 @@
     },
     {
       "id": "r2-linear-scaling",
-      "seconds": 0.483,
+      "seconds": 0.425,
       "evaluations": 4000,
       "front_size": 11,
       "selected_complexity": 17,
@@ -94,7 +94,7 @@
     },
     {
       "id": "r3-constant-tuning",
-      "seconds": 0.574,
+      "seconds": 0.508,
       "evaluations": 4120,
       "front_size": 15,
       "selected_complexity": 22,
@@ -106,7 +106,7 @@
     },
     {
       "id": "r4-multi-objective",
-      "seconds": 0.407,
+      "seconds": 0.358,
       "evaluations": 4120,
       "front_size": 3,
       "selected_complexity": 6,
@@ -138,7 +138,7 @@
     "mean_structural_distance": null,
     "symbolic_test_failure_rate": null,
     "test_disagreement_count": 0,
-    "total_seconds": 1.97,
+    "total_seconds": 1.8,
     "total_evaluations": 16240,
     "variants_with_irrelevant_features": 0
   }

@@ -57,7 +57,7 @@
   "variants": [
     {
       "id": "r1-koza-baseline",
-      "seconds": 1.441,
+      "seconds": 1.175,
       "evaluations": 9000,
       "front_size": 14,
       "selected_complexity": 25,
@@ -69,7 +69,7 @@
     },
     {
       "id": "r2-linear-scaling",
-      "seconds": 1.376,
+      "seconds": 1.389,
       "evaluations": 9000,
       "front_size": 17,
       "selected_complexity": 24,
@@ -81,7 +81,7 @@
     },
     {
       "id": "r3-constant-tuning",
-      "seconds": 1.05,
+      "seconds": 1.113,
       "evaluations": 9180,
       "front_size": 12,
       "selected_complexity": 30,
@@ -93,7 +93,7 @@
     },
     {
       "id": "r4-multi-objective",
-      "seconds": 1.005,
+      "seconds": 0.863,
       "evaluations": 9180,
       "front_size": 4,
       "selected_complexity": 11,
@@ -105,7 +105,7 @@
     },
     {
       "id": "r5-epsilon-lexicase",
-      "seconds": 22.125,
+      "seconds": 18.664,
       "evaluations": 9180,
       "front_size": 4,
       "selected_complexity": 11,
@@ -117,7 +117,7 @@
     },
     {
       "id": "r6-age-fitness-islands",
-      "seconds": 12.138,
+      "seconds": 10.467,
       "evaluations": 9720,
       "front_size": 4,
       "selected_complexity": 8,
@@ -129,7 +129,7 @@
     },
     {
       "id": "r7-deduplication",
-      "seconds": 111.952,
+      "seconds": 77.035,
       "evaluations": 9720,
       "front_size": 4,
       "selected_complexity": 8,
@@ -141,7 +141,7 @@
     },
     {
       "id": "parsimony-arm",
-      "seconds": 0.845,
+      "seconds": 0.653,
       "evaluations": 9180,
       "front_size": 8,
       "selected_complexity": 12,
@@ -153,7 +153,7 @@
     },
     {
       "id": "sparse-regression",
-      "seconds": 0.002,
+      "seconds": 0.001,
       "evaluations": 0,
       "front_size": 1,
       "selected_complexity": 14,
@@ -173,7 +173,7 @@
     "mean_structural_distance": null,
     "symbolic_test_failure_rate": null,
     "test_disagreement_count": 0,
-    "total_seconds": 151.93,
+    "total_seconds": 111.36,
     "total_evaluations": 74160,
     "variants_with_irrelevant_features": 0
   }

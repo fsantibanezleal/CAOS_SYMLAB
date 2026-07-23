@@ -129,3 +129,45 @@ def test_the_sweep_is_ordered_and_non_trivial() -> None:
     assert list(THRESHOLD_FRACTIONS) == sorted(THRESHOLD_FRACTIONS)
     assert len(THRESHOLD_FRACTIONS) >= 5
     assert THRESHOLD_FRACTIONS[0] > 0
+
+
+def test_no_member_exceeds_the_term_cap():
+    """A sparse-regression member must never be a wall of terms.
+
+    On an over-complete, collinear library (the 21-input flotation case builds ~336 terms), least
+    squares hands out large cancelling coefficients that all clear the threshold, so STLSQ could not
+    prune and the exported model was the whole library: measured at 1650 nodes with R2 near zero, and
+    17.8 MB of artifact. A sparse method that returns everything is not sparse. The hard cap keeps
+    the strongest MAX_TERMS and refits, so this asserts the cap holds.
+    """
+    import numpy as np
+
+    from symlab.search.sparse import MAX_TERMS, SparseRegressionSearch
+    from symlab.search.engine import SearchConfig
+    from symlab.model.complexity import node_count
+
+    rng = np.random.default_rng(0)
+    # 21 collinear inputs and a target the library cannot fit compactly: the exact failure shape.
+    X = rng.normal(size=(400, 21))
+    X[:, 1:] += 0.3 * X[:, [0]]
+    y = rng.normal(size=400)
+
+    result = SparseRegressionSearch(SearchConfig()).run(X, y, seed=0)
+    for member in result.pareto:
+        terms = _count_terms(member.expression)
+        assert terms <= MAX_TERMS, (
+            f"a sparse member carries {terms} terms, above the cap of {MAX_TERMS}; "
+            f"node_count {node_count(member.expression)}"
+        )
+
+
+def _count_terms(expression) -> int:
+    """Top-level additive terms in an expression tree."""
+    from symlab.model.expr import Node
+
+    def walk(node: Node) -> int:
+        if node.op == "add":
+            return sum(walk(c) for c in node.children)
+        return 1
+
+    return walk(expression)
