@@ -152,6 +152,13 @@ class SearchResult:
     duplicates_avoided: int
     invalid_rejected: int
     wall_seconds: float
+    #: What the unit-typed initialisation ACTUALLY did, not what the config asked for. One of
+    #: "off" (the config did not request it), "typed" (the initial population was dimensionally
+    #: valid), "no-dimensions-declared" (requested, but the case declares no units, so the search
+    #: ran untyped), or "target-unreachable" (requested and declared, but no expression over these
+    #: inputs can reach the target dimension, so the search ran untyped). The last two mean the
+    #: run is NOT unit-typed however the config reads.
+    unit_typed_status: str = "off"
 
 
 def _apply_scaling(expression: Node, fitted: scaling_mod.Scaling, enabled: bool) -> Node:
@@ -230,10 +237,21 @@ class Engine:
             duplicates_avoided = 0
             invalid_rejected = 0
             next_id = 0
+            tuned_candidates = 0
+            unidentifiable_tunings = 0
 
             # -- initial population, per island
             islands: list[list[Individual]] = []
             per_island = max(4, cfg.population // max(1, cfg.n_islands))
+            unit_typed_status = "off"
+            if cfg.unit_typed:
+                # Decided ONCE, before the island loop, so the recorded status describes the run and
+                # not whichever island happened to be initialised last.
+                unit_typed_status = (
+                    "typed" if self.input_dims is not None and self.target_dims is not None
+                    else "no-dimensions-declared"
+                )
+
             for island_index in range(max(1, cfg.n_islands)):
                 if cfg.unit_typed and self.input_dims is not None and self.target_dims is not None:
                     trees = typed_population(
@@ -241,8 +259,11 @@ class Engine:
                         input_dims=self.input_dims, target=self.target_dims, max_depth=min(6, cfg.max_depth),
                     )
                     if not trees:
-                        # The declared inputs cannot reach the target dimension. Report it by falling
-                        # back and marking the run, rather than silently searching a different problem.
+                        # No expression over these inputs reaches the target dimension. Falling back
+                        # keeps the run alive, but the run is then NOT unit-typed, and that has to
+                        # land in the artifact: this line used to carry a comment saying the run was
+                        # marked, beside code that marked nothing.
+                        unit_typed_status = "target-unreachable"
                         trees = ramped_half_and_half(
                             rng, size=per_island, primitives=self.primitives, n_vars=n_vars,
                             max_depth=min(6, cfg.max_depth), const_range=cfg.const_range,
@@ -293,9 +314,11 @@ class Engine:
                     if cfg.constant_tuning and generation % max(1, cfg.tuning_every) == 0:
                         order = np.argsort([m.loss for m in members])[: cfg.tuning_top_k]
                         trees = [m.expression for m in members]
-                        trees, _improved = tune_population(
+                        trees, _improved, _unidentifiable = tune_population(
                             trees, X, y, indices=list(order), max_iterations=cfg.tuning_iterations
                         )
+                        tuned_candidates += len(order)
+                        unidentifiable_tunings += _unidentifiable
                         for i in order:
                             members[i].expression = trees[i]
                             loss, fitted, errors = self._evaluate_one(trees[i], X, y, box)
@@ -405,7 +428,12 @@ class Engine:
 
                         children.append(Individual(
                             expression=child_tree,
-                            age=min(members[a_idx].age, members[b_idx].age) + 1,
+                            # MAX, not min. Genotypic age counts generations since the OLDEST
+                            # ancestor entered the population, so the maximum is the definition.
+                            # With the minimum, an entrenched lineage resets its age by crossing
+                            # with any younger individual, which is the takeover age-fitness Pareto
+                            # optimisation exists to prevent (Schmidt and Lipson, 2011).
+                            age=max(members[a_idx].age, members[b_idx].age) + 1,
                             operator=operator,
                             parents=(members[a_idx].ident, members[b_idx].ident),
                             island=island_index,
@@ -419,6 +447,32 @@ class Engine:
                     if len(children) < len(members):
                         for i in order[: len(members) - len(children)]:
                             children.append(dataclass_replace(members[int(i)], age=members[int(i)].age + 1))
+
+                    # -- age-0 injection, the second half of age-fitness Pareto optimisation
+                    #
+                    # One new random individual enters each generation with age 0. Without it the
+                    # youngest age in the population only ever climbs, the age objective has nothing
+                    # fresh to protect, and the mechanism degenerates to plain multi-objective
+                    # survival with a third column that carries no information. This engine ran
+                    # r6, r7 and r8 that way.
+                    #
+                    # It REPLACES a child instead of adding one, so the population size and the
+                    # evaluations per generation are identical to the rung below and the ablation
+                    # stays a comparison of mechanisms rather than of budgets.
+                    if cfg.age_fitness and children:
+                        fresh = ramped_half_and_half(
+                            rng, size=1, primitives=self.primitives, n_vars=n_vars,
+                            max_depth=min(6, cfg.max_depth), const_range=cfg.const_range,
+                        )
+                        if fresh:
+                            children[-1] = Individual(
+                                expression=fresh[0],
+                                age=0,
+                                operator="age-0 injection",
+                                island=island_index,
+                                ident=next_id,
+                            )
+                            next_id += 1
 
                     # -- survival
                     if cfg.multi_objective or cfg.age_fitness:
@@ -538,12 +592,20 @@ class Engine:
                 "evaluations": evaluations,
                 "max_depth_seen": max((depth(m.expression) for m in front), default=0),
                 "max_size_seen": max((size(m.expression) for m in front), default=0),
+                # Constant tuning fits parameters by Levenberg-Marquardt, and a rank-deficient
+                # Jacobian means those parameters are not jointly recoverable from this data. The
+                # tuner has always detected it per candidate; until now the verdict was discarded
+                # inside `tune_population` and never reached an artifact, so a front of
+                # well-determined constants and a front of arbitrary ones looked identical.
+                "tuned_candidates": tuned_candidates,
+                "unidentifiable_tunings": unidentifiable_tunings,
             }
             return SearchResult(
                 config=self.config, seed=seed, pareto=front, pareto_scores=scores, best=best,
                 history=history, counters=counters, duplicates_avoided=duplicates_avoided,
                 invalid_rejected=invalid_rejected,
                 wall_seconds=round(time.perf_counter() - started, 3),
+                unit_typed_status=unit_typed_status,
             )
         finally:
             errstate.__exit__(None, None, None)
@@ -561,8 +623,16 @@ LADDER: dict[str, SearchConfig] = {
     "r5-epsilon-lexicase": SearchConfig(linear_scaling=True, interval_guard=True, interval_margin=0.25,
                                         constant_tuning=True, multi_objective=True,
                                         epsilon_lexicase=True),
+    # `multi_objective=True` here is a FIX, not decoration. This rung used to omit it while r5 had
+    # it and r7 turned it back on, so r6 changed three things at once: it added age as an objective,
+    # added islands, AND silently dropped complexity as an objective, falling from the three-way
+    # NSGA-II survival to the two-way age-fitness one. The rung is labelled "age BECOMES an
+    # objective", which is an addition, and r4 is the rung where the output is said to stop being a
+    # model and become a front. Dropping complexity here took that front away again, and the
+    # Experiments page still attributed the whole measured delta to islands.
     "r6-age-fitness-islands": SearchConfig(linear_scaling=True, interval_guard=True, interval_margin=0.25,
-                                           constant_tuning=True, epsilon_lexicase=True,
+                                           constant_tuning=True, multi_objective=True,
+                                           epsilon_lexicase=True,
                                            age_fitness=True, n_islands=4),
     "r7-deduplication": SearchConfig(linear_scaling=True, interval_guard=True, interval_margin=0.25,
                                      constant_tuning=True, multi_objective=True, epsilon_lexicase=True,

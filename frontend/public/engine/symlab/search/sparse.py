@@ -37,6 +37,7 @@ import time
 from dataclasses import dataclass
 import numpy as np
 
+from ..model.complexity import node_count
 from ..model.expr import Node, evaluate
 from ..model import scaling as scaling_mod
 from .engine import Individual, SearchConfig, SearchResult
@@ -220,7 +221,7 @@ class SparseRegressionSearch:
         return Individual(
             expression=Node.const(float(np.mean(y))),
             loss=float(np.mean((y - np.mean(y)) ** 2)),
-            complexity=1,
+            complexity=int(node_count(Node.const(float(np.mean(y))))),
             operator=operator,
         )
 
@@ -283,7 +284,13 @@ class SparseRegressionSearch:
             members.append(Individual(
                 expression=expression,
                 loss=loss,
-                complexity=int(sum(terms[i].complexity for i in support) + len(support)),
+                # node_count of the PUBLISHED expression, for the same reason the loss two
+                # comments up is measured on it. This used to be a hand-rolled tally,
+                # `sum(term complexities) + len(support)`, which disagreed with the node count the
+                # exporter writes into the front by one on 25 of the 39 committed artifacts. The
+                # front then plotted a member at one complexity while the score beside it reported
+                # another, and the two arms' fronts were not on the same axis at all.
+                complexity=int(node_count(expression)),
                 scaling=scaling_mod.IDENTITY,
                 operator=f"stlsq(threshold={threshold:g})",
             ))

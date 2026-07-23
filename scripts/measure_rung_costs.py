@@ -77,7 +77,14 @@ def main() -> int:
     print(
         "\nThese are CUMULATIVE: a rung inherits every mechanism below it, so the multiple for r7 is\n"
         "the cost of everything up to and including deduplication, not the cost of deduplication.\n"
-        "Quote them that way, and keep any isolated single-mechanism figure clearly separate."
+        "Quote them that way, and keep any isolated single-mechanism figure clearly separate.\n"
+        "\n"
+        "Cumulative does NOT mean monotone, and this ladder measurably is not. r6 comes out CHEAPER\n"
+        "than r5 while adding two mechanisms to it. That is real rather than a defect: r6 splits the\n"
+        "population into four islands, so epsilon-lexicase then filters a pool a quarter the size.\n"
+        "Measured on this bake, r6 runs slightly MORE evaluations than r5 (median 9720 against 9180)\n"
+        "at a lower cost each (2398us against 3210us). Adding a mechanism can buy back more than it\n"
+        "costs, and a reader comparing rungs by wall clock has to be told so."
     )
     return 0
 

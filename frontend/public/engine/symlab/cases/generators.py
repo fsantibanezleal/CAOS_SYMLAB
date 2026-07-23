@@ -15,9 +15,12 @@ Four of them have a real-data twin in the case list, which is the strongest arra
 calibrate the engine where the answer is known, then test it where it is not.
 
 - `friction-factor` pairs with the Nikuradse 362-point measured dataset.
-- `flotation-kinetics` and `comminution-bond` pair with the mining cases.
-- `monod-saturation` pairs with the penicillin fermentation case.
-- `wind-power-curve` pairs with the Kelmarsh reserve case.
+- `flotation-kinetics` pairs with the flotation plant case.
+
+Two more were listed here and are not shipped: `comminution-bond` named a `geomet-bond` case and
+`monod-saturation` a penicillin case, neither of which exists in the registry or the source table,
+and `wind-power-curve` named a Kelmarsh reserve case that was never added. Those `real_data_twin`
+fields are now `None`; this list is the prose that repeated them.
 
 Honesty rules applied throughout: a generator whose validity range is finite carries that range and a
 variant that DELIBERATELY leaves it, because showing a law break down outside its domain is the most
@@ -178,7 +181,7 @@ MICHAELIS_MENTEN = Generator(
         "A Lineweaver-Burk linearisation fits this exactly but distorts the error structure; the lab "
         "shows that as a worked example of a transformation that helps a human and hurts a fit.",
     ),
-    real_data_twin="penicillin-monod",
+    real_data_twin=None,
     truth_node=lambda: Node.call("div", Node.call("mul", Node.var(1), Node.var(0)),
                                 Node.call("add", Node.var(2), Node.var(0))),
     regime="structure",
@@ -312,7 +315,7 @@ COMMINUTION_BOND = Generator(
         "The Morrell size-specific-energy refinement is a known extension whose exact coefficient form "
         "the research could not verify, so it is deliberately NOT shipped as a scored target.",
     ),
-    real_data_twin="geomet-bond",
+    real_data_twin=None,
     truth_node=lambda: Node.call("mul", Node.call("mul", Node.const(10.0), Node.var(2)),
         Node.call("sub", Node.call("inv", Node.call("sqrt", Node.var(1))),
                           Node.call("inv", Node.call("sqrt", Node.var(0))))),
@@ -339,7 +342,7 @@ COMMINUTION_KICK = Generator(
     sample=_kick,
     recovery_target="the logarithmic ratio form, distinguished from Bond's inverse-square-root",
     caveats=("Shipped so the model-selection question in the Bond case has a real alternative to select.",),
-    real_data_twin="geomet-bond",
+    real_data_twin=None,
     truth_node=lambda: Node.call("mul", Node.var(2),
         Node.call("log", Node.call("div", Node.var(0), Node.var(1)))),
     regime="structure",
@@ -461,12 +464,14 @@ NTU_COUNTERFLOW = Generator(
     truth_infix="(1 - exp(-NTU*(1 - Cr))) / (1 - Cr*exp(-NTU*(1 - Cr)))",
     source="Effectiveness-NTU method, counter-current arrangement, verified (research dossier 7.2.7)",
     sample=_ntu,
-    recovery_target="both branches, plus the Cr = 1 limit eps = NTU/(1 + NTU)",
+    recovery_target="the effectiveness expression over the sampled Cr range",
     validity="Steady state, constant properties, no phase change, no losses to surroundings.",
     caveats=(
         "There is a REMOVABLE SINGULARITY at Cr = 1 where the expression degenerates to NTU/(1+NTU). "
-        "That is the point of the case: a fitted result that blows up at Cr = 1 is wrong in a way a "
-        "plain error metric hides completely, and the extrapolation view is what exposes it.",
+        "A fitted result that blows up there is wrong in a way a plain error metric hides completely, "
+        "and the extrapolation view is what exposes it. NOTE that the sampling does not currently "
+        "place points at Cr = 1, so this is a property of the law to watch for in the extrapolation "
+        "panel rather than a configuration the case selector offers.",
     ),
     truth_node=lambda: Node.call("div",
         Node.call("sub", Node.const(1.0), Node.call("exp", Node.call("neg",
@@ -649,8 +654,10 @@ STOKES = Generator(
         "The density difference matters: a fit that finds rho_p alone can look excellent on a sample "
         "where rho_f barely varies, and is wrong. This is the clearest small example of a correct-looking "
         "fit that is the wrong law.",
-        "A variant deliberately samples beyond Re = 1 so the lab can show a law BREAKING DOWN outside "
-        "its validity range, which is the single most useful honest lesson available here.",
+        "The validity range ends near Re = 1, and sampling deliberately beyond it would let the lab "
+        "show a law BREAKING DOWN outside its domain, which is the most useful honest lesson "
+        "available here. That sampling is NOT implemented: the generator stays inside the range, and "
+        "this caveat previously described it as a shipped variant.",
         "No open tabulated sphere-drag experimental dataset was found in the research, so this case "
         "stays synthetic rather than claiming a real twin.",
     ),
@@ -687,8 +694,9 @@ ANTOINE = Generator(
     recovery_target="the B/(C + T) reciprocal-shifted form",
     validity="-20 to 100 degC for these constants; a DIFFERENT verified set covers 99 to 374 degC.",
     caveats=(
-        "A single constant set cannot cover the whole liquid range. The two-window variant asks the "
-        "search to detect that, which is a change-point question dressed as a fitting question.",
+        "A single constant set cannot cover the whole liquid range, and a second window would turn "
+        "this into a change-point question dressed as a fitting question. Only ONE window is "
+        "generated; the second is not implemented, and this caveat previously called it a variant.",
         "Real-data twin: the batch distillation dataset names its three chemical systems, so the true "
         "Antoine constants of every component are independently obtainable rather than assumed.",
     ),
@@ -792,7 +800,8 @@ WIND_POWER = Generator(
         "PIECEWISE by construction: zero below cut-in, cubic, a rated plateau, then zero above cut-out. "
         "A single smooth expression cannot represent it, so this case tests whether the search reports "
         "an honest partial fit or an overconfident smooth one.",
-        "Real-data twin: the Kelmarsh farm, using the same swept area and rated power.",
+        "No real-data twin ships with this case. The Kelmarsh farm would be the natural one, and the "
+        "geometry used here is taken from it, but the measured series is not among the sources.",
     ),
     #: NO truth node. The curve is piecewise: zero below cut-in, zero above cut-out, and capped at
     #: rated power in between. The operator set has no comparison, no minimum and no indicator, so
@@ -837,7 +846,7 @@ THETA_LOGISTIC = Generator(
         "Real-data twin: GPDD ships 5,156 series WITH published theta fits, so a recovered exponent "
         "can be compared against a published one rather than only against the residual.",
     ),
-    real_data_twin="gpdd-density-dependence",
+    real_data_twin=None,
     truth_node=lambda: Node.call(
         "mul",
         Node.call("mul", Node.var(1), Node.var(0)),
@@ -851,8 +860,9 @@ THETA_LOGISTIC = Generator(
 def _lotka_volterra(rng: np.random.Generator, n: int) -> tuple[np.ndarray, np.ndarray]:
     # Parameters chosen to reproduce roughly the ten-year lynx-hare cycle.
     # Only the prey right-hand side is generated here, so only alpha and beta are used. The
-    # predator parameters gamma and delta belong to the second equation of the system and to
-    # the conserved quantity, both of which ship as their own variants.
+    # predator equation and the conserved quantity are the other two formulations of this system
+    # and NEITHER is implemented: this comment used to say "both of which ship as their own
+    # variants", and no such generator is registered.
     alpha, beta = 0.55, 0.028
     hares = rng.uniform(5.0, 90.0, size=n)
     lynx = rng.uniform(5.0, 60.0, size=n)
@@ -873,14 +883,16 @@ LOTKA_VOLTERRA = Generator(
     truth_infix="0.55*H - 0.028*H*L",
     source="Lotka-Volterra predator-prey model, lynx-hare parameterisation (research dossier 7.2.14)",
     sample=_lotka_volterra,
-    recovery_target="the bilinear interaction term, and separately the conserved quantity",
+    recovery_target="the bilinear interaction term",
     caveats=(
-        "The conserved quantity V = delta*H - gamma*ln(H) + beta*L - alpha*ln(L) is a DIFFERENT and "
-        "harder symbolic regression formulation on the same system, and it ships as its own variant. "
-        "Recovering an invariant is not the same task as recovering a derivative.",
-        "Real-data twin: the lynx-hare series, 21 points, 1900 to 1920.",
+        "Only the PREY right-hand side is posed here. The conserved quantity "
+        "V = delta*H - gamma*ln(H) + beta*L - alpha*ln(L) is a different and harder formulation on "
+        "the same system, and recovering an invariant is not the same task as recovering a "
+        "derivative. It is not implemented, and this caveat used to claim it shipped as its own "
+        "variant.",
+        "There is no real-data twin in this repository. The lynx-hare series would be the natural one, but it is not among the shipped sources.",
     ),
-    real_data_twin="lynx-hare-lotka-volterra",
+    real_data_twin=None,
     truth_node=lambda: Node.call("sub", Node.call("mul", Node.const(0.55), Node.var(0)),
         Node.call("mul", Node.const(0.028), Node.call("mul", Node.var(0), Node.var(1)))),
     regime="structure+constants",
