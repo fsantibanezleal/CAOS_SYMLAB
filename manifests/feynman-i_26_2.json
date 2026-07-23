@@ -11,7 +11,7 @@
     "path": "feynman-i_26_2/run.json",
     "format": "json",
     "schema_version": "1.0.0",
-    "bytes": 2557625
+    "bytes": 2537195
   },
   "gate": {
     "lane": "precompute",
@@ -61,7 +61,7 @@
   "variants": [
     {
       "id": "r1-koza-baseline",
-      "seconds": 1.373,
+      "seconds": 1.029,
       "evaluations": 9000,
       "front_size": 4,
       "selected_complexity": 4,
@@ -73,7 +73,7 @@
     },
     {
       "id": "r2-linear-scaling",
-      "seconds": 1.704,
+      "seconds": 1.219,
       "evaluations": 9000,
       "front_size": 6,
       "selected_complexity": 12,
@@ -85,7 +85,7 @@
     },
     {
       "id": "r3-constant-tuning",
-      "seconds": 2.817,
+      "seconds": 1.977,
       "evaluations": 9180,
       "front_size": 9,
       "selected_complexity": 20,
@@ -97,7 +97,7 @@
     },
     {
       "id": "r4-multi-objective",
-      "seconds": 2.064,
+      "seconds": 1.483,
       "evaluations": 9180,
       "front_size": 3,
       "selected_complexity": 9,
@@ -109,7 +109,7 @@
     },
     {
       "id": "r5-epsilon-lexicase",
-      "seconds": 45.427,
+      "seconds": 36.289,
       "evaluations": 9180,
       "front_size": 3,
       "selected_complexity": 8,
@@ -121,7 +121,7 @@
     },
     {
       "id": "r6-age-fitness-islands",
-      "seconds": 42.535,
+      "seconds": 30.233,
       "evaluations": 9720,
       "front_size": 3,
       "selected_complexity": 9,
@@ -133,7 +133,7 @@
     },
     {
       "id": "r7-deduplication",
-      "seconds": 277.185,
+      "seconds": 246.921,
       "evaluations": 9720,
       "front_size": 3,
       "selected_complexity": 9,
@@ -145,7 +145,7 @@
     },
     {
       "id": "parsimony-arm",
-      "seconds": 1.616,
+      "seconds": 1.721,
       "evaluations": 9180,
       "front_size": 4,
       "selected_complexity": 8,
@@ -157,9 +157,9 @@
     },
     {
       "id": "sparse-regression",
-      "seconds": 0.014,
+      "seconds": 0.019,
       "evaluations": 0,
-      "front_size": 4,
+      "front_size": 3,
       "selected_complexity": 45,
       "test_r2": 0.993881102,
       "accuracy_solution": false,
@@ -177,7 +177,7 @@
     "mean_structural_distance": null,
     "symbolic_test_failure_rate": null,
     "test_disagreement_count": 0,
-    "total_seconds": 374.74,
+    "total_seconds": 320.89,
     "total_evaluations": 74160,
     "variants_with_irrelevant_features": 0
   }

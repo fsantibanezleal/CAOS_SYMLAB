@@ -56,6 +56,15 @@ THRESHOLD_FRACTIONS: tuple[float, ...] = (
 #: before the bound in every practical case; the bound exists so a pathological input cannot spin.
 MAX_REFITS = 12
 
+#: Hard cap on the number of terms in any exported model. A sparse-regression result that returns
+#: hundreds of terms is neither sparse nor readable, and it happens: on an over-complete, collinear
+#: library (21 flotation process inputs give a ~336-term library), least squares hands out large
+#: cancelling coefficients that ALL clear the threshold, so STLSQ never prunes and the "sparsest"
+#: member is the whole library fitting nothing (measured: 1650 nodes, R2 near zero). Capping to the
+#: strongest contributors makes the result genuinely sparse; where the library cannot fit compactly,
+#: a poor fit over few terms is the honest outcome, not a wall of 300 terms that also fits poorly.
+MAX_TERMS = 12
+
 
 @dataclass(frozen=True)
 class BasisTerm:
@@ -180,6 +189,18 @@ def _stlsq(library: np.ndarray, y: np.ndarray, threshold: float, scales: np.ndar
         coefficients = np.zeros(library.shape[1])
         fitted, *_ = np.linalg.lstsq(normalised[:, support], y, rcond=None)
         coefficients[support] = fitted
+
+    # HARD SPARSITY CAP. See MAX_TERMS: an over-complete library can leave STLSQ unable to prune, so
+    # the support here may still be the whole library. `coefficients` are on the normalised columns,
+    # where the magnitude IS the term's contribution, so keep the strongest and refit on those.
+    active = np.flatnonzero(coefficients)
+    if active.size > MAX_TERMS:
+        strongest = active[np.argsort(np.abs(coefficients[active]))[::-1][:MAX_TERMS]]
+        capped = np.zeros(library.shape[1], dtype=bool)
+        capped[strongest] = True
+        coefficients = np.zeros(library.shape[1])
+        fitted, *_ = np.linalg.lstsq(normalised[:, capped], y, rcond=None)
+        coefficients[capped] = fitted
 
     return coefficients / scales
 

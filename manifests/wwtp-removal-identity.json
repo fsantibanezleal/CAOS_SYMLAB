@@ -11,7 +11,7 @@
     "path": "wwtp-removal-identity/run.json",
     "format": "json",
     "schema_version": "1.0.0",
-    "bytes": 321404
+    "bytes": 299725
   },
   "gate": {
     "lane": "precompute",
@@ -61,7 +61,7 @@
   "variants": [
     {
       "id": "r1-koza-baseline",
-      "seconds": 0.218,
+      "seconds": 0.227,
       "evaluations": 5000,
       "front_size": 2,
       "selected_complexity": 2,
@@ -73,7 +73,7 @@
     },
     {
       "id": "r2-linear-scaling",
-      "seconds": 0.389,
+      "seconds": 0.423,
       "evaluations": 5000,
       "front_size": 12,
       "selected_complexity": 7,
@@ -85,7 +85,7 @@
     },
     {
       "id": "r3-constant-tuning",
-      "seconds": 0.284,
+      "seconds": 0.302,
       "evaluations": 5150,
       "front_size": 4,
       "selected_complexity": 7,
@@ -97,7 +97,7 @@
     },
     {
       "id": "r4-multi-objective",
-      "seconds": 0.393,
+      "seconds": 0.406,
       "evaluations": 5150,
       "front_size": 2,
       "selected_complexity": 7,
@@ -109,7 +109,7 @@
     },
     {
       "id": "r7-deduplication",
-      "seconds": 70.27,
+      "seconds": 72.584,
       "evaluations": 5600,
       "front_size": 2,
       "selected_complexity": 7,
@@ -123,7 +123,7 @@
       "id": "sparse-regression",
       "seconds": 0.002,
       "evaluations": 0,
-      "front_size": 5,
+      "front_size": 4,
       "selected_complexity": 20,
       "test_r2": 0.9962896168,
       "accuracy_solution": false,
@@ -141,7 +141,7 @@
     "mean_structural_distance": 0.6488,
     "symbolic_test_failure_rate": 0.0,
     "test_disagreement_count": 0,
-    "total_seconds": 71.56,
+    "total_seconds": 73.94,
     "total_evaluations": 25900,
     "variants_with_irrelevant_features": 0
   }

@@ -11,7 +11,7 @@
     "path": "feynman-ii_27_18/run.json",
     "format": "json",
     "schema_version": "1.0.0",
-    "bytes": 2293440
+    "bytes": 2239674
   },
   "gate": {
     "lane": "precompute",
@@ -61,7 +61,7 @@
   "variants": [
     {
       "id": "r1-koza-baseline",
-      "seconds": 1.135,
+      "seconds": 0.668,
       "evaluations": 9000,
       "front_size": 3,
       "selected_complexity": 4,
@@ -73,7 +73,7 @@
     },
     {
       "id": "r2-linear-scaling",
-      "seconds": 1.779,
+      "seconds": 1.17,
       "evaluations": 9000,
       "front_size": 10,
       "selected_complexity": 4,
@@ -85,7 +85,7 @@
     },
     {
       "id": "r3-constant-tuning",
-      "seconds": 1.899,
+      "seconds": 1.161,
       "evaluations": 9180,
       "front_size": 7,
       "selected_complexity": 4,
@@ -97,7 +97,7 @@
     },
     {
       "id": "r4-multi-objective",
-      "seconds": 2.494,
+      "seconds": 1.619,
       "evaluations": 9180,
       "front_size": 4,
       "selected_complexity": 11,
@@ -109,7 +109,7 @@
     },
     {
       "id": "r5-epsilon-lexicase",
-      "seconds": 36.411,
+      "seconds": 23.704,
       "evaluations": 9180,
       "front_size": 4,
       "selected_complexity": 11,
@@ -121,7 +121,7 @@
     },
     {
       "id": "r6-age-fitness-islands",
-      "seconds": 41.469,
+      "seconds": 26.108,
       "evaluations": 9720,
       "front_size": 4,
       "selected_complexity": 11,
@@ -133,7 +133,7 @@
     },
     {
       "id": "r7-deduplication",
-      "seconds": 189.505,
+      "seconds": 104.694,
       "evaluations": 9720,
       "front_size": 4,
       "selected_complexity": 11,
@@ -145,7 +145,7 @@
     },
     {
       "id": "parsimony-arm",
-      "seconds": 1.103,
+      "seconds": 0.835,
       "evaluations": 9180,
       "front_size": 7,
       "selected_complexity": 4,
@@ -157,11 +157,11 @@
     },
     {
       "id": "sparse-regression",
-      "seconds": 0.008,
+      "seconds": 0.009,
       "evaluations": 0,
-      "front_size": 2,
-      "selected_complexity": 60,
-      "test_r2": 0.9976583595,
+      "front_size": 1,
+      "selected_complexity": 55,
+      "test_r2": 0.9976586969,
       "accuracy_solution": false,
       "exact_recovery": false,
       "symbolic_test_decided": true,
@@ -174,10 +174,10 @@
     "accuracy_solution_rate": 0.4444,
     "exact_recoveries": 4,
     "exact_recovery_rate": 0.4444,
-    "mean_structural_distance": 0.5936,
+    "mean_structural_distance": 0.5929,
     "symbolic_test_failure_rate": 0.0,
     "test_disagreement_count": 0,
-    "total_seconds": 275.8,
+    "total_seconds": 159.97,
     "total_evaluations": 74160,
     "variants_with_irrelevant_features": 0
   }

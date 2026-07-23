@@ -11,7 +11,7 @@
     "path": "feynman-iii_15_14/run.json",
     "format": "json",
     "schema_version": "1.0.0",
-    "bytes": 3170273
+    "bytes": 2692257
   },
   "gate": {
     "lane": "precompute",
@@ -62,7 +62,7 @@
   "variants": [
     {
       "id": "r1-koza-baseline",
-      "seconds": 1.955,
+      "seconds": 1.135,
       "evaluations": 9000,
       "front_size": 7,
       "selected_complexity": 9,
@@ -74,31 +74,31 @@
     },
     {
       "id": "r2-linear-scaling",
-      "seconds": 1.734,
+      "seconds": 1.007,
       "evaluations": 9000,
       "front_size": 8,
       "selected_complexity": 8,
       "test_r2": 1.0,
       "accuracy_solution": true,
-      "exact_recovery": false,
+      "exact_recovery": true,
       "symbolic_test_decided": true,
       "irrelevant_features": 0
     },
     {
       "id": "r3-constant-tuning",
-      "seconds": 1.583,
+      "seconds": 0.844,
       "evaluations": 9180,
       "front_size": 7,
       "selected_complexity": 8,
       "test_r2": 1.0,
       "accuracy_solution": true,
-      "exact_recovery": false,
+      "exact_recovery": true,
       "symbolic_test_decided": true,
       "irrelevant_features": 0
     },
     {
       "id": "r4-multi-objective",
-      "seconds": 1.743,
+      "seconds": 1.032,
       "evaluations": 9180,
       "front_size": 4,
       "selected_complexity": 8,
@@ -110,7 +110,7 @@
     },
     {
       "id": "r5-epsilon-lexicase",
-      "seconds": 35.85,
+      "seconds": 19.626,
       "evaluations": 9180,
       "front_size": 4,
       "selected_complexity": 8,
@@ -122,7 +122,7 @@
     },
     {
       "id": "r6-age-fitness-islands",
-      "seconds": 33.683,
+      "seconds": 17.818,
       "evaluations": 9720,
       "front_size": 4,
       "selected_complexity": 8,
@@ -134,7 +134,7 @@
     },
     {
       "id": "r7-deduplication",
-      "seconds": 207.597,
+      "seconds": 119.711,
       "evaluations": 9720,
       "front_size": 4,
       "selected_complexity": 8,
@@ -146,7 +146,7 @@
     },
     {
       "id": "parsimony-arm",
-      "seconds": 1.083,
+      "seconds": 0.621,
       "evaluations": 9180,
       "front_size": 4,
       "selected_complexity": 8,
@@ -158,11 +158,11 @@
     },
     {
       "id": "sparse-regression",
-      "seconds": 0.017,
+      "seconds": 0.013,
       "evaluations": 0,
       "front_size": 1,
-      "selected_complexity": 106,
-      "test_r2": 0.851308517,
+      "selected_complexity": 53,
+      "test_r2": 0.645628761,
       "accuracy_solution": false,
       "exact_recovery": false,
       "symbolic_test_decided": true,
@@ -173,12 +173,12 @@
     "n_variants": 9,
     "accuracy_solutions": 2,
     "accuracy_solution_rate": 0.2222,
-    "exact_recoveries": 0,
-    "exact_recovery_rate": 0.0,
-    "mean_structural_distance": 0.8435,
+    "exact_recoveries": 2,
+    "exact_recovery_rate": 0.2222,
+    "mean_structural_distance": 0.8372,
     "symbolic_test_failure_rate": 0.0,
-    "test_disagreement_count": 2,
-    "total_seconds": 285.25,
+    "test_disagreement_count": 0,
+    "total_seconds": 161.81,
     "total_evaluations": 74160,
     "variants_with_irrelevant_features": 0
   }

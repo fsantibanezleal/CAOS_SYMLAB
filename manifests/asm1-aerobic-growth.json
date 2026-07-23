@@ -11,7 +11,7 @@
     "path": "asm1-aerobic-growth/run.json",
     "format": "json",
     "schema_version": "1.0.0",
-    "bytes": 670545
+    "bytes": 565015
   },
   "gate": {
     "lane": "live",
@@ -56,7 +56,7 @@
   "variants": [
     {
       "id": "r1-koza-baseline",
-      "seconds": 1.599,
+      "seconds": 2.087,
       "evaluations": 12000,
       "front_size": 21,
       "selected_complexity": 16,
@@ -68,7 +68,7 @@
     },
     {
       "id": "r2-linear-scaling",
-      "seconds": 2.232,
+      "seconds": 2.657,
       "evaluations": 12000,
       "front_size": 18,
       "selected_complexity": 13,
@@ -80,7 +80,7 @@
     },
     {
       "id": "r3-constant-tuning",
-      "seconds": 2.316,
+      "seconds": 2.738,
       "evaluations": 12240,
       "front_size": 24,
       "selected_complexity": 13,
@@ -92,7 +92,7 @@
     },
     {
       "id": "r4-multi-objective",
-      "seconds": 1.091,
+      "seconds": 1.283,
       "evaluations": 12240,
       "front_size": 3,
       "selected_complexity": 7,
@@ -104,7 +104,7 @@
     },
     {
       "id": "r5-epsilon-lexicase",
-      "seconds": 24.216,
+      "seconds": 28.658,
       "evaluations": 12240,
       "front_size": 3,
       "selected_complexity": 7,
@@ -116,7 +116,7 @@
     },
     {
       "id": "r6-age-fitness-islands",
-      "seconds": 17.124,
+      "seconds": 18.387,
       "evaluations": 12960,
       "front_size": 3,
       "selected_complexity": 7,
@@ -128,7 +128,7 @@
     },
     {
       "id": "r7-deduplication",
-      "seconds": 108.47,
+      "seconds": 127.937,
       "evaluations": 12960,
       "front_size": 3,
       "selected_complexity": 7,
@@ -140,11 +140,11 @@
     },
     {
       "id": "sparse-regression",
-      "seconds": 0.002,
+      "seconds": 0.003,
       "evaluations": 0,
-      "front_size": 5,
-      "selected_complexity": 62,
-      "test_r2": 0.7441030855,
+      "front_size": 1,
+      "selected_complexity": 56,
+      "test_r2": 0.7278470737,
       "accuracy_solution": false,
       "exact_recovery": false,
       "symbolic_test_decided": true,
@@ -157,10 +157,10 @@
     "accuracy_solution_rate": 0.0,
     "exact_recoveries": 0,
     "exact_recovery_rate": 0.0,
-    "mean_structural_distance": 0.7064,
+    "mean_structural_distance": 0.7042,
     "symbolic_test_failure_rate": 0.0,
     "test_disagreement_count": 0,
-    "total_seconds": 157.05,
+    "total_seconds": 183.75,
     "total_evaluations": 86640,
     "variants_with_irrelevant_features": 0
   }
