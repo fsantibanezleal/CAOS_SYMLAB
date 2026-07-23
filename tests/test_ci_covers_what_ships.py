@@ -145,3 +145,37 @@ def test_the_recovery_verdict_is_derived_in_one_place() -> None:
         f"the recovery rule is hand-written in {offenders}. Use isRecovered() from lib/recovery.ts, "
         "so the verdict is decided in one place."
     )
+
+
+def test_the_browser_engine_copies_match_the_pipeline_source() -> None:
+    """frontend/public/engine/ must be byte-identical to data-pipeline/symlab/.
+
+    The live lane loads those copies into Pyodide. copy-data.mjs regenerates them from the pipeline
+    source at build time, but they are also TRACKED so a clone serves them without a build, and that
+    is where they rot: several engine-source fixes on this branch (the ladder, age-fitness, sparse
+    complexity) changed the source and left the tracked copies behind, so the committed browser
+    engine was running pre-fix code while the committed pipeline engine was fixed. Nothing failed;
+    the live lane just silently ran an older search than the one the artifacts were baked with.
+
+    Only the files the copier actually mirrors are checked, read from `copy-data.mjs` so this cannot
+    drift from what ships.
+    """
+    frontend = ROOT / "frontend"
+    copier = (frontend / "copy-data.mjs").read_text(encoding="utf-8")
+    # The copier lists the modules as 'symlab/...'-relative paths in an array.
+    modules = re.findall(r"'(symlab/[^']+\.py)'", copier)
+    assert modules, "copy-data.mjs lists no engine modules; the extraction pattern is stale"
+
+    mismatched = []
+    for rel in modules:
+        source = ROOT / "data-pipeline" / rel
+        copy = frontend / "public" / "engine" / rel
+        if not source.exists() or not copy.exists():
+            mismatched.append(f"{rel} (missing: source={source.exists()} copy={copy.exists()})")
+        elif source.read_bytes() != copy.read_bytes():
+            mismatched.append(f"{rel} (source and browser copy differ)")
+
+    assert not mismatched, (
+        "the browser engine copies are stale against the pipeline source: "
+        f"{mismatched}. Run `cd frontend && node copy-data.mjs` and commit."
+    )
