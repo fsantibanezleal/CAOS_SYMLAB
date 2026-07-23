@@ -1,0 +1,16 @@
+{
+  "name": "caos-symlab-tools",
+  "private": true,
+  "version": "0.0.0",
+  "description": "Dependencies for the verification harnesses in tools/. The application itself lives in frontend/ and has its own manifest; nothing here ships to a reader.",
+  "type": "module",
+  "scripts": {
+    "verify:workbench": "node tools/visual-verify/workbench.mjs",
+    "verify:routes": "node tools/visual-verify/verify.mjs",
+    "verify:pages": "node tools/visual-verify/pages.mjs",
+    "verify:parity": "node tools/verify/live-parity-check.mjs"
+  },
+  "devDependencies": {
+    "playwright": "^1.49.1"
+  }
+}

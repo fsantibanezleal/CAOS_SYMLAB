@@ -3,12 +3,16 @@
  *
  * The cost panel is not bookkeeping. The benchmark literature names budget unfairness as a standing
  * problem, and this lab measured a selection method that buys quality at roughly 22 times the
- * baseline wall-clock. Showing seconds and evaluations next to the loss curve is what lets a reader
+ * baseline wall-clock in isolation, and around 24 times cumulatively at the published budgets.
+ * Showing seconds and evaluations next to the loss curve is what lets a reader
  * ask whether a rung earned its price, instead of comparing rungs at equal generation count and
  * calling that fair.
  */
 import type { HistoryPayload, VariantScore } from '../lib/contract.types';
 import { UPlotChart } from './UPlotChart';
+import { groupDigits } from '../lib/format';
+
+
 
 export function SearchHistory({
   history,
@@ -63,11 +67,11 @@ export function SearchHistory({
           <dt>{lang === 'es' ? 'segundos' : 'seconds'}</dt>
           <dd>{score.seconds.toFixed(1)}</dd>
           <dt>{lang === 'es' ? 'evaluaciones' : 'evaluations'}</dt>
-          <dd>{score.evaluations.toLocaleString()}</dd>
+          <dd>{groupDigits(score.evaluations)}</dd>
           <dt>{lang === 'es' ? 'duplicados evitados' : 'duplicates avoided'}</dt>
-          <dd>{score.duplicates_avoided.toLocaleString()}</dd>
+          <dd>{groupDigits(score.duplicates_avoided)}</dd>
           <dt>{lang === 'es' ? 'candidatos invalidos' : 'invalid candidates'}</dt>
-          <dd>{score.invalid_rejected.toLocaleString()}</dd>
+          <dd>{groupDigits(score.invalid_rejected)}</dd>
           <dt>{lang === 'es' ? 'tamano del frente' : 'front size'}</dt>
           <dd>{score.front_size}</dd>
         </dl>

@@ -16,7 +16,8 @@ from dataclasses import dataclass
 
 
 from ..cases.registry import Case, Variant
-from ..search.engine import Engine, SearchResult
+from ..search.engine import Engine
+from ..search.sparse import SparseRegressionSearch, SearchResult
 from ..search.exhaustive import ExhaustiveResult, run_exhaustive
 from .feature_extraction import Features
 from .preprocess import PreparedCase
@@ -48,11 +49,16 @@ def run(
         # produce a chip whose label promises a constraint the data cannot supply.
         if variant.config.unit_typed and not features.units_declared:
             continue
-        engine = Engine(
-            variant.config,
-            input_dims=features.input_dims if features.units_declared else None,
-            target_dims=features.target_dims if features.units_declared else None,
-        )
+        # The family is a property of the VARIANT, not of the config, because the two families do
+        # not share a configuration space: a sparsity sweep has no population and no generations.
+        if variant.method == "sparse":
+            engine = SparseRegressionSearch(variant.config)
+        else:
+            engine = Engine(
+                variant.config,
+                input_dims=features.input_dims if features.units_declared else None,
+                target_dims=features.target_dims if features.units_declared else None,
+            )
         started = time.perf_counter()
         result = engine.run(prepared.X_train, prepared.y_train, seed=seed)
         out.append(TrainedVariant(variant=variant, result=result,

@@ -4,8 +4,9 @@ Each loader owns the quirks of ONE source, and every quirk it handles is a docum
 the research phase rather than a defensive guess. Three of them exist specifically because the
 source lies about itself:
 
-- The flotation file states hourly laboratory assays on 20-second rows, so a row-wise fit leaks the
-  target about 13.5 times over. `load_flotation` aggregates to the hourly grid and REFUSES to return
+- The flotation file states hourly laboratory assays on 20-second rows: 737,453 rows over 4,097
+  timestamps, so each assay is copied 180 times and a row-wise fit is scored against 180 copies of
+  the same measurement. `load_flotation` aggregates to the hourly grid and REFUSES to return
   row-level data at all, so the leak is structurally unavailable rather than merely discouraged.
   It also parses the comma decimal separator, which a naive reader turns into wrong numbers silently.
 - The water-treatment landing page states there are no missing values; the file has 591.
@@ -51,6 +52,9 @@ class LoadedDataset:
     licence: str = ""
     redistribution: str = ""
     real_or_synthetic: str = "real"
+    #: How many rows the SOURCE carried, before any subsample. Recorded so the app can state
+    #: "4 000 of 9 568 used" rather than printing one number that contradicts the case description.
+    n_rows_source: int | None = None
     defects_applied: list[str] = field(default_factory=list)
     notes: str = ""
     ground_truth_latex: str | None = None
@@ -87,15 +91,31 @@ def _read_zip_member(source: Source, suffixes: tuple[str, ...]) -> bytes:
 
 
 def load_pmlb(dataset: str) -> LoadedDataset:
-    """Load one PMLB dataset. The last column is the target, by PMLB convention."""
+    """Load one PMLB dataset, taking the column NAMED `target` wherever it sits.
+
+    The convention is usually last-column, and every Feynman file in this collection follows it. The
+    Strogatz files do not: they are headed `target, x, y`, with the derivative FIRST. Assuming the
+    last column meant the pipeline fitted `y` from `[dx/dt, x]`, predicting a state variable from
+    the derivative, which is the inverse of the question those cases claim to ask, and all seven
+    baked Strogatz artifacts measured it.
+
+    Checked against the published right-hand side for `bacres1`,
+    dx/dt = 20 - x - x*y/(1 + 0.5*x^2): the first column reproduces it to 4.9e-14 and the last
+    column misses by 55.2.
+
+    So the name decides, and position is only the fallback for a file that does not carry one.
+    """
     source = SOURCES[f"pmlb-{dataset}"]
     with gzip.open(source.path, "rt", encoding="utf-8") as handle:
         header = handle.readline().rstrip("\n").split("\t")
         rows = np.loadtxt(handle, delimiter="\t")
     if rows.ndim == 1:
         rows = rows.reshape(1, -1)
-    X, y = rows[:, :-1], rows[:, -1]
-    keys = header[:-1]
+
+    target_index = header.index("target") if "target" in header else len(header) - 1
+    input_indices = [i for i in range(len(header)) if i != target_index]
+    X, y = rows[:, input_indices], rows[:, target_index]
+    keys = [header[i] for i in input_indices]
     return LoadedDataset(
         id=f"pmlb-{dataset}",
         name=source.name,
@@ -104,8 +124,8 @@ def load_pmlb(dataset: str) -> LoadedDataset:
         input_display=list(keys),
         input_units=["1"] * len(keys),
         input_dims=[DIMENSIONLESS] * len(keys),
-        target_key=header[-1],
-        target_display=header[-1],
+        target_key=header[target_index],
+        target_display=header[target_index],
         target_unit="1",
         source_id=source.id,
         citation=source.citation,
@@ -121,17 +141,31 @@ def load_pmlb(dataset: str) -> LoadedDataset:
 
 HOURLY_AGGREGATION_NOTE = (
     "Aggregated to the hourly grid before any fitting. The concentrate assays are hourly laboratory "
-    "measurements repeated across every 20-second process row; fitting at row level would leak the "
-    "target about 13.5 times over. Row-level access is not offered by this loader."
+    "measurements copied across every 20-second process row, 737,453 rows over 4,097 timestamps, so "
+    "each assay appears 180 times; fitting at row level scores the model against 180 copies of the "
+    "same measurement. Row-level access is not offered by this loader."
 )
 
 
 def load_flotation(*, target: str = "silica") -> LoadedDataset:
     """Load the froth flotation plant data, aggregated to the hourly grid.
 
-    The aggregation is not a modelling choice, it is a correctness requirement. Process variables are
-    averaged within the hour; the assay columns are constant within the hour by construction and are
-    taken as the first value, which is verified rather than assumed.
+    Aggregating to the hour is a correctness requirement, not a preference: the file records process
+    variables at roughly 20-second resolution but the laboratory assays only once an hour, so the raw
+    rows repeat each assay about 180 times and a row-level fit would be scored against 180 copies of
+    the same measurement.
+
+    Every column is averaged within the hour, assays included. That is worth stating plainly because
+    the feed assays do not need it and the target does. Measured over all 4,097 hours of the raw
+    file, the feed assays are genuinely constant within the hour (zero hours vary), but
+    %_Silica_Concentrate varies in 310 hours and %_Iron_Concentrate in 216, with as many as 180
+    distinct values inside a single hour.
+
+    So the target of this case is a smoothed quantity, and a reader comparing its R2 against a
+    row-level benchmark has to know that. The count is re-measured on the rows actually loaded and
+    shipped in `defects_applied` rather than asserted here, because a docstring cannot be checked and
+    this one was previously wrong: it claimed the assays were constant by construction and taken as
+    the first value, when they vary and are averaged.
     """
     source = SOURCES["flotation-mining-process"]
     text = source.path.read_text(encoding="utf-8", errors="replace")
@@ -211,6 +245,16 @@ def load_flotation(*, target: str = "silica") -> LoadedDataset:
 
     aggregated = np.vstack([matrix[idx].mean(axis=0) for idx in order.values()])
 
+    # Measure what the averaging actually did to the assay columns, rather than asserting it. This
+    # is the check the docstring used to promise and not perform.
+    assay_columns = [c for c in columns if c.startswith("%_")]
+    varying: list[str] = []
+    for name in assay_columns:
+        j = columns.index(name)
+        hours_varying = sum(1 for idx in order.values() if np.ptp(matrix[idx, j]) > 0.0)
+        if hours_varying:
+            varying.append(f"{name} in {hours_varying} of {len(order)} hours")
+
     target_column = "%_Silica_Concentrate" if target == "silica" else "%_Iron_Concentrate"
     if target_column not in columns:
         matches = [c for c in columns if target in c.lower()]
@@ -242,6 +286,11 @@ def load_flotation(*, target: str = "silica") -> LoadedDataset:
         redistribution=source.redistribution,
         defects_applied=[
             HOURLY_AGGREGATION_NOTE,
+            (
+                "Assay columns averaged within the hour, not sampled: "
+                + ("; ".join(varying) if varying else "no assay column varied within an hour")
+                + ". The averaged column is therefore a smoothed quantity where it varied."
+            ),
             f"Comma decimal separator handled explicitly; {parse_failures} malformed rows skipped.",
             "Both concentrate assay columns excluded from the inputs: predicting one from the other "
             "is reading the answer off the same laboratory measurement, not soft sensing.",
@@ -253,10 +302,21 @@ def load_flotation(*, target: str = "silica") -> LoadedDataset:
 def load_flotation_mineralogy() -> LoadedDataset:
     """The ore-mineralogy closure case: iron feed against silica feed.
 
-    This is the case where the research measured a real discrepancy: the plant data give
-    Fe = 67.11 - 0.738*Si while two-mineral stoichiometry predicts 69.94 - 0.699*Si. Recovering the
-    measured line and comparing it against the theoretical one is the whole point, so nothing here
-    tries to reconcile them.
+    This is the case where the research measured a real discrepancy between the plant data and
+    two-mineral stoichiometry. Re-derived from the rows this loader actually returns, by ordinary
+    least squares on the 4097 hourly rows:
+
+        measured      Fe = 67.0831 - 0.7363 * Si
+        stoichiometry Fe = 69.94   - 0.699  * Si
+
+    The research phase recorded 67.11 and 0.738 for the measured line. That is the same line to the
+    precision the research quoted it at, and the figures above are the ones this code reproduces, so
+    they are the ones stated: a number in a docstring should be recomputable from the module it sits
+    in. Note the fit is weighted by the hourly broadcast; on the 309 unique (Si, Fe) pairs it is
+    Fe = 65.2725 - 0.6438 * Si, which is a different question and not the one the case asks.
+
+    Recovering the measured line and comparing it against the theoretical one is the whole point, so
+    nothing here tries to reconcile them.
     """
     source = SOURCES["flotation-mining-process"]
     base = load_flotation(target="silica")
@@ -375,7 +435,10 @@ def load_concrete() -> LoadedDataset:
         target_key="strength", target_display="f_c", target_unit="MPa",
         source_id=source.id, citation=source.citation, licence=source.licence,
         redistribution=source.redistribution,
-        ground_truth_latex=r"f_c pprox rac{A}{B^{w/c}} \quad	ext{(Abrams), with a } \ln(t_{age}) 	ext{ maturity term}",
+        ground_truth_latex=(
+            r"f_c \approx \frac{A}{B^{w/c}} \quad \text{(Abrams), with a }"
+            r" \ln(t_{age}) \text{ maturity term}"
+        ),
         defects_applied=[
             "The workbook column names carry units inside the label; they are replaced by short "
             "machine keys and the units are recorded separately, so a discovered expression renders "

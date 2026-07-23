@@ -13,19 +13,26 @@ disjoint parts of the problem, and tournament cannot tell them apart.
 
 Judges one training case at a time, in random order, keeping only individuals within epsilon of the
 best on that case, until one survives. Specialists therefore survive where aggregate error would
-discard them. Epsilon is set automatically from the median absolute deviation of that case's errors:
+discard them. Epsilon is set automatically from the median absolute deviation of that case's errors,
+taken over the individuals still in the pool rather than over the whole population:
 
     epsilon_j = median_i | e_ij - median_k e_kj |
 
-That automatic epsilon is what makes lexicase work on continuous targets at all.
+That automatic epsilon is what makes lexicase work on continuous targets at all. When the case list
+runs out with more than one individual still in the pool, the winner is drawn uniformly from what
+survives.
 
 **Its cost is real and is published.** At population 100 over 10 generations on 120 rows it takes the
 run from 0.30 s to 6.73 s, roughly 22 times. A selection method that buys quality at that price has
-to be compared at equal BUDGET rather than at equal generation count.
+to be compared at equal BUDGET rather than at equal generation count. That measurement does not
+record its case or its primitive set, so it is a direction rather than a reproducible number; see
+[method-families.md](../method-families.md) for a re-measurement at the same budget.
 
 Down-sampling evaluates on a random subset of cases per selection event, which is the standard way to
-make it affordable. It changes the selection pressure, so it is recorded in the manifest rather than
-treated as a free speedup.
+make it affordable. It changes the selection pressure, and here it is fixed at
+`lexicase_down_sample = 64` cases per event. It is NOT among the configuration fields written into
+the artifact, so a reader cannot recover it from a run: the exported config carries the switches and
+the budget, not the down-sample size or the tuning schedule.
 
 ## NSGA-II survival
 
@@ -37,20 +44,40 @@ generations.
 The output stops being a model and becomes a FRONT. This is the rung that changes what the whole
 product reports.
 
-The textbook presentation of the sort is a nested double loop. A direct transcription dominated the
-wall clock here, 39.2 s against 0.8 s for the same budget without multi-objective survival, so it is
-computed as a single vectorised domination matrix instead. The result is identical; only the constant
-factor changes.
+The textbook presentation of the sort is a nested double loop, and a direct transcription dominates
+the wall clock, so the domination relation is computed as a single vectorised matrix instead. The
+result is identical; only the constant factor changes. Measured while auditing this page, at
+population 400 over 20 generations on 120 rows: 0.88 s with multi-objective survival off, 1.36 s
+with it on and the vectorised sort, 161 s with the same run and a textbook nested loop substituted
+for it, and the two sorts return the same fronts on random objective matrices. The docstring of
+`fast_non_dominated_sort` records a different pair from an earlier measurement (39 s against 1.3 s)
+whose case is not recorded, so treat the ratio rather than the seconds as the finding.
 
 ## Age-fitness Pareto survival
 
-Age becomes an objective, where age is how many generations an individual's oldest ancestor has
-survived. A young individual only has to beat older ones on error, so fresh material is not
-immediately outcompeted by an entrenched lineage. That is the mechanism that stops premature
-convergence, and it costs one extra objective.
+Age becomes an objective, so a young individual only has to beat older ones on error rather than the
+whole population, and a fresh lineage gets a window in which to become competitive. This rung ADDS
+age to the objectives the rung below already had, so survival here is NSGA-II non-domination on
+(error, complexity, age), not a two-way trade that discards the front r4 introduced.
 
-Combined with islands and periodic migration it is the recipe the best-known commercial engine of the
-previous generation used, and it remains cheap and competitive.
+Both halves of the published method are implemented. Age is the number of generations since an
+individual's OLDEST ancestor entered the population, inherited as `1 + max(parent ages)`; and one
+brand-new random individual of age 0 enters each island every generation. The injection REPLACES a
+child rather than adding one, so the population size and the evaluations per generation are identical
+to the rung below and the ablation stays a comparison of mechanisms rather than of budgets.
+
+Both were wrong until recently, and the way they were wrong is worth recording, because the search
+still ran and still converged. Children inherited `1 + min(parent ages)`, which tracks the YOUNGEST
+ancestor, so an entrenched lineage could reset its age by crossing with anything younger, which is
+precisely the takeover age-fitness Pareto optimisation exists to prevent. And nothing was injected,
+so the only age-0 material was the initial population and the youngest age present could only climb,
+leaving the age objective with nothing fresh to protect. The rung carried the name of the method and
+inverted its mechanism.
+
+Combined with islands and periodic migration it is the recipe behind Eureqa, the Schmidt and Lipson
+engine (see [frameworks/21_feyn-qlattice.md](../frameworks/21_feyn-qlattice.md)), and it remains
+cheap. `UNVERIFIED`: whether Eureqa itself used islands with migration. The dossier records AFP plus
+an island model with migration as "the Eureqa recipe" without a primary source for the island half.
 
 ## References
 

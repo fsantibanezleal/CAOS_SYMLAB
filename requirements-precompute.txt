@@ -1,11 +1,15 @@
-# Offline pipeline dependencies. Heavy or native packages belong here, never in requirements.txt,
-# which must stay Pyodide-safe for the browser lane.
-numpy==2.3.4
-scipy==1.16.3
-openpyxl==3.1.5          # UCI Combined Cycle Power Plant ships its data as .xlsx
-xlrd==2.0.2              # UCI Concrete ships its data as a legacy .xls
+# PRECOMPUTE lane. Heavy or native packages belong here, never in requirements.txt, which must stay
+# Pyodide-safe for the browser lane.
+#
+# Pinned to the versions actually installed and verified in .venv (Python 3.12, 2026-07-22). Every
+# entry below is imported by data-pipeline/symlab/. Nothing is pinned "in case": scipy sat here
+# pinned to 1.16.3, was never installed, and was never imported by a single module.
+numpy==2.5.1
+openpyxl==3.1.5          # UCI Combined Cycle Power Plant ships its data as .xlsx (io/loaders.py)
+xlrd==2.0.2              # UCI Concrete ships its data as a legacy .xls (io/loaders.py)
 
 # The evaluation harness, extracted as its own MIT package because the problem is not specific to
-# this lab. Pinned to a git tag until the first PyPI release lands, then swapped to a version pin.
-sreval[symbolic] @ git+https://github.com/fsantibanezleal/CAOS_SREVAL@main
-sympy>=1.12             # required by sreval's symbolic equivalence test
+# this lab: telling "the method failed" apart from "the scorer failed" is a general need. Now a
+# version pin rather than a git ref, because 0.1.0 is published on PyPI.
+sreval[symbolic]==0.1.0
+sympy==1.14.0            # required by sreval's symbolic equivalence test

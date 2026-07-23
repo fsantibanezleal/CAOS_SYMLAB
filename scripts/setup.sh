@@ -1,28 +1,33 @@
 #!/usr/bin/env bash
-# Create BOTH venvs + install per-lane requirements + the editable package. Idempotent. No global installs.
-#   .venv-pipeline = heavy OFFLINE lane (data-pipeline/requirements.txt) + dev + editable pkg  (local-only)
-#   .venv          = runtime/live-thin lane (requirements.txt)                                  (what ships)
-# Dormant lanes are skipped gracefully. Re-runnable.
+# Create the ONE virtual environment this repo uses, install the precompute lane and the editable
+# package. Idempotent, re-runnable, no global installs.
+#
+# There used to be two venvs here, `.venv-pipeline` for a "heavy OFFLINE lane" and `.venv` for a
+# "runtime/live-thin lane". Neither half held up, and only `.venv` was ever created, so every guide
+# that told a reader to run `.venv-pipeline/bin/python` was giving an instruction that could not work.
+#
+# There is no heavy lane: the engine is hand-written numpy precisely so the same modules can run in
+# the browser, and the only dependencies beyond numpy are two spreadsheet readers and the evaluation
+# harness. And there is no thin runtime lane to install, because the live lane runs in the READER'S
+# BROWSER through Pyodide, which resolves its own wheels and has never read a venv.
+#
+# So `requirements.txt` is not an install target here. It declares what the browser lane is allowed
+# to import, which is why it is kept to numpy alone. The separation that matters is between those two
+# FILES, not between two directories on this machine.
 set -euo pipefail
 cd "$(dirname "$0")/.."
 PY="${PYTHON:-python}"
 
-mkvenv() { [ -d "$1" ] || "$PY" -m venv "$1"; }
-venvpy() { local p="$1/bin/python"; [ -x "$p" ] || p="$1/Scripts/python.exe"; echo "$p"; }
+[ -d .venv ] || "$PY" -m venv .venv
+VP=".venv/bin/python"; [ -x "$VP" ] || VP=".venv/Scripts/python.exe"
 
-echo "[setup] .venv-pipeline (offline lane)…"
-mkvenv .venv-pipeline
-VP="$(venvpy .venv-pipeline)"
+echo "[setup] .venv, precompute lane..."
 "$VP" -m pip install --upgrade pip -q
-"$VP" -m pip install -q -r data-pipeline/requirements.txt -r requirements-dev.txt
+"$VP" -m pip install -q -r requirements-precompute.txt -r requirements-dev.txt
 "$VP" -m pip install -q -e .
-echo "[setup] .venv-pipeline ready."
-
-echo "[setup] .venv (runtime/live-thin lane)…"
-mkvenv .venv
-VR="$(venvpy .venv)"
-"$VR" -m pip install --upgrade pip -q
-"$VR" -m pip install -q -r requirements.txt
 echo "[setup] .venv ready."
 
-echo "[setup] done. Next:  ./scripts/precompute.sh   then   ./scripts/dev.sh"
+echo
+echo "[setup] done. Next:"
+echo "  ./scripts/precompute.sh all --expand   bake every case"
+echo "  ./scripts/dev.sh                       serve the app"

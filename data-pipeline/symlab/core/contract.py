@@ -21,8 +21,13 @@ mode behind it:
    it does not recognise, visibly, rather than rendering a blank panel.
 
 A seventh rule is specific to this lab's honesty commitments: whenever a payload is downsampled, the
-original count ships next to it. Showing 24 lineages out of 184,320 individuals is fine; not saying
-so is not.
+original count ships next to it. Exporting 12 front members out of 16 is fine; not saying so is not.
+That pair is real and checkable: `MAX_EXPORTED_MEMBERS` is 12, and `ccpp-derating` has a variant
+whose front holds 16, which the artifact reports as `pareto_exported` 12 and `pareto_total` 16.
+
+An earlier version of this paragraph illustrated the rule with "24 lineages out of 184,320
+individuals". No budget in this repo produces 184,320 of anything: a case runs 300 by 40 per rung.
+An invented example inside a paragraph about not hiding numbers is the wrong place to invent one.
 """
 from __future__ import annotations
 
@@ -53,9 +58,33 @@ from ..model.units import DIMENSIONLESS, Dims, format_dims, infer_dims
 #: matching change in the web app's mirrored TypeScript types.
 SCHEMA_VERSION = "1.0.0"
 
-#: How many significant digits reach the browser. The UI never shows more than this, so shipping
-#: more would only be noise in the payload.
-FLOAT_DIGITS = 6
+#: How many SIGNIFICANT digits reach the browser, not decimal places.
+#:
+#: Ten rather than six, because the numbers this lab argues about live where six is not enough. An
+#: R-squared of 0.999999998 rounds to exactly 1.0 at six significant digits, and "1.0" beside
+#: "structure not recovered" reads as a contradiction instead of as the finding. Six DECIMAL places,
+#: which is what this was before, additionally sent a mean squared error of 6.1e-12 to exactly zero.
+#:
+#: The cost is about four characters per float in the validation arrays. That is a fair price for
+#: not publishing a claim of a mathematically exact fit that the search did not achieve.
+FLOAT_DIGITS = 10
+
+
+def _significant(value: float, digits: int) -> float:
+    """Round to SIGNIFICANT digits, not decimal places.
+
+    `round(v, 6)` sends everything below 5e-7 to exactly 0.0. That published a mean squared error of
+    6.1e-12 as "0.0" and an R-squared of 0.999999998 as "1.0", which are claims of a mathematically
+    exact fit. This lab's whole argument is the difference between a very good fit and the right
+    answer, and a variant reporting zero error beside "structure not recovered" reads as a
+    contradiction rather than as the finding it is.
+
+    Significant digits keep the payload compact without destroying small magnitudes: a loss of
+    1e-12 stays 1e-12, and 1234567.891 stays 1234567.891.
+    """
+    if value == 0.0:
+        return 0.0
+    return float(f"{value:.{digits}g}")
 
 
 def _round_floats(obj: Any, digits: int = FLOAT_DIGITS) -> Any:
@@ -63,10 +92,10 @@ def _round_floats(obj: Any, digits: int = FLOAT_DIGITS) -> Any:
     if isinstance(obj, float):
         if not math.isfinite(obj):
             return None
-        return round(obj, digits)
+        return _significant(obj, digits)
     if isinstance(obj, (np.floating,)):
         value = float(obj)
-        return None if not math.isfinite(value) else round(value, digits)
+        return None if not math.isfinite(value) else _significant(value, digits)
     if isinstance(obj, (np.integer,)):
         return int(obj)
     if isinstance(obj, np.ndarray):
@@ -429,6 +458,42 @@ def history_payload(
 # --------------------------------------------------------------------------------------------
 
 
+def parity_stride(n_rows: int, max_points: int) -> int:
+    """The one definition of the parity stride.
+
+    It has to be one definition because two blocks are exported separately and then read side by
+    side: the per-variant parity arrays, and the per-case input columns below. If those two ever
+    used different strides the app would plot a residual against the wrong row's input and nothing
+    would look wrong on screen.
+    """
+    return max(1, n_rows // max_points)
+
+
+def parity_input_columns(
+    X_train: np.ndarray,
+    *,
+    X_test: np.ndarray | None = None,
+    input_keys: Sequence[str] | None = None,
+    max_parity_points: int = 2000,
+) -> dict:
+    """The input columns behind the parity arrays, exported ONCE per case.
+
+    A column of the data is a property of the case, not of the expression being scored, so storing
+    it inside each variant multiplied it by the number of rungs for no information. Row order and
+    stride match `validation_payload` exactly, by construction: both call `parity_stride`, and both
+    stack train before test.
+    """
+    keys = list(input_keys or [f"x{i}" for i in range(X_train.shape[1])])
+    X_all = np.vstack([X_train, X_test]) if X_test is not None else X_train
+    stride = parity_stride(len(X_all), max_parity_points)
+    return {
+        "stride": stride,
+        "n_shown": int(len(X_all[::stride])),
+        "n_total": int(len(X_all)),
+        "columns": {key: X_all[::stride, j].tolist() for j, key in enumerate(keys)},
+    }
+
+
 def validation_payload(
     root: Node,
     X_train: np.ndarray,
@@ -458,7 +523,7 @@ def validation_payload(
         X_all, y_all, split = X_train, y_train, np.zeros(len(y_train), dtype=int)
 
     y_pred = evaluate(root, X_all)
-    stride = max(1, len(y_all) // max_parity_points)
+    stride = parity_stride(len(y_all), max_parity_points)
     parity = {
         "y_true": y_all[::stride].tolist(),
         "y_pred": (y_pred[::stride] if is_valid(y_pred) else np.full_like(y_all[::stride], np.nan)).tolist(),
@@ -467,14 +532,15 @@ def validation_payload(
         "n_total": int(len(y_all)),
     }
 
-    residuals_by_input = {}
-    if is_valid(y_pred):
-        residual = y_all - y_pred
-        for j, key in enumerate(keys):
-            residuals_by_input[key] = {
-                "x": X_all[::stride, j].tolist(),
-                "residual": residual[::stride].tolist(),
-            }
+    # NOTE: the residual-against-each-input series is NOT stored here, and that is a size decision
+    # with a measured cause. It used to be, as {input: {x, residual}} for all inputs of all variants,
+    # and both halves were redundant: `residual` is exactly `y_true - y_pred` from the parity block
+    # two lines up, byte for byte, repeated once per input, and `x` is a column of the data, which
+    # does not depend on which expression is being scored and so was repeated once per variant too.
+    # On the flotation case, 21 inputs by 3400 rows by 8 variants came to 12.1 MB of the 12.6 MB
+    # artifact. The reader downloaded all of it to see a residual plot that the app can subtract for
+    # itself. The x columns are now exported ONCE per case by `parity_input_columns` below, on the
+    # same stride, and the residual is subtracted in the browser.
 
     pdp: list[dict] = []
     extrapolation: list[dict] = []
@@ -509,7 +575,6 @@ def validation_payload(
 
     return {
         "parity": parity,
-        "residuals_by_input": residuals_by_input,
         "pdp": pdp,
         "extrapolation": extrapolation,
         "term_contributions": term_contributions,

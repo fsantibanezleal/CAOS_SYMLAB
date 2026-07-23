@@ -1,0 +1,181 @@
+{
+  "schema": "symlab.manifest/v1",
+  "case_id": "wind-power-curve",
+  "category": "E",
+  "engine": {
+    "package": "symlab",
+    "version": "0.04.000"
+  },
+  "seed": 0,
+  "artifact": {
+    "path": "wind-power-curve/run.json",
+    "format": "json",
+    "schema_version": "1.0.0",
+    "bytes": 745830
+  },
+  "gate": {
+    "lane": "live",
+    "has_generator": true,
+    "wheels": [
+      "numpy"
+    ],
+    "reasons": []
+  },
+  "lane": "live",
+  "data": {
+    "source_id": "wind-power-curve",
+    "citation": "Betz law and the verified Kelmarsh turbine geometry (research dossier 7.2.13)",
+    "licence": "MIT (generator authored in this repository)",
+    "redistribution": "mirror",
+    "real_or_synthetic": "synthetic",
+    "defects_applied": []
+  },
+  "contract": {
+    "n_rows": 400,
+    "n_inputs": 3,
+    "input_keys": [
+      "v",
+      "T",
+      "p"
+    ],
+    "target_key": "P",
+    "distinct_target_values": 105,
+    "target_repeat_ratio": 3.81,
+    "constant_inputs": [],
+    "warnings": [
+      "the target takes only 105 distinct values across 400 rows (3.8 repeats each). If those repeats come from a coarser measurement grid, fitting at this resolution leaks the target."
+    ],
+    "defects_applied": [],
+    "licence": "MIT (generator authored in this repository)",
+    "redistribution": "mirror",
+    "citation": "Betz law and the verified Kelmarsh turbine geometry (research dossier 7.2.13)",
+    "n_train": 255,
+    "n_test": 85,
+    "n_extrapolation": 60
+  },
+  "units_declared": true,
+  "split_note": "extrapolation split holds out the lowest and highest 30 rows of 'p', so the training region is an interior box and the extrapolation rows lie outside the support the search ever saw",
+  "variants": [
+    {
+      "id": "r1-koza-baseline",
+      "seconds": 1.129,
+      "evaluations": 12000,
+      "front_size": 14,
+      "selected_complexity": 6,
+      "test_r2": -0.01647745248,
+      "accuracy_solution": false,
+      "exact_recovery": null,
+      "symbolic_test_decided": null,
+      "irrelevant_features": 0
+    },
+    {
+      "id": "r2-linear-scaling",
+      "seconds": 1.614,
+      "evaluations": 12000,
+      "front_size": 18,
+      "selected_complexity": 32,
+      "test_r2": 0.6725300701,
+      "accuracy_solution": false,
+      "exact_recovery": null,
+      "symbolic_test_decided": null,
+      "irrelevant_features": 0
+    },
+    {
+      "id": "r3-constant-tuning",
+      "seconds": 3.16,
+      "evaluations": 12240,
+      "front_size": 18,
+      "selected_complexity": 35,
+      "test_r2": 0.9233513012,
+      "accuracy_solution": false,
+      "exact_recovery": null,
+      "symbolic_test_decided": null,
+      "irrelevant_features": 0
+    },
+    {
+      "id": "r4-multi-objective",
+      "seconds": 1.021,
+      "evaluations": 12240,
+      "front_size": 2,
+      "selected_complexity": 5,
+      "test_r2": 0.04048424065,
+      "accuracy_solution": false,
+      "exact_recovery": null,
+      "symbolic_test_decided": null,
+      "irrelevant_features": 0
+    },
+    {
+      "id": "r5-epsilon-lexicase",
+      "seconds": 26.047,
+      "evaluations": 12240,
+      "front_size": 2,
+      "selected_complexity": 5,
+      "test_r2": 0.04048424065,
+      "accuracy_solution": false,
+      "exact_recovery": null,
+      "symbolic_test_decided": null,
+      "irrelevant_features": 0
+    },
+    {
+      "id": "r6-age-fitness-islands",
+      "seconds": 20.78,
+      "evaluations": 12960,
+      "front_size": 2,
+      "selected_complexity": 5,
+      "test_r2": 0.04048424065,
+      "accuracy_solution": false,
+      "exact_recovery": null,
+      "symbolic_test_decided": null,
+      "irrelevant_features": 0
+    },
+    {
+      "id": "r7-deduplication",
+      "seconds": 135.178,
+      "evaluations": 12960,
+      "front_size": 2,
+      "selected_complexity": 5,
+      "test_r2": 0.04048424065,
+      "accuracy_solution": false,
+      "exact_recovery": null,
+      "symbolic_test_decided": null,
+      "irrelevant_features": 0
+    },
+    {
+      "id": "r8-unit-typed",
+      "seconds": 238.122,
+      "evaluations": 12960,
+      "front_size": 3,
+      "selected_complexity": 5,
+      "test_r2": 0.04048424065,
+      "accuracy_solution": false,
+      "exact_recovery": null,
+      "symbolic_test_decided": null,
+      "irrelevant_features": 0
+    },
+    {
+      "id": "sparse-regression",
+      "seconds": 0.002,
+      "evaluations": 0,
+      "front_size": 3,
+      "selected_complexity": 91,
+      "test_r2": 0.8875141607,
+      "accuracy_solution": false,
+      "exact_recovery": null,
+      "symbolic_test_decided": null,
+      "irrelevant_features": 0
+    }
+  ],
+  "summary": {
+    "n_variants": 9,
+    "accuracy_solutions": 0,
+    "accuracy_solution_rate": 0.0,
+    "exact_recoveries": 0,
+    "exact_recovery_rate": null,
+    "mean_structural_distance": null,
+    "symbolic_test_failure_rate": null,
+    "test_disagreement_count": 0,
+    "total_seconds": 427.05,
+    "total_evaluations": 99600,
+    "variants_with_irrelevant_features": 0
+  }
+}

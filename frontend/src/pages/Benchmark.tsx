@@ -2,8 +2,11 @@ import { Callout, Cite, Refs } from '@fasl-work/caos-app-shell';
 import { useEffect, useMemo, useState } from 'react';
 
 import { loadIndex, loadRun } from '../lib/data';
+import { isCheckable, isRecovered } from '../lib/recovery';
 import type { CaseIndex, RunPayload } from '../lib/contract.types';
 import { useLang } from '../lib/useLang';
+import { groupDigits } from '../lib/format';
+import { formatR2 } from '../lib/format';
 
 /**
  * Benchmark: numbers read from the committed artifacts, never typed into the page.
@@ -44,10 +47,24 @@ export default function Benchmark() {
   const totals = useMemo(() => {
     if (rows.length === 0) return null;
     const withR2 = rows.filter((r) => r.score.best_test_r2 !== null);
+
+    // Recovery is counted over the configurations where it is CHECKABLE, never over all of them.
+    // Dividing recoveries by the full row count would silently include problems that have no
+    // published law to recover, which is the exact arithmetic this page exists to refuse.
+    const checkable = rows.filter((r) => isCheckable(r.score.equivalence));
+    const recovered = checkable.filter((r) => isRecovered(r.score.equivalence));
+    // Accuracy WITHOUT recovery, on the same configurations: the gap, as a count.
+    const fitButNotFound = checkable.filter(
+      (r) => r.score.accuracy_solution && !isRecovered(r.score.equivalence),
+    );
+
     return {
       variants: rows.length,
       cases: runs.length,
       accuracySolutions: rows.filter((r) => r.score.accuracy_solution).length,
+      checkable: checkable.length,
+      recovered: recovered.length,
+      fitButNotFound: fitButNotFound.length,
       seconds: rows.reduce((sum, r) => sum + r.score.seconds, 0),
       evaluations: rows.reduce((sum, r) => sum + r.score.evaluations, 0),
       medianR2:
@@ -102,7 +119,7 @@ export default function Benchmark() {
                     <td>{row.label}</td>
                     <td>{row.score.selected_complexity}</td>
                     <td>
-                      {row.score.best_test_r2 === null ? '-' : row.score.best_test_r2.toFixed(4)}
+                      {formatR2(row.score.best_test_r2, 4)}
                     </td>
                     <td>{row.score.accuracy_solution ? (es ? 'si' : 'yes') : 'no'}</td>
                     <td>
@@ -151,12 +168,30 @@ export default function Benchmark() {
               </strong>
             </li>
             <li>
+              {es ? 'recuperaciones exactas' : 'exact recoveries'}:{' '}
+              <strong>
+                {totals.recovered} / {totals.checkable}
+              </strong>{' '}
+              {es
+                ? `(sobre las ${totals.checkable} configuraciones donde la recuperacion ES comprobable, no sobre las ${totals.variants})`
+                : `(over the ${totals.checkable} configurations where recovery IS checkable, not over all ${totals.variants})`}
+            </li>
+            <li>
+              <strong>
+                {es ? 'ajustaron bien y NO encontraron la ley' : 'fitted well and did NOT find the law'}
+              </strong>
+              : <strong>{totals.fitButNotFound}</strong>{' '}
+              {es
+                ? 'configuraciones superaron el umbral de exactitud y devolvieron la estructura equivocada. Esa cuenta es la medicion que justifica este laboratorio.'
+                : 'configurations cleared the accuracy threshold and returned the wrong structure. That count is the measurement this lab exists to make.'}
+            </li>
+            <li>
               {es ? 'R2 mediano en prueba' : 'median test R2'}:{' '}
-              <strong>{totals.medianR2 === null ? '-' : totals.medianR2.toFixed(4)}</strong>
+              <strong>{formatR2(totals.medianR2, 4)}</strong>
             </li>
             <li>
               {es ? 'evaluaciones totales' : 'total evaluations'}:{' '}
-              <strong>{totals.evaluations.toLocaleString()}</strong>
+              <strong>{groupDigits(totals.evaluations)}</strong>
             </li>
             <li>
               {es ? 'segundos de busqueda' : 'search seconds'}: <strong>{totals.seconds.toFixed(0)}</strong>
@@ -170,8 +205,8 @@ export default function Benchmark() {
         <Callout variant="honest" title={es ? 'Una tasa de exactitud alta no es un descubrimiento' : 'A high accuracy rate is not a discovery'}>
           <p>
             {es
-              ? 'La columna de exactitud dice que la expresion ajusta las filas retenidas. La columna de recuperacion dice que es la expresion CORRECTA. Sobre un conjunto de descubrimiento cientifico, un metodo preentrenado alcanzo 26,7 por ciento en la primera con 0,00 por ciento en la segunda. Leer la primera columna como si fuera la segunda es el error que esta pagina existe para impedir.'
-              : 'The accuracy column says the expression fits the held-out rows. The recovery column says it is the CORRECT expression. On a scientific-discovery benchmark, a pretrained method reached 26.7 percent on the first with 0.00 percent on the second. Reading the first column as if it were the second is the mistake this page exists to prevent.'}{' '}
+              ? 'La columna de exactitud dice que la expresion ajusta las filas retenidas. La columna de recuperacion dice que es la expresion CORRECTA. En el nivel FACIL del conjunto SRSD-Feynman, un transformador preentrenado alcanzo 26,7 por ciento en la primera con 0,00 por ciento en la segunda. Leer la primera columna como si fuera la segunda es el error que esta pagina existe para impedir.'
+              : 'The accuracy column says the expression fits the held-out rows. The recovery column says it is the CORRECT expression. On the EASY tier of the SRSD-Feynman set, a pretrained transformer reached 26.7 percent on the first with 0.00 percent on the second. Reading the first column as if it were the second is the mistake this page exists to prevent.'}{' '}
             <Cite id="matsubara2022" paren />
           </p>
         </Callout>

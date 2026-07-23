@@ -30,6 +30,20 @@ function readVar(name: string, fallback: string): string {
   return value || fallback;
 }
 
+/**
+ * A fixed-locale number for an axis label.
+ *
+ * uPlot formats tick values through the browser locale, so a Spanish-locale browser rendered 0.75
+ * as "0,75" on the English page. Axis numbers must not change meaning with regional settings.
+ */
+function formatFixed(value: number): string {
+  if (!Number.isFinite(value)) return '';
+  const magnitude = Math.abs(value);
+  if (magnitude !== 0 && (magnitude < 1e-3 || magnitude >= 1e5)) return value.toExponential(1);
+  return Number(value.toPrecision(4)).toLocaleString('en-US', { maximumFractionDigits: 6 })
+    .replace(/,/g, ' ');
+}
+
 const FALLBACKS = ['#4f7cff', '#e0733d', '#2fa37a', '#8b5cd6'];
 
 export function UPlotChart({
@@ -55,12 +69,43 @@ export function UPlotChart({
         width,
         height,
         cursor: { drag: { x: true, y: false } },
-        scales: { y: logY ? { distr: 3 } : {} },
+        // uPlot treats the x scale as UNIX time by default, so a generation index rendered as
+        // "12/31/69 9:00pm" and the legend said "Time:". The x axis here is a generation counter.
+        scales: { x: { time: false }, y: logY ? { distr: 3 } : {} },
         axes: [
-          { label: xLabel, stroke: readVar('--color-fg-subtle', '#888'),
-            grid: { stroke: readVar('--color-border', '#3333') } },
-          { label: yLabel, stroke: readVar('--color-fg-subtle', '#888'),
-            grid: { stroke: readVar('--color-border', '#3333') } },
+          {
+            label: xLabel,
+            stroke: readVar('--color-fg-subtle', '#888'),
+            grid: { stroke: readVar('--color-border', '#3333') },
+            values: (_u, splits) => splits.map((v) => (Number.isInteger(v) ? String(v) : '')),
+          },
+          {
+            label: yLabel,
+            stroke: readVar('--color-fg-subtle', '#888'),
+            grid: { stroke: readVar('--color-border', '#3333') },
+            // Two separate traps on this axis.
+            //
+            // On a LOG scale uPlot emits a tick per decade AND per minor step, which over several
+            // decades overlaps into an unreadable smear. Decades only, but never to zero labels: a
+            // narrow range can contain no decade boundary at all, and an axis with no numbers is
+            // worse than a crowded one, so the extremes are labelled in that case.
+            //
+            // On a LINEAR scale uPlot formats through the BROWSER locale, which rendered 0.75 as
+            // "0,75" on a Spanish-locale browser reading the English page.
+            values: (_u, splits) => {
+              if (!logY) return splits.map((v) => formatFixed(v));
+              const decades = splits.filter(
+                (v) => v > 0 && Number.isInteger(Math.round(Math.log10(v) * 1e6) / 1e6),
+              );
+              if (decades.length >= 2) {
+                return splits.map((v) => (decades.includes(v) ? v.toExponential(0) : ''));
+              }
+              const positive = splits.filter((v) => v > 0);
+              const lo = Math.min(...positive);
+              const hi = Math.max(...positive);
+              return splits.map((v) => (v === lo || v === hi ? v.toExponential(1) : ''));
+            },
+          },
         ],
         series: [
           {},

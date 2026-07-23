@@ -179,8 +179,14 @@ def tune_population(
     indices: list[int] | None = None,
     max_iterations: int = 15,
     max_constants: int = 12,
-) -> tuple[list[Node], int]:
-    """Tune a subset of the population. Returns the new list and how many were improved.
+) -> tuple[list[Node], int, int]:
+    """Tune a subset of the population.
+
+    Returns `(expressions, improved, unidentifiable)`. The third number is the point of the module
+    docstring above and used to be dropped on the floor: `levenberg_marquardt` computes
+    `TuneResult.identifiable` for every candidate it touches, and this function returned only the
+    first two, so nothing downstream could tell a front of well-determined constants from a front
+    whose parameters are not jointly recoverable at all.
 
     `max_constants` skips expressions with more numeric leaves than the budget allows, because the
     Jacobian cost grows with the parameter count and a candidate with twenty free constants is
@@ -188,12 +194,15 @@ def tune_population(
     """
     out = list(expressions)
     improved = 0
+    unidentifiable = 0
     targets = indices if indices is not None else range(len(expressions))
     for i in targets:
         if n_constants(out[i]) == 0 or n_constants(out[i]) > max_constants:
             continue
         result = levenberg_marquardt(out[i], X, y, max_iterations=max_iterations)
+        if not result.identifiable:
+            unidentifiable += 1
         if result.improved:
             out[i] = result.expression
             improved += 1
-    return out, improved
+    return out, improved, unidentifiable

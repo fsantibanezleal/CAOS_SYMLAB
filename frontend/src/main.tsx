@@ -1,4 +1,4 @@
-import { AppShell, CitationsProvider } from '@fasl-work/caos-app-shell';
+import { AppShell, CitationsProvider, applyTheme, readTheme } from '@fasl-work/caos-app-shell';
 import '@fasl-work/caos-app-shell/styles.css';
 import 'katex/dist/katex.min.css';
 import { FlaskConical } from 'lucide-react';
@@ -7,6 +7,7 @@ import { createRoot } from 'react-dom/client';
 import { BrowserRouter, Route, Routes } from 'react-router-dom';
 
 import './symlab.css';
+import './symlab-workbench.css';
 import { ARCHITECTURE } from './architecture';
 import { CITATIONS } from './data/citations';
 import { EXTERNAL_LINKS, VERSION } from './lib/links';
@@ -18,6 +19,16 @@ import Implementation from './pages/Implementation';
 import Introduction from './pages/Introduction';
 import Methodology from './pages/Methodology';
 import NotFound from './pages/NotFound';
+
+/**
+ * Apply the persisted theme BEFORE the first paint.
+ *
+ * The header toggle writes `caos.theme` and sets `data-theme` at runtime, but nothing read it back
+ * on load, so a reader who chose light got dark again on every reload and on every deep link. The
+ * shell exports `readTheme` and `applyTheme` for exactly this, and the consumer has to call them:
+ * the choice is persisted by the shell and applied by the app.
+ */
+applyTheme(readTheme());
 
 createRoot(document.getElementById('root')!).render(
   <StrictMode>

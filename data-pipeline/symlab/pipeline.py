@@ -6,7 +6,8 @@
     python -m symlab.pipeline --quick             # a reduced budget, for a smoke run
 
 A run is a pure function of `(case, config, seed, data)`. Nothing here reads the clock into an
-artifact, so regenerating a case produces byte-identical output and a re-bake never dirties git
+artifact, so regenerating a case reproduces every scientific number exactly. Measured wall clock is
+recorded and does vary between runs, so a re-bake shows a timing diff and never a result diff
 without a real change behind it.
 
 The suite cases (the published-physics collections) expand into one sub-case per problem, because a
@@ -17,6 +18,7 @@ from __future__ import annotations
 
 import argparse
 import json
+import os
 import sys
 import time
 from dataclasses import replace
@@ -24,6 +26,7 @@ from pathlib import Path
 
 from .cases.registry import Case, coverage_summary, list_cases
 from .core.contract import SCHEMA_VERSION
+from .cases.physics_truths import FEYNMAN_TRUTHS, INEXPRESSIBLE
 from .io.sources import FEYNMAN_SELECTION, STROGATZ_SELECTION
 from .stages import evaluate as evaluate_stage
 from .stages import export as export_stage
@@ -33,10 +36,65 @@ from .stages import preprocess as preprocess_stage
 from .stages import train as train_stage
 
 REPO_ROOT = Path(__file__).resolve().parents[2]
-DERIVED = REPO_ROOT / "data" / "derived"
-MANIFESTS = REPO_ROOT / "manifests"
+# The canonical output tree, overridable so a TEST can never write into it.
+#
+# `tests/test_contract_conformance.py` bakes a case to compare the real document against the
+# declared interfaces. Without this it wrote a reduced-budget run over the published artifact, so
+# running the suite silently replaced a committed full-budget result with a --quick one, and running
+# it DURING a bake produced a file that was half of each. That exact failure has cost this line a
+# release before: a pytest run clobbered a committed bake and two versions shipped it.
+_OUTPUT_OVERRIDE = os.environ.get("SYMLAB_OUTPUT_DIR")
+_OUTPUT_ROOT = Path(_OUTPUT_OVERRIDE) if _OUTPUT_OVERRIDE else REPO_ROOT
+DERIVED = _OUTPUT_ROOT / "data" / "derived"
+MANIFESTS = _OUTPUT_ROOT / "manifests"
 
 STAGES = ("preprocess", "feature_extraction", "train", "infer", "evaluate", "export")
+
+
+def _expanded_summary(label: str, dataset: str, es: bool) -> str:
+    """The summary for ONE expanded problem, rather than the suite's description of all of them.
+
+    An expanded case inherited its parent's text, so the page for a single Gaussian opened with
+    "Eighteen published physical laws, each with 100,000 sampled rows". The reader is looking at one
+    of them, and a description that counts eighteen is a false statement about what is on screen.
+    """
+    reason = INEXPRESSIBLE.get(dataset)
+    if reason is not None:
+        checkable_en = (
+            "Its published law cannot be written in this operator set, so recovery is reported as "
+            "not checkable rather than as zero: a zero would describe the primitive set rather "
+            "than the method."
+        )
+        checkable_es = (
+            "Su ley publicada no se puede escribir en este conjunto de operadores, asi que la "
+            "recuperacion se reporta como no comprobable y no como cero: un cero describiria el "
+            "conjunto de primitivas y no al metodo."
+        )
+    elif dataset in FEYNMAN_TRUTHS:
+        checkable_en = (
+            "The published law is wired as a machine-comparable expression, verified against this "
+            "dataset before it was allowed to score, so recovery is checked rather than assumed."
+        )
+        checkable_es = (
+            "La ley publicada esta conectada como expresion comparable por maquina, verificada "
+            "contra este conjunto antes de permitirle puntuar, asi que la recuperacion se comprueba."
+        )
+    else:
+        checkable_en = "No machine-comparable law is wired for it, so recovery is not checkable."
+        checkable_es = (
+            "No hay ley comparable por maquina conectada, asi que la recuperacion no es comprobable."
+        )
+
+    if es:
+        return (
+            f"Una ley fisica publicada, {label}, muestreada por PMLB. Los parametros fisicos llegan "
+            f"como COLUMNAS de entrada, asi que lo desconocido es la FORMA y no los numeros. "
+            f"{checkable_es}"
+        )
+    return (
+        f"One published physical law, {label}, as sampled by PMLB. The physical parameters arrive as "
+        f"input COLUMNS, so what is unknown is the FORM and not the numbers. {checkable_en}"
+    )
 
 
 def expand_suites(cases: list[Case]) -> list[Case]:
@@ -46,10 +104,13 @@ def expand_suites(cases: list[Case]) -> list[Case]:
         if case.loader == "pmlb:feynman":
             for dataset in FEYNMAN_SELECTION:
                 short = dataset.replace("feynman_", "").lower()
+                label = short.replace("_", ".").upper()
                 out.append(replace(
                     case, id=f"feynman-{short}", loader=f"pmlb-dataset:{dataset}",
-                    name_en=f"Feynman {short.replace('_', '.').upper()}",
-                    name_es=f"Feynman {short.replace('_', '.').upper()}",
+                    name_en=f"Feynman {label}",
+                    name_es=f"Feynman {label}",
+                    summary_en=_expanded_summary(f"Feynman {label}", dataset, es=False),
+                    summary_es=_expanded_summary(f"Feynman {label}", dataset, es=True),
                 ))
         elif case.loader == "pmlb:strogatz":
             for dataset in STROGATZ_SELECTION:
@@ -57,6 +118,8 @@ def expand_suites(cases: list[Case]) -> list[Case]:
                 out.append(replace(
                     case, id=f"strogatz-{short}", loader=f"pmlb-dataset:{dataset}",
                     name_en=f"Strogatz {short}", name_es=f"Strogatz {short}",
+                    summary_en=_expanded_summary(f"the {short} system", dataset, es=False),
+                    summary_es=_expanded_summary(f"el sistema {short}", dataset, es=True),
                 ))
         else:
             out.append(case)
@@ -81,7 +144,8 @@ def run_case(case: Case, *, seed: int = 0, noise: float = 0.0, quick: bool = Fal
     features = features_stage.run(prepared)
     trained = train_stage.run(prepared, features, case, seed=seed)
     inferred = infer_stage.run(prepared, trained)
-    scores = evaluate_stage.run(prepared, trained, inferred, truth=None, seed=seed)
+    # The truth is used ONLY for scoring. The search never receives it.
+    scores = evaluate_stage.run(prepared, trained, inferred, truth=prepared.truth, seed=seed)
 
     certificate = None
     if not quick and prepared.n_inputs <= 3:
@@ -103,7 +167,7 @@ def run_case(case: Case, *, seed: int = 0, noise: float = 0.0, quick: bool = Fal
         }
 
     run = export_stage.build_run(case, prepared, features, trained, inferred, scores,
-                                 seed=seed, truth=None, certificate=certificate)
+                                 seed=seed, truth=prepared.truth, certificate=certificate)
     manifest = export_stage.build_manifest(case, prepared, features, scores, seed=seed,
                                            artifact_relative=f"{case.id}/run.json",
                                            artifact_bytes=0)
@@ -114,6 +178,7 @@ def run_case(case: Case, *, seed: int = 0, noise: float = 0.0, quick: bool = Fal
         "case_id": case.id,
         "category": case.category,
         "category_name": case.category_name,
+        "category_name_es": case.category_name_es,
         "name_en": case.name_en,
         "name_es": case.name_es,
         "ground_truth_known": case.ground_truth_known,

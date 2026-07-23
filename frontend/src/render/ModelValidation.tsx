@@ -18,6 +18,59 @@ const W = 620;
 const H = 300;
 const PAD = { top: 18, right: 20, bottom: 42, left: 62 };
 
+/** A compact numeric axis for the SVG charts below.
+ *
+ * They shipped with axis TITLES and no tick VALUES, so a reader could see the shape of a
+ * relationship and not its magnitude. `count` is a hint, not a promise: d3 rounds to human numbers,
+ * which is the point, since 0.5 / 1 / 1.5 reads and 0.4713 does not.
+ *
+ * `format` keeps a wide range legible. A default `toString` prints 0.30000000000000004 for a tick
+ * d3 considers round, and prints 12 characters of a value where 4 would do.
+ */
+function Ticks({
+  scale,
+  orientation,
+  at,
+  count = 5,
+}: {
+  scale: (v: number) => number;
+  orientation: 'x' | 'y';
+  /** The pixel position of the other axis: y for the x-axis baseline, x for the y-axis line. */
+  at: number;
+  count?: number;
+}) {
+  // `scale` is a d3 linear scale; `ticks` exists on it but is not in the narrowed call signature.
+  const ticks: number[] = (scale as unknown as { ticks: (n: number) => number[] }).ticks(count);
+  const format = (v: number) => {
+    const a = Math.abs(v);
+    if (v === 0) return '0';
+    if (a >= 1e5 || a < 1e-3) return v.toExponential(1);
+    return String(Number(v.toPrecision(4)));
+  };
+  return (
+    <g className="sym-ticks" aria-hidden="true">
+      {ticks.map((t) => {
+        const p = scale(t);
+        return orientation === 'x' ? (
+          <g key={t}>
+            <line className="sym-tick-mark" x1={p} y1={at} x2={p} y2={at + 4} />
+            <text className="sym-tick-label" x={p} y={at + 15} textAnchor="middle">
+              {format(t)}
+            </text>
+          </g>
+        ) : (
+          <g key={t}>
+            <line className="sym-tick-mark" x1={at - 4} y1={p} x2={at} y2={p} />
+            <text className="sym-tick-label" x={at - 7} y={p + 3.5} textAnchor="end">
+              {format(t)}
+            </text>
+          </g>
+        );
+      })}
+    </g>
+  );
+}
+
 export function ParityPlot({ validation, lang }: { validation: ValidationPayload; lang: 'en' | 'es' }) {
   const [hover, setHover] = useState<number | null>(null);
   const parity = validation.parity;
@@ -66,6 +119,8 @@ export function ParityPlot({ validation, lang }: { validation: ValidationPayload
             onMouseLeave={() => setHover(null)}
           />
         ))}
+        <Ticks scale={x} orientation="x" at={H - PAD.bottom} />
+        <Ticks scale={y} orientation="y" at={PAD.left} />
         <text className="sym-axis-title" x={(W + PAD.left) / 2} y={H - 8} textAnchor="middle">
           {lang === 'es' ? 'valor medido' : 'measured value'}
         </text>
@@ -163,6 +218,8 @@ export function ExtrapolationPlot({
           height={H - PAD.top - PAD.bottom}
         />
         <path className="sym-extrap-path" d={path} />
+        <Ticks scale={x} orientation="x" at={H - PAD.bottom} />
+        <Ticks scale={y} orientation="y" at={PAD.left} />
         <text className="sym-axis-title" x={(W + PAD.left) / 2} y={H - 8} textAnchor="middle">
           {entry.var}
         </text>
@@ -212,6 +269,12 @@ export function PartialDependence({
                 className="sym-pdp-path"
                 d={finite.map((d, i) => `${i === 0 ? 'M' : 'L'}${x(d.g)},${y(d.v)}`).join(' ')}
               />
+              {/* Three ticks, not five: these cards are a fifth the width of the charts above, and
+                  a crowded axis is harder to read than none. The range is what matters here, since
+                  a partial-dependence card is a statement about SHAPE and a reader still has to
+                  know whether the shape spans 0.01 or 1000. */}
+              <Ticks scale={x} orientation="x" at={148} count={3} />
+              <Ticks scale={y} orientation="y" at={44} count={3} />
             </svg>
             <figcaption>{entry.var}</figcaption>
           </figure>

@@ -57,6 +57,11 @@ FORBIDDEN_CONTENT = (
 TEXT_SUFFIXES = {
     ".ts", ".tsx", ".js", ".jsx", ".mjs", ".cjs", ".py", ".md", ".json",
     ".css", ".html", ".yml", ".yaml", ".toml", ".txt", ".cfg", ".ini",
+    # `.csv` was missing, and that is exactly where the residue was hiding: the shipped example
+    # dataset was the template's SIR parameter table, with rows literally named `EX02_epidemic` and
+    # `EX01_subcritical`, both of which are on the FORBIDDEN_CONTENT list above. The guard reported
+    # a clean repository across 358 tracked files because it never opened the file.
+    ".csv", ".tsv",
 }
 
 
