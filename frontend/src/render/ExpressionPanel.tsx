@@ -12,6 +12,8 @@
  * false statement about the method.
  */
 import katex from 'katex';
+
+import { latexSafeName } from '../lib/latex';
 import type React from 'react';
 import { useEffect, useMemo, useRef } from 'react';
 
@@ -99,14 +101,17 @@ export function ExpressionPanel({
   lang,
 }: ExpressionPanelProps) {
   const es = lang === 'en' ? false : true;
+  // The target may be a raw data column name (e.g. `%_Silica_Concentrate`), which is not
+  // valid LaTeX; escape it so a leading `%` cannot comment out the whole equation.
+  const safeTarget = latexSafeName(targetSymbol);
   const hostRef = useRef<HTMLDivElement>(null);
   const foundWrap = useClipDetection(hostRef, [member, showRaw, longForm]);
 
   const tex = useMemo(() => {
-    if (showRaw) return `${targetSymbol} = ${member.latex_raw}`;
+    if (showRaw) return `${safeTarget} = ${member.latex_raw}`;
     if (longForm) return member.latex_aligned;
-    return `${targetSymbol} = ${member.latex_pretty}`;
-  }, [member, targetSymbol, longForm, showRaw]);
+    return `${safeTarget} = ${member.latex_pretty}`;
+  }, [member, safeTarget, longForm, showRaw]);
 
   useEffect(() => {
     const host = hostRef.current;
@@ -220,7 +225,7 @@ export function ExpressionPanel({
           </header>
           {truthAvailable && truthLatex ? (
             <>
-              <MathBlock tex={`${targetSymbol} = ${truthLatex}`} />
+              <MathBlock tex={`${safeTarget} = ${truthLatex}`} />
               <dl className="sym-side-metrics">
                 <div>
                   <dt>{es ? 'regimen' : 'regime'}</dt>
