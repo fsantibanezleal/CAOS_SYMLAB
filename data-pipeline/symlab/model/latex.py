@@ -92,10 +92,38 @@ def format_number(value: float, *, sig_digits: int = 4) -> str:
     return text
 
 
+#: A plain identifier with at most one underscore-subscript. These render correctly as bare LaTeX
+#: (`mu`, `T_amb`, `V_1`), so they are left alone; everything else raw is escaped into \mathrm{}.
+_SIMPLE_IDENTIFIER = re.compile(r"^[A-Za-z][A-Za-z0-9]*(_[A-Za-z0-9]+)?$")
+
+#: LaTeX specials that must be escaped when a raw name is set as upright text.
+_LATEX_ESCAPE = {
+    "%": r"\%", "#": r"\#", "&": r"\&", "$": r"\$",
+    "_": r"\_", "{": r"\{", "}": r"\}",
+    "~": r"\textasciitilde{}", "^": r"\textasciicircum{}",
+}
+
+
+def latexify_name(name: str) -> str:
+    """Make a display name safe and readable inside a LaTeX string.
+
+    Mirrors `frontend/src/lib/latex.ts :: latexSafeName`. A raw data-column name like
+    `%_Silica_Concentrate` or `Flotation_Column_03_Air_Flow` is escaped and set upright rather than
+    interpreted as a run of subscripts (or, for a leading `%`, a comment that blanks the equation).
+    """
+    if "\\" in name:
+        return name
+    if _SIMPLE_IDENTIFIER.match(name):
+        return name
+    escaped = "".join(_LATEX_ESCAPE.get(char, char) for char in name)
+    return f"\\mathrm{{{escaped}}}"
+
+
 def variable_latex(index: int, display_names: list[str] | None = None) -> str:
-    """A variable's rendered symbol. Case definitions supply real symbols (`\\theta`, `T_{in}`)."""
+    """A variable's rendered symbol. Case definitions supply real symbols (`\\theta`, `T_{in}`);
+    real-data loaders supply raw column names, which are made LaTeX-safe here."""
     if display_names and index < len(display_names):
-        return display_names[index]
+        return latexify_name(display_names[index])
     return f"x_{{{index}}}"
 
 
