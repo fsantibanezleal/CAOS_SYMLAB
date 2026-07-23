@@ -11,7 +11,7 @@
     "path": "strogatz-bacres1/run.json",
     "format": "json",
     "schema_version": "1.0.0",
-    "bytes": 600396
+    "bytes": 553057
   },
   "gate": {
     "lane": "precompute",
@@ -57,7 +57,7 @@
   "variants": [
     {
       "id": "r1-koza-baseline",
-      "seconds": 3.61,
+      "seconds": 2.726,
       "evaluations": 9000,
       "front_size": 14,
       "selected_complexity": 34,
@@ -69,7 +69,7 @@
     },
     {
       "id": "r2-linear-scaling",
-      "seconds": 2.262,
+      "seconds": 1.559,
       "evaluations": 9000,
       "front_size": 17,
       "selected_complexity": 16,
@@ -81,7 +81,7 @@
     },
     {
       "id": "r3-constant-tuning",
-      "seconds": 2.318,
+      "seconds": 1.481,
       "evaluations": 9180,
       "front_size": 15,
       "selected_complexity": 13,
@@ -93,7 +93,7 @@
     },
     {
       "id": "r4-multi-objective",
-      "seconds": 1.636,
+      "seconds": 1.083,
       "evaluations": 9180,
       "front_size": 4,
       "selected_complexity": 9,
@@ -105,7 +105,7 @@
     },
     {
       "id": "r5-epsilon-lexicase",
-      "seconds": 43.148,
+      "seconds": 30.499,
       "evaluations": 9180,
       "front_size": 4,
       "selected_complexity": 9,
@@ -117,7 +117,7 @@
     },
     {
       "id": "r6-age-fitness-islands",
-      "seconds": 35.661,
+      "seconds": 22.755,
       "evaluations": 9720,
       "front_size": 4,
       "selected_complexity": 9,
@@ -129,7 +129,7 @@
     },
     {
       "id": "r7-deduplication",
-      "seconds": 233.937,
+      "seconds": 122.035,
       "evaluations": 9720,
       "front_size": 4,
       "selected_complexity": 9,
@@ -141,7 +141,7 @@
     },
     {
       "id": "parsimony-arm",
-      "seconds": 1.265,
+      "seconds": 0.652,
       "evaluations": 9180,
       "front_size": 6,
       "selected_complexity": 8,
@@ -153,11 +153,11 @@
     },
     {
       "id": "sparse-regression",
-      "seconds": 0.003,
+      "seconds": 0.002,
       "evaluations": 0,
-      "front_size": 3,
-      "selected_complexity": 65,
-      "test_r2": 0.9999952835,
+      "front_size": 1,
+      "selected_complexity": 55,
+      "test_r2": 0.9999902583,
       "accuracy_solution": true,
       "exact_recovery": null,
       "symbolic_test_decided": null,
@@ -173,7 +173,7 @@
     "mean_structural_distance": null,
     "symbolic_test_failure_rate": null,
     "test_disagreement_count": 0,
-    "total_seconds": 323.84,
+    "total_seconds": 182.79,
     "total_evaluations": 74160,
     "variants_with_irrelevant_features": 0
   }

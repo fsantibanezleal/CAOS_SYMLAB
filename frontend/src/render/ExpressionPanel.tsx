@@ -19,6 +19,7 @@ import { useEffect, useMemo, useRef } from 'react';
 
 import type { ParetoMember, VariantScore } from '../lib/contract.types';
 import { formatR2 } from '../lib/format';
+import { notCheckableReasonText } from '../lib/notCheckable';
 import { isRecovered } from '../lib/recovery';
 
 /**
@@ -259,9 +260,9 @@ export function ExpressionPanel({
                   not describe this data", and those say different things about what they are
                   looking at. */}
               {notCheckableReason && (
-                <p className="sym-why-not" lang="en">
+                <p className="sym-why-not">
                   <strong>{es ? 'Por que no es comprobable: ' : 'Why it is not checkable: '}</strong>
-                  {notCheckableReason}
+                  {notCheckableReasonText(notCheckableReason, es ? 'es' : 'en')}
                 </p>
               )}
             </div>

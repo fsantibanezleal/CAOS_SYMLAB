@@ -11,7 +11,7 @@
     "path": "monod-saturation/run.json",
     "format": "json",
     "schema_version": "1.0.0",
-    "bytes": 616168
+    "bytes": 507292
   },
   "gate": {
     "lane": "live",
@@ -56,7 +56,7 @@
   "variants": [
     {
       "id": "r1-koza-baseline",
-      "seconds": 1.536,
+      "seconds": 3.013,
       "evaluations": 12000,
       "front_size": 16,
       "selected_complexity": 17,
@@ -68,7 +68,7 @@
     },
     {
       "id": "r2-linear-scaling",
-      "seconds": 1.144,
+      "seconds": 2.357,
       "evaluations": 12000,
       "front_size": 13,
       "selected_complexity": 14,
@@ -80,7 +80,7 @@
     },
     {
       "id": "r3-constant-tuning",
-      "seconds": 1.342,
+      "seconds": 2.701,
       "evaluations": 12240,
       "front_size": 18,
       "selected_complexity": 16,
@@ -92,7 +92,7 @@
     },
     {
       "id": "r4-multi-objective",
-      "seconds": 1.09,
+      "seconds": 2.223,
       "evaluations": 12240,
       "front_size": 3,
       "selected_complexity": 8,
@@ -104,7 +104,7 @@
     },
     {
       "id": "r5-epsilon-lexicase",
-      "seconds": 27.503,
+      "seconds": 28.096,
       "evaluations": 12240,
       "front_size": 3,
       "selected_complexity": 8,
@@ -116,7 +116,7 @@
     },
     {
       "id": "r6-age-fitness-islands",
-      "seconds": 18.709,
+      "seconds": 26.846,
       "evaluations": 12960,
       "front_size": 3,
       "selected_complexity": 7,
@@ -128,7 +128,7 @@
     },
     {
       "id": "r7-deduplication",
-      "seconds": 122.286,
+      "seconds": 163.293,
       "evaluations": 12960,
       "front_size": 3,
       "selected_complexity": 7,
@@ -140,9 +140,9 @@
     },
     {
       "id": "sparse-regression",
-      "seconds": 0.002,
+      "seconds": 0.003,
       "evaluations": 0,
-      "front_size": 6,
+      "front_size": 2,
       "selected_complexity": 34,
       "test_r2": 0.8867041732,
       "accuracy_solution": false,
@@ -160,7 +160,7 @@
     "mean_structural_distance": 0.7354,
     "symbolic_test_failure_rate": 0.0,
     "test_disagreement_count": 0,
-    "total_seconds": 173.61,
+    "total_seconds": 228.53,
     "total_evaluations": 86640,
     "variants_with_irrelevant_features": 0
   }
