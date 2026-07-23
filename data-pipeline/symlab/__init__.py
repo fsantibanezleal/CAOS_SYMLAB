@@ -15,4 +15,4 @@ The package is layered so that the browser lane can import a strict subset:
 - `stages/`  the six named offline pipeline stages.
 """
 
-__version__ = "0.04.000"
+__version__ = "0.04.001"

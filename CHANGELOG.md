@@ -3,6 +3,22 @@
 All notable changes are documented here. Format follows Keep a Changelog; newest on top.
 Version format is X.XX.XXX; the manifest carries the semver form with zeros dropped.
 
+## 0.04.001 - 2026-07-23
+
+A re-bake release: the corpus is regenerated with three fixes and the version bumps so the app's
+cache-busted artifact fetches pick up the new files rather than the CDN-cached old ones.
+
+### Fixed
+- The symbolic scorer no longer rejects a coefficient one unit in the last place from the truth, so
+  the sparse arm recovers the two Feynman product laws it was already returning exactly:
+  feynman-i_12_1 and i_12_5 move from 8/9 to 9/9.
+- Real-data variable names render as upright text (`\mathrm{...}`) instead of garbled subscripts, and
+  a leading `%` no longer blanks the equation.
+- The sparse arm is capped at 12 terms, so a high-dimensional collinear case (flotation, 21 inputs) no
+  longer returns the whole 336-term library: flotation-silica falls from 1650 nodes to 53 and 17.8 MB
+  to 3.4 MB, and the corpus from 87.6 MB to 65 MB.
+- The recovery-not-checkable reason is shown in Spanish on the Spanish page.
+
 ## 0.04.000 - 2026-07-22
 
 The version this lab starts actually taking its own headline measurement, and the measurement
