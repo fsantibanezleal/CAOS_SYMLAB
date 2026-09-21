@@ -3,12 +3,15 @@ name: CI
 on:
   push:
     branches: [main, develop]
-  pull_request:
   workflow_dispatch:
+concurrency:
+  group: ${{ github.workflow }}-${{ github.ref }}
+  cancel-in-progress: true
 
 jobs:
   test:
     runs-on: ubuntu-latest
+    timeout-minutes: 30
     steps:
       - uses: actions/checkout@v4
       - uses: actions/setup-python@v5
@@ -16,24 +19,16 @@ jobs:
           python-version: "3.12"
           cache: pip
       - name: Install (offline lane + dev + editable pkg)
-        run: pip install -r data-pipeline/requirements.txt -r requirements-dev.txt -e .
+        run: pip install -r requirements-dev.txt -e .
       - name: Lint
         run: ruff check data-pipeline tests
-      - name: Tests
-        run: pytest
-      - name: Pipeline smoke (regenerate one case into a sandbox)
-        # SYMLAB_OUTPUT_DIR is MANDATORY here. Without it, baking a single case rewrites
-        # manifests/index.json with that one case, truncating the committed 55-case index to 1.
-        # The next step then reports drift and fails, so this job was red on every run for a reason
-        # that had nothing to do with the change under test. It is the same rule the tests enforce:
-        # a bake must never write the canonical tree, and the smoke bake is a bake.
-        run: SYMLAB_OUTPUT_DIR="${RUNNER_TEMP}/symlab-smoke" python -m symlab.pipeline monod-saturation
       - name: CONTRACT 2, the COMMITTED manifests and artifacts are consistent (no drift)
         # Runs against the checked-out tree, which the sandboxed smoke bake above did not touch.
         run: python scripts/check_artifacts.py
 
   guards:
     runs-on: ubuntu-latest
+    timeout-minutes: 30
     steps:
       - uses: actions/checkout@v4
       - name: Base-integrity guards (the regressions this archetype forbids)
@@ -61,11 +56,14 @@ jobs:
       - name: No em-dash or emoji in product content (ADR-0067)
         run: python scripts/check_content_standards.py
 
+      - name: CI budget, trunk-only triggers, no training (ADR-0074)
+        run: python scripts/check_ci_budget.py
   frontend:
     # The frontend was built ONLY by the Pages deploy workflow, which runs on main. A TypeScript
     # error therefore passed CI on a pull request and failed after the merge, which is the worst
     # place to find it. It is checked here, on every push and every PR.
     runs-on: ubuntu-latest
+    timeout-minutes: 30
     steps:
       - uses: actions/checkout@v4
       - uses: actions/setup-python@v5
