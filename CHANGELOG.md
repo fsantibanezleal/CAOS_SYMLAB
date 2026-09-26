@@ -3,6 +3,11 @@
 All notable changes are documented here. Format follows Keep a Changelog; newest on top.
 Version format is X.XX.XXX; the manifest carries the semver form with zeros dropped.
 
+## 0.04.002 - 2026-09-26
+
+No em-dash in the product's content (ADR-0067); the archetype's content guard runs in CI. The sweep had
+merged on 2026-09-26 without a release. `VERSION` file added as the version source (ADR-0068).
+
 ## 0.04.001 - 2026-07-23
 
 A re-bake release: the corpus is regenerated with three fixes and the version bumps so the app's
